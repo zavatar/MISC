@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-
-project(MISC)
+set(PROJECT_NAME MISC)
+project(${PROJECT_NAME} C CXX)
 enable_testing()
 
 #CMAKE_BUILD_TOOL
@@ -12,20 +12,8 @@ endif(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 ################################
 # Add common source 
 
+include_directories("./")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/common")
-
-################################
-# Add output directory
-
-if(MSVC)
-	set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/build/)
-else(MSVC)
-	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/build/debug )
-	else(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/build/release )
-	endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-endif(MSVC)
 
 ################################
 # Add subdirectory
