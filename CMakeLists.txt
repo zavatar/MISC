@@ -12,8 +12,21 @@ endif(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 ################################
 # Add common source 
 
-include_directories("./")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/common")
+
+################################
+# Add output directory
+
+if(MSVC)
+	set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/build/)
+else()
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/build/debug )
+	else()
+		set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/build/release )
+	endif()
+endif()
 
 ################################
 # Add subdirectory
