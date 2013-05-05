@@ -126,7 +126,7 @@
 #	elif(MISC_LANG == MISC_LANG_CXX0X)
 #		pragma message("MISC: C++0x")
 #	elif(MISC_LANG == MISC_LANG_CXX98)
-#		pragma message("MISC: C++98")
+#       error("MISC: C++98")
 #   else
 #       error("MISC: C++ language undetected")
 #	endif//MISC_MODEL

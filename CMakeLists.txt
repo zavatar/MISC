@@ -10,7 +10,7 @@ if(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 endif(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-	#add_definitions(-std=c++11)
+	add_definitions(-std=c++11)
 endif()
 
 ################################
