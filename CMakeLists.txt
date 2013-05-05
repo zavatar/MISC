@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.8)
 set(PROJECT_NAME MISC)
-project(${PROJECT_NAME} C CXX)
+project(${PROJECT_NAME})
 enable_testing()
 
 #CMAKE_BUILD_TOOL
@@ -9,11 +9,14 @@ if(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 	message(FATAL_ERROR "Source and binary directories must be different")
 endif(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+	#add_definitions(-std=c++11)
+endif()
+
 ################################
 # Add common source 
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/common")
+
 
 ################################
 # Add output directory

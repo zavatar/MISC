@@ -1,42 +1,53 @@
+//////////////////////////////////////////////////////////////////////////
+// In GNU libstdc++, there are ... allocators and so on.
+// __gnu_cxx::new_allocator (default)
+// __gnu_cxx::malloc_allocator
+// __gnu_cxx::__pool_alloc
+//
+// In STLPort (SGI STL), use ... predefines to change allocators. (compat.h)
+// #define __STL_USE_NEWALLOC
+// #define __STL_USE_MALLOC
+// __node_alloc	(_alloc.h)	(default)
+//
+// In VC STL, only has (default) new allocator.
+//////////////////////////////////////////////////////////////////////////
+//#define __STL_USE_NEWALLOC
 #include <misc/misc.hpp>
 
 #include <memory>
 #include <map>
 
-#if((MISC_COMPILER & MISC_COMPILER_GCC) == MISC_COMPILER_GCC)
-#include <malloc.h>
+#if(MISC_COMPILER & MISC_COMPILER_GCC)
+// For GNU libstdc++, try pool alloc.
 #include <ext/pool_allocator.h>
+#define ALLOCATOR(_Kty, _Ty) __gnu_cxx::__pool_alloc< std::pair<_Kty, _Ty> >
+#else
+// For STLPort or VC STL, use the default.
+#define ALLOCATOR(_Kty, _Ty) std::allocator< std::pair<_Kty, _Ty> >
 #endif
 
-//#define NEW_ALLOC
+#if(MISC_PLATFORM & MISC_PLATFORM_UNIX)
+#include <malloc.h>
+#define OBSERVER malloc_stats(); mallinfo();
+#else
+#define OBSERVER system("pause");
+#endif
+
+template <typename T>
+void fun(T& tmap)
+{
+	OBSERVER
+	for (int i=0; i<1024*1024; i++)
+		tmap[i] = float(i);
+	OBSERVER
+	tmap.clear();
+	OBSERVER
+}
 
 int main()
 {
-#	if(((MISC_COMPILER & MISC_COMPILER_GCC) == MISC_COMPILER_GCC) && !defined(__MINGW32__))
-	malloc_stats();
-#	endif
-	std::map<int, float, std::less<int>
-#	if(((MISC_COMPILER & MISC_COMPILER_GCC) == MISC_COMPILER_GCC) && !defined(NEW_ALLOC))
-		,__gnu_cxx::__pool_alloc<std::pair<int, float> >
-#	endif
-	> tmap;
-
-	for (int i=0; i<1024*1024; i++)
-		tmap[i] = float(i);
-
-#	if(((MISC_COMPILER & MISC_COMPILER_GCC) == MISC_COMPILER_GCC) && !defined(__MINGW32__))
-	malloc_stats();
-#	else
-	system("pause");
-#	endif
-
-	tmap.clear();
-
-#	if(((MISC_COMPILER & MISC_COMPILER_GCC) == MISC_COMPILER_GCC) && !defined(__MINGW32__))
-	malloc_stats();
-#	else
-	system("pause");
-#	endif
+	std::map<int, float, std::less<int>, ALLOCATOR(int, float)> tmap;
+	fun(tmap);
 
 	return 0;
 }

@@ -1,15 +1,13 @@
-option(TEST_ENABLE_CXX_11 "Enable C++ 11" OFF)
 if(CMAKE_COMPILER_IS_GNUCXX)
-	if(TEST_ENABLE_CXX_11)
-		add_definitions(-std=c++11)
-	endif()
+	#set(COMPILER_DEFS "-D__STRICT_ANSI__")
 elseif(MSVC)
 #vc 2012 fix for vararg templates
-    set(MSVC_COMPILER_DEFS "-D_VARIADIC_MAX=10")
-	add_definitions(${MSVC_COMPILER_DEFS})
+    set(COMPILER_DEFS "-D_VARIADIC_MAX=10")
+	add_definitions(${COMPILER_DEFS})
 endif()
 
 add_subdirectory(gtest)
+include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
 
 set(TEST_NAME tests)
