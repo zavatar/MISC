@@ -34,4 +34,5 @@ else()
 	)
 endif()
 
-add_test(${TEST_NAME} ${TEST_NAME})
+add_test(NAME ${TEST_NAME}
+	    COMMAND $<TARGET_FILE:${TEST_NAME}>)
