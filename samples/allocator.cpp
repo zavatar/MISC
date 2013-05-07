@@ -46,6 +46,10 @@ void fun(T& tmap)
 
 int main()
 {
+	unsigned char a = 0xe0;
+	unsigned int b=a;
+	int c=a;
+	char d=a;
 	std::map<int, float, std::less<int>, ALLOCATOR(int, float)> tmap;
 	fun(tmap);
 
