@@ -19,4 +19,11 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 
-CreateSample(allocator)
+file(GLOB SAMPLE_LIST *.cpp)
+foreach(Src ${SAMPLE_LIST})
+	string(REPLACE "/" ";" srcBlock ${Src})
+	list(GET srcBlock -1 cppName)
+	string(REPLACE ".cpp" "" Name ${cppName})
+	message(STATUS "Find Sample: ${Name}")
+	CreateSample(${Name})
+endforeach()
