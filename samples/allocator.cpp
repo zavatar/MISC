@@ -17,16 +17,16 @@
 #include <memory>
 #include <map>
 
-#if(MISC_COMPILER & MISC_COMPILER_GCC)
+#if(MISC_ISGCC)
 // For GNU libstdc++, try pool alloc.
 #include <ext/pool_allocator.h>
 #define ALLOCATOR(_Kty, _Ty) __gnu_cxx::__pool_alloc< std::pair<_Kty, _Ty> >
-#else
+#elif(MISC_ISVC)
 // For STLPort or VC STL, use the default.
 #define ALLOCATOR(_Kty, _Ty) std::allocator< std::pair<_Kty, _Ty> >
 #endif
 
-#if(MISC_PLATFORM & MISC_PLATFORM_UNIX)
+#if(MISC_PLATFORM == MISC_PLATFORM_UNIX)
 #include <malloc.h>
 #define OBSERVER malloc_stats(); mallinfo();
 #else
