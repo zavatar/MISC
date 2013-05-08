@@ -10,8 +10,8 @@
 // (Base Class may be inherited by different Derive Classes)
 // 2. The call of virtual function through VTable is pre-compiled as vptr[offset],
 // since the offset of function in Base Class is constant for all Derived Class.
+// 3. In multiple inheritance, Base classes are arranged one by one in Derived Class.
 // But virtual function isn't always called through VTable, like bp1->Base1::f() 
-// 
 //
 //////////////////////////////////////////////////////////////////////////
 
