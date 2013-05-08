@@ -165,7 +165,11 @@ int main( int argc, char *argv[] )
     std::cout << "CLayoutBase2 offset of LayoutSub1 is " << (char*)( LayoutBase2 *)lsc - (char*)lsc << std::endl;
 
     int *ptr = (int*)lsc;
+#	if(MISC_ISGCC)
+	std::cout << "vbc in LayoutSub1 is " << *(int*)ptr[0] << std::endl;
+#	elif(MISC_ISVC)
     std::cout << "vbc in LayoutSub1 is " << *(int*)ptr[3] << std::endl;
+#	endif
 
     delete lsc;
 
