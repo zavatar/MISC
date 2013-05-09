@@ -4,6 +4,9 @@ function(CreateSample NAME)
 	add_test( 
 	    NAME ${SAMPLE_NAME}
 	    COMMAND $<TARGET_FILE:${SAMPLE_NAME}>)
+	if(NAME STREQUAL "virtual_inheritance" AND MSVC)
+		set_target_properties(${SAMPLE_NAME} PROPERTIES COMPILE_FLAGS /d1reportAllClassLayout)
+	endif()
 endfunction()
 
 ################################
