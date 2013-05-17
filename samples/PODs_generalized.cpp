@@ -13,8 +13,7 @@
 // template deduction, reference collapsing rules.
 //
 //////////////////////////////////////////////////////////////////////////
-#include "misc/setup.hpp"
-#include <stdio.h>
+#include "misc/misc.hpp"
 #include <cstdlib>
 #include <cstddef> // for offsetof
 #include <type_traits>
@@ -70,7 +69,7 @@ public:
 	}
 };
 
-#if(MISC_ISVC)
+#ifdef MISC_STL_VC
 template <typename T>
 void f(T&& a) {
 	typedef typename std::remove_reference<T>::type rT;
@@ -88,7 +87,7 @@ public:
 	std::is_pod<_N>::value);
 #define PRINT_IS_TRIVIAL(_N) printf("%*s%*s%d\n",NCOL,#_N,NCOL,"is trivial:",\
 	std::is_trivial<_N>::value);
-#if(MISC_ISVC) // libstdc++ doesn't support std::is_trivially_copyable?
+#ifdef MISC_STL_VC // libstdc++ doesn't support std::is_trivially_copyable?
 #define PRINT_IS_TRIVIALLY_COPYABLE(_N) printf("%*s%*s%d\n",NCOL,#_N,NCOL,"is trivially copyable:",\
 	std::is_trivially_copyable<_N>::value);
 #endif
@@ -122,7 +121,7 @@ int main()
 	
 	PRINT_IS_TRIVIAL(Trivial);
 	PRINT_IS_TRIVIAL(NonTrivial);
-#if(MISC_ISVC)
+#ifdef MISC_STL_VC
 	PRINT_IS_TRIVIALLY_COPYABLE(NonTrivial); // Trivial ¡Ê TriviallyCopyable
 	PRINT_IS_TRIVIALLY_COPYABLE(TriviallyCopyable);
 	PRINT_IS_TRIVIALLY_COPYABLE(NonTriviallyCopyable);
@@ -152,7 +151,7 @@ int main()
 		sl1 = static_cast<StandardLayout&&>(sl3); // move assignment
 	}
 	printf("\n");
-#if(MISC_ISVC)
+#ifdef MISC_STL_VC
 	{
 		f(sl1); // T == StandardLayout&, T&& collapse to StandardLayout&. Two copy ctor
 		printf("\n");

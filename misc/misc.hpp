@@ -6,6 +6,7 @@
 
 #include "setup.hpp"
 
+#include "allocator.hpp"
 #include "interval_tree.hpp"
 
 #endif//misc_misc

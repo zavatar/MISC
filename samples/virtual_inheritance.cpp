@@ -9,8 +9,7 @@
 // to see the layout of class DiamondSub2 in VC
 //
 //////////////////////////////////////////////////////////////////////////
-#include "misc/setup.hpp"
-#include <stdio.h>
+#include "misc/misc.hpp"
 
 #if(MISC_ISVC)
 // Warning C4250: http://msdn.microsoft.com/en-us/library/6b3sy7ae(v=vs.80).aspx
@@ -71,6 +70,12 @@ public:
 	int m_val;
 };
 
+#	if(MISC_ISGCC)
+#	pragma message("Try VS2012 to see the layout of classes\n")
+#	elif(MISC_ISVC)
+#	pragma message("Build this project and see the layout of classes in Output\n")
+#	endif
+
 int main( int argc, char *argv[] )
 {
 	printf("Compare directly invoke\n");
@@ -90,10 +95,5 @@ int main( int argc, char *argv[] )
 	b1->l(); b2->l();
 	b1->r(); b2->r();
 
-#	if(MISC_ISGCC)
-#	pragma message("Try VS2012 to see the layout of classes\n")
-#	elif(MISC_ISVC)
-#	pragma message("Build this project and see the layout of classes in Output\n")
-#	endif
     return 0; 
 }

@@ -15,16 +15,8 @@
 #include <misc/misc.hpp>
 
 #include <memory>
+#include <vector>
 #include <map>
-
-#if(MISC_ISGCC)
-// For GNU libstdc++, try pool alloc.
-#include <ext/pool_allocator.h>
-#define ALLOCATOR(_Kty, _Ty) __gnu_cxx::__pool_alloc< std::pair<_Kty, _Ty> >
-#elif(MISC_ISVC)
-// For STLPort or VC STL, use the default.
-#define ALLOCATOR(_Kty, _Ty) std::allocator< std::pair<_Kty, _Ty> >
-#endif
 
 #if(MISC_PLATFORM == MISC_PLATFORM_UNIX)
 #include <malloc.h>
@@ -46,8 +38,12 @@ void fun(T& tmap)
 
 int main()
 {
-	std::map<int, float, std::less<int>, ALLOCATOR(int, float)> tmap;
-	fun(tmap);
-
+#ifndef MISC_STL_PORT
+	std::map<int, float, std::less<int>, misc::new_alloc<std::pair<int,float> >MISC_TALIAS > tmap1;
+	fun(tmap1);
+	printf("\n");
+#endif
+	std::map<int, float, std::less<int>, misc::pool_alloc<std::pair<int,float> >MISC_TALIAS > tmap2;
+	fun(tmap2);
 	return 0;
 }

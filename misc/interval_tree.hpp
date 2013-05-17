@@ -10,10 +10,10 @@ namespace misc{
 		MISC_FUNC_DECL interval_tree();
 	};
 
-}//namespace misc
+} // namespace misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE
 #include "interval_tree.inl"
-#endif//MISC_EXTERNAL_TEMPLATE
+#endif // !MISC_EXTERNAL_TEMPLATE
 
-#endif//misc_interval_tree
+#endif // !misc_interval_tree
