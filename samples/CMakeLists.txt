@@ -4,6 +4,12 @@ function(CreateSample NAME)
 	add_test( 
 	    NAME ${SAMPLE_NAME}
 	    COMMAND $<TARGET_FILE:${SAMPLE_NAME}>)
+	if(NAME STREQUAL "virtual_inheritance" AND MSVC)
+		set_target_properties(${SAMPLE_NAME} PROPERTIES COMPILE_FLAGS /d1reportSingleClassLayoutDiamondSub)
+	elseif(NAME STREQUAL "allocator" AND STLPort)
+		set_target_properties(${SAMPLE_NAME} PROPERTIES INCLUDE_DIRECTORIES 
+		${PROJECT_SOURCE_DIR}/common/stlport/inc)
+	endif()
 endfunction()
 
 ################################
@@ -11,13 +17,10 @@ endfunction()
 
 if(MSVC)
 	option(STLPort "Using STLPort" OFF)
-	if(STLPort)
-		include_directories(${PROJECT_SOURCE_DIR}/common/stlport/inc)
+	if (STLPort)
 		link_directories(${PROJECT_SOURCE_DIR}/common/stlport/lib)
 	endif()
 endif()
-
-include_directories(${PROJECT_SOURCE_DIR})
 
 file(GLOB SAMPLE_LIST *.cpp)
 foreach(Src ${SAMPLE_LIST})
@@ -27,3 +30,5 @@ foreach(Src ${SAMPLE_LIST})
 	message(STATUS "Find Sample: ${Name}")
 	CreateSample(${Name})
 endforeach()
+
+include_directories(${PROJECT_SOURCE_DIR})

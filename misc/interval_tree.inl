@@ -6,4 +6,4 @@ namespace misc{
 		std::cout<<"Constructing interval_tree %d\n";
 	}
 
-}//namespace misc
+} // namespace misc

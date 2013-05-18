@@ -29,13 +29,13 @@
 // Report platform detection
 #if(defined(MISC_MESSAGES) && !defined(MISC_MESSAGE_PLATFORM_DISPLAYED))
 #	define MISC_MESSAGE_PLATFORM_DISPLAYED
-#	if(MISC_PLATFORM & MISC_PLATFORM_WINDOWS)
+#	if(MISC_PLATFORM == MISC_PLATFORM_WINDOWS)
 #		pragma message("MISC: Windows platform detected")
-#	elif(MISC_PLATFORM & MISC_PLATFORM_LINUX)
+#	elif(MISC_PLATFORM == MISC_PLATFORM_LINUX)
 #		pragma message("MISC: Linux platform detected")
-#	elif(MISC_PLATFORM & MISC_PLATFORM_UNIX)
+#	elif(MISC_PLATFORM == MISC_PLATFORM_UNIX)
 #		pragma message("MISC: UNIX platform detected")
-#	elif(MISC_PLATFORM & MISC_PLATFORM_UNKNOWN)
+#	elif(MISC_PLATFORM == MISC_PLATFORM_UNKNOWN)
 #		pragma message("MISC: platform unknown")
 #	else
 #		error("MISC: platform not detected")
@@ -93,6 +93,34 @@
 #	endif//MISC_MODEL
 #endif//MISC_MESSAGE
 
+#define MISC_ISGCC (MISC_COMPILER & MISC_COMPILER_GCC)
+#define MISC_ISVC (MISC_COMPILER & MISC_COMPILER_VC)
+
+//////////////////////////////////////////////////////////////////////////
+// STL Version
+
+#ifdef __GLIBCXX__
+#	define MISC_STL_LIBSTDCXX __GLIBCXX__
+#elif defined(__SGI_STL_PORT)
+#	define MISC_STL_PORT __SGI_STL_PORT
+#elif defined(_CPPLIB_VER)
+#	define MISC_STL_VC _CPPLIB_VER
+#endif
+
+#if(defined(MISC_MESSAGES) && !defined(MISC_MESSAGE_STL_DISPLAYED))
+#	define MISC_MESSAGE_STL_DISPLAYED
+#	ifdef __GLIBCXX__
+#		pragma message("MISC: libstdc++")
+#	elif defined(__SGI_STL_PORT)
+#		pragma message("MISC: STLPort")
+#	elif defined(_CPPLIB_VER)
+#		pragma message("MISC: VS Dinkumware STL")
+#	else
+#		error("MISC: Include setup.hpp after STL header file")
+#	endif
+#endif
+
+
 //////////////////////////////////////////////////////////////////////////
 // C++ Version
 #define MISC_LANG_CXX			(0 << 0)
@@ -101,7 +129,7 @@
 #define MISC_LANG_CXX11			(1 << 3)
 
 // http://gcc.gnu.org/gcc-4.7/changes.html
-#if(MISC_COMPILER & MISC_COMPILER_GCC)
+#if(MISC_ISGCC)
 #	if(__cplusplus == 201103L)
 #		define MISC_LANG MISC_LANG_CXX11
 #	elif(__cplusplus == 199711L)
@@ -109,7 +137,7 @@
 #	else
 #		define MISC_LANG MISC_LANG_CXX
 #	endif
-#elif(MISC_COMPILER & MISC_COMPILER_VC)
+#elif(MISC_ISVC)
 #	if(MISC_COMPILER == MISC_COMPILER_VC2012)
 #		define MISC_LANG MISC_LANG_CXX0X
 #	else
@@ -134,19 +162,13 @@
 
 //////////////////////////////////////////////////////////////////////////
 // Qualifiers
-#if(defined(MISC_FORCE_INLINE))
-#   if(MISC_COMPILER & MISC_COMPILER_VC)
-#       define MISC_INLINE __forceinline
-#   elif(MISC_COMPILER & MISC_COMPILER_GCC)
-#       define MISC_INLINE __attribute__((always_inline))
-#   else
-#       define MISC_INLINE inline
+#   if(MISC_ISVC)
+#		define MISC_TALIAS ::type
+#   elif(MISC_ISGCC)
+#		define MISC_TALIAS
 #   endif//MISC_COMPILER
-#else
-#   define MISC_INLINE inline
-#endif//defined(MISC_FORCE_INLINE)
 
 #define MISC_FUNC_DECL	
-#define MISC_FUNC_QUALIFIER		MISC_INLINE
+#define MISC_FUNC_QUALIFIER inline
 
 #endif//misc_setup
