@@ -43,10 +43,10 @@ struct Byte {
 
 int main()
 {
-	misc::pool_alloc<Byte<1>> byte1;
-	misc::pool_alloc<Byte<8>> byte8;
-	misc::pool_alloc<Byte<33>> byte33;
-	misc::pool_alloc<Byte<128>> byte128;
+	misc::pool_alloc<Byte<1> >MISC_TALIAS byte1;
+	misc::pool_alloc<Byte<8> >MISC_TALIAS byte8;
+	misc::pool_alloc<Byte<33> >MISC_TALIAS byte33;
+	misc::pool_alloc<Byte<128> >MISC_TALIAS byte128;
 	std::vector<Byte<8>*> pbyte8;
 	// malloc 40*RUP(1)=40*8 bytes, 1*8 return, 19*8 add to flist[0]
 	auto p1 = byte1.allocate(1);
