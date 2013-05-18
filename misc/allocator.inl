@@ -2,8 +2,8 @@ namespace misc{
 
 #if defined(MISC_STL_VC)
 
-	template <typename T>
-	void* pool_alloc<T>::_allocate(size_t __n)
+	template <int inst>
+	void* _alloc<inst>::_allocate(size_t __n)
 	{
 		void* __ret = 0;
 
@@ -23,11 +23,11 @@ namespace misc{
 		return __ret;
 	}
 
-	template <typename T>
-	void pool_alloc<T>::_deallocate(void* __p, size_t __n)
+	template <int inst>
+	void _alloc<inst>::_deallocate(void* __p, size_t __n)
 	{
 		if (__n > (size_t) _MAX_BYTES)
-			delete((pool_alloc<T>::pointer)__p);
+			delete(__p);
 		else {
 			_Obj* volatile* __my_free_list = _S_free_list + _S_freelist_index(__n);
 			_Obj* __q = (_Obj*)__p;
@@ -36,8 +36,8 @@ namespace misc{
 		}
 	}
 
-	template <typename T>
-	void* pool_alloc<T>::_reallocate(void* __p, size_t __old_sz, size_t __new_sz)
+	template <int inst>
+	void* _alloc<inst>::_reallocate(void* __p, size_t __old_sz, size_t __new_sz)
 	{
 		void* __result;
 		size_t __copy_sz;
@@ -57,8 +57,8 @@ namespace misc{
 	// the malloc heap too much.
 	// We assume that size is properly aligned.
 	// We hold the allocation lock.
-	template <typename T>
-	char* pool_alloc<T>::_S_chunk_alloc(size_t __size, int& __nobjs)
+	template <int inst>
+	char* _alloc<inst>::_S_chunk_alloc(size_t __size, int& __nobjs)
 	{
 		char* __result;
 		size_t __total_bytes = __size * __nobjs;
@@ -120,8 +120,8 @@ namespace misc{
 	// Returns an object of size __n, and optionally adds to size __n free list.
 	// We assume that __n is properly aligned.
 	// We hold the allocation lock.
-	template <typename T>
-	void* pool_alloc<T>::_S_refill(size_t __n)
+	template <int inst>
+	void* _alloc<inst>::_S_refill(size_t __n)
 	{
 		int __nobjs = 20;
 		char* __chunk = _S_chunk_alloc(__n, __nobjs);
@@ -150,18 +150,18 @@ namespace misc{
 		return(__result);
 	}
 
-	template <typename T>
-	typename pool_alloc<T>::_Obj* pool_alloc<T>::_S_free_list[pool_alloc<T>::_NFREELISTS] =
+	template <int inst>
+	typename _alloc<inst>::_Obj* _alloc<inst>::_S_free_list[_alloc<inst>::_NFREELISTS] =
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
 
-	template <typename T>
-	char* pool_alloc<T>::_S_start_free = 0;
+	template <int inst>
+	char* _alloc<inst>::_S_start_free = 0;
 
-	template <typename T>
-	char* pool_alloc<T>::_S_end_free = 0;
+	template <int inst>
+	char* _alloc<inst>::_S_end_free = 0;
 
-	template <typename T>
-	size_t pool_alloc<T>::_S_heap_size = 0;
+	template <int inst>
+	size_t _alloc<inst>::_S_heap_size = 0;
 
 #endif
 

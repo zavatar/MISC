@@ -42,6 +42,47 @@ namespace misc{
 		typedef T value_type;
 	};
 
+	template <int inst>
+	class _alloc {
+	public:
+		// __n must be > 0
+		static void* _allocate(size_t __n);
+
+		// __p may not be 0
+		static void _deallocate(void* __p, size_t __n);
+
+		static void* _reallocate(void* __p, size_t __old_sz, size_t __new_sz);
+
+	private:
+		static const int _ALIGN = 8;
+		static const int _MAX_BYTES = 128;
+		static const int _NFREELISTS = 16; // _MAX_BYTES/_ALIGN
+
+		union _Obj {
+			union _Obj* _M_free_list_link;
+			char _M_client_data[1];    // The client sees this.
+		};
+
+		static _Obj* _S_free_list[_NFREELISTS];
+
+		static size_t _S_round_up(size_t __bytes) 
+		{ return (((__bytes) + (size_t) _ALIGN-1) & ~((size_t) _ALIGN - 1)); }
+
+		static size_t _S_freelist_index(size_t __bytes)
+		{ return (((__bytes) + (size_t)_ALIGN-1)/(size_t)_ALIGN - 1); }
+
+		// Returns an object of size __n, and optionally adds to size __n free list.
+		static void* _S_refill(size_t __n);
+		// Allocates a chunk for nobjs of size size.  nobjs may be reduced
+		// if it is inconvenient to allocate the requested number.
+		static char* _S_chunk_alloc(size_t __size, int& __nobjs);
+
+		// Chunk allocation state.
+		static char* _S_start_free;
+		static char* _S_end_free;
+		static size_t _S_heap_size;
+	};
+
 	template <typename T>
 	class pool_alloc
 	{
@@ -58,6 +99,8 @@ namespace misc{
 		
 		typedef size_t size_type;
 		typedef ptrdiff_t difference_type;
+
+		typedef _alloc<0> _Alloc_Proxy;
 
 		template <typename _Other>
 		struct rebind {
@@ -78,11 +121,11 @@ namespace misc{
 		// __n is permitted to be 0.  The C++ standard says nothing about what
 		// the return value is when __n == 0.
 		T* allocate(size_type __n, const void* = 0)
-		{ return __n != 0 ? static_cast<T*>(_allocate(__n * sizeof(T))) : 0; }
+		{ return __n != 0 ? static_cast<T*>(_Alloc_Proxy::_allocate(__n * sizeof(T))) : 0; }
 
 		// __p is not permitted to be a null pointer.
 		void deallocate(pointer __p, size_type __n)
-		{ _deallocate(__p, __n * sizeof(T)); }
+		{ _Alloc_Proxy::_deallocate(__p, __n * sizeof(T)); }
 
 		void construct(T* __p, const T& __val) { new(__p) T(__val); }
 		void destroy(T* __p) { __p->~T(); }
@@ -90,42 +133,6 @@ namespace misc{
 		size_type max_size() const _THROW0() 
 		{ return size_t(-1) / sizeof(T); }
 
-	private:
-		static const int _ALIGN = 8;
-		static const int _MAX_BYTES = 128;
-		static const int _NFREELISTS = 16; // _MAX_BYTES/_ALIGN
-
-		union _Obj {
-			union _Obj* _M_free_list_link;
-			char _M_client_data[1];    // The client sees this.
-		};
-
-		static _Obj* _S_free_list[_NFREELISTS];
-
-		// __n must be > 0
-		static void* _allocate(size_t __n);
-
-		// __p may not be 0
-		static void _deallocate(void* __p, size_t __n);
-
-		static void* _reallocate(void* __p, size_t __old_sz, size_t __new_sz);
-
-		static size_t _S_round_up(size_t __bytes) 
-		{ return (((__bytes) + (size_t) _ALIGN-1) & ~((size_t) _ALIGN - 1)); }
-
-		static size_t _S_freelist_index(size_t __bytes)
-		{ return (((__bytes) + (size_t)_ALIGN-1)/(size_t)_ALIGN - 1); }
-
-		// Returns an object of size __n, and optionally adds to size __n free list.
-		static void* _S_refill(size_t __n);
-		// Allocates a chunk for nobjs of size size.  nobjs may be reduced
-		// if it is inconvenient to allocate the requested number.
-		static char* _S_chunk_alloc(size_t __size, int& __nobjs);
-
-		// Chunk allocation state.
-		static char* _S_start_free;
-		static char* _S_end_free;
-		static size_t _S_heap_size;
 	};
 
 #endif
