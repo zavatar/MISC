@@ -36,14 +36,31 @@ void fun(T& tmap)
 	OBSERVER
 }
 
+template <int N>
+struct Byte {
+	char _b[N];
+};
+
 int main()
 {
+	// malloc 40*RUP(1)=40*8 bytes, 1*8 return, 19*8 add to flist[0]
+	auto p1 = misc::pool_alloc<Byte<1>>().allocate(1);
+	delete p1; // raw delete
+	// left 20*8 in chunk
+	for (int i=0; i<19; i++) // use out of flist[0]
+		delete misc::pool_alloc<Byte<8>>().allocate(1);
+	// 
+	misc::pool_alloc<Byte<128>>().allocate(1);
+
+
 #ifndef MISC_STL_PORT
-	std::map<int, float, std::less<int>, misc::new_alloc<std::pair<int,float> >MISC_TALIAS > tmap1;
+	std::map<int, float, std::less<int>, 
+		misc::new_alloc<std::pair<int,float> >MISC_TALIAS > tmap1;
 	fun(tmap1);
 	printf("\n");
 #endif
-	std::map<int, float, std::less<int>, misc::pool_alloc<std::pair<int,float> >MISC_TALIAS > tmap2;
+	std::map<int, float, std::less<int>, 
+		misc::pool_alloc<std::pair<int,float> >MISC_TALIAS > tmap2;
 	fun(tmap2);
 	return 0;
 }
