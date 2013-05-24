@@ -43,6 +43,13 @@ int main()
 		std::cout << *it << ' ';
 	std::cout << '\n';
 
+	// Fucking the Question 5 in http://blog.csdn.net/fengbingyang/article/details/8764931
+	// refer to http://programmers.stackexchange.com/questions/153386/why-is-x-x-undefined
+	int x=10;
+	x = x++;
+	from = from++;
+	printf("int++: %d, iter++: %d\n",x,*from);
+
 	std::vector<int> vc1(numbers, numbers+5);
 	std::vector<int> vc2(vc1.begin(), vc1.end());
 

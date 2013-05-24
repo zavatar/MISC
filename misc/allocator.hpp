@@ -10,36 +10,36 @@
 namespace misc{
 
 #ifdef MISC_STL_LIBSTDCXX
-	template <typename T>
-	using new_alloc = __gnu_cxx::new_allocator<T>;
-	template <typename T>
-	using pool_alloc = __gnu_cxx::__pool_alloc<T>;
+	template <typename _Ty>
+	using new_alloc = __gnu_cxx::new_allocator<_Ty>;
+	template <typename _Ty>
+	using pool_alloc = __gnu_cxx::__pool_alloc<_Ty>;
 #elif defined(MISC_STL_PORT)
-	template <typename T>
+	template <typename _Ty>
 	struct new_alloc {}; // STLPort doesn't support changing allocator in runtime
-	template <typename T>
+	template <typename _Ty>
 	struct pool_alloc {
-		typedef std::allocator<T> type;
+		typedef std::allocator<_Ty> type;
 	};
 #elif defined(MISC_STL_VC)
 
 	// C++11 Templates Aliases. 
 	// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2258.pdf
-	// template <typename T>
-	// using new_alloc = std::allocator<T>;
-	template <typename T>
+	// template <typename _Ty>
+	// using new_alloc = std::allocator<_Ty>;
+	template <typename _Ty>
 	struct new_alloc {
-		typedef std::allocator<T> type;
+		typedef std::allocator<_Ty> type;
 	};
 
-	template <typename T>
+	template <typename _Ty>
 	struct value_type_traits {
-		typedef T value_type;
+		typedef _Ty value_type;
 	};
 
-	template <typename T>
-	struct value_type_traits<const T> {
-		typedef T value_type;
+	template <typename _Ty>
+	struct value_type_traits<const _Ty> {
+		typedef _Ty value_type;
 	};
 
 	template <int inst>
@@ -83,13 +83,13 @@ namespace misc{
 		static size_t _S_heap_size;
 	};
 
-	template <typename T>
+	template <typename _Ty>
 	class pool_alloc
 	{
 	public:
-		typedef pool_alloc<T> type; // for support template alias
+		typedef pool_alloc<_Ty> type; // for support template alias
 
-		typedef typename value_type_traits<T>::value_type value_type;
+		typedef typename value_type_traits<_Ty>::value_type value_type;
 
 		typedef value_type* pointer;
 		typedef const value_type* const_pointer;
@@ -113,25 +113,25 @@ namespace misc{
 		pool_alloc() _THROW0() {}
 		pool_alloc(const pool_alloc&) _THROW0() {}
 		template <class _Other> pool_alloc(const pool_alloc<_Other>&) _THROW0() {}
-		template<class _Other> pool_alloc<T>& operator=(const pool_alloc<_Other>&) {
+		template<class _Other> pool_alloc<_Ty>& operator=(const pool_alloc<_Other>&) {
 			return (*this);
 		}
 		~pool_alloc() _THROW0() {}
 
 		// __n is permitted to be 0.  The C++ standard says nothing about what
 		// the return value is when __n == 0.
-		T* allocate(size_type __n, const void* = 0)
-		{ return __n != 0 ? static_cast<T*>(_Alloc_Proxy::_allocate(__n * sizeof(T))) : 0; }
+		_Ty* allocate(size_type __n, const void* = 0)
+		{ return __n != 0 ? static_cast<_Ty*>(_Alloc_Proxy::_allocate(__n * sizeof(_Ty))) : 0; }
 
 		// __p is not permitted to be a null pointer.
 		void deallocate(pointer __p, size_type __n)
-		{ _Alloc_Proxy::_deallocate(__p, __n * sizeof(T)); }
+		{ _Alloc_Proxy::_deallocate(__p, __n * sizeof(_Ty)); }
 
-		void construct(T* __p, const T& __val) { new(__p) T(__val); }
-		void destroy(T* __p) { __p->~T(); }
+		void construct(_Ty* __p, const _Ty& __val) { new(__p) _Ty(__val); }
+		void destroy(_Ty* __p) { __p->~_Ty(); }
 
 		size_type max_size() const _THROW0() 
-		{ return size_t(-1) / sizeof(T); }
+		{ return size_t(-1) / sizeof(_Ty); }
 
 	};
 
