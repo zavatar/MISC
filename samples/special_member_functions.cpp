@@ -29,8 +29,9 @@ int main()
 	A a2=a1;
 	a1=a2;
 
-	B a1;
-	// B a2=a1; // compiler error, won't call copy assignment
-	a1=a2;
+	B b1;
+	B b2;
+	// B b2=b1; // compiler error, won't call copy assignment
+	b1=b2;
 	return 0;
 }
