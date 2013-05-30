@@ -3,7 +3,7 @@
 int main()
 {
 	int Error(0);
-	misc::red_black_tree<int> rbt;
+	misc::red_black_tree<int>MISC_TALIAS rbt;
 
 	// data from CLRS p310 Figure 13.1
 	rbt.insert(47);
