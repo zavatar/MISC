@@ -160,6 +160,9 @@
 #	endif//MISC_MODEL
 #endif//MISC_MESSAGE
 
+#define MISC_ISCXX11 (MISC_LANG == MISC_LANG_CXX11)
+#define MISC_ISCXX0X (MISC_LANG == MISC_LANG_CXX0X)
+
 //////////////////////////////////////////////////////////////////////////
 // Qualifiers
 #   if(MISC_ISVC)

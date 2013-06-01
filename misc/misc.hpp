@@ -7,6 +7,7 @@
 #include "setup.hpp"
 
 #include "allocator.hpp"
+#include "red_black_tree.hpp"
 #include "interval_tree.hpp"
 
 #endif//misc_misc

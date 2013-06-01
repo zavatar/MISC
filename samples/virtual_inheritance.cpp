@@ -8,6 +8,9 @@
 // Using /d1reportSingleClassLayoutDiamondSub2 and /d1reportAllClassLayout
 // to see the layout of class DiamondSub2 in VC
 //
+// Or Debug using WinDbg on VS2012
+// http://blogs.msdn.com/b/mariohewardt/archive/2012/06/05/visual-studio-2012-and-windbg-integration.aspx
+//
 //////////////////////////////////////////////////////////////////////////
 #include "misc/misc.hpp"
 
