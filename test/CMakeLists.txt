@@ -1,12 +1,10 @@
-if(CMAKE_COMPILER_IS_GNUCXX)
-	set(COMPILER_DEFS "-U__STRICT_ANSI__")
-elseif(MSVC)
-#vc 2012 fix for vararg templates
-    set(COMPILER_DEFS "-D_VARIADIC_MAX=10")
-endif()
 add_definitions(${COMPILER_DEFS})
 
 add_subdirectory(gtest)
+# for sample-google_test
+set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS} PARENT_SCOPE)
+set(GTEST_LIBS_DIR ${GTEST_LIBS_DIR} PARENT_SCOPE)
+
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
 
@@ -25,13 +23,11 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	)
 else()
 	target_link_libraries(${TEST_NAME}
-	   debug ${GTEST_LIBS_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
-	   optimized ${GTEST_LIBS_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
-	)
+	   debug ${GTEST_LIBS_DIR}/DebugLibs/gtest.lib
+	   optimized ${GTEST_LIBS_DIR}/ReleaseLibs/gtest.lib)
 	target_link_libraries(${TEST_NAME}
-	   debug ${GTEST_LIBS_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest_main${CMAKE_FIND_LIBRARY_SUFFIXES}
-	   optimized ${GTEST_LIBS_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest_main${CMAKE_FIND_LIBRARY_SUFFIXES}
-	)
+	   debug ${GTEST_LIBS_DIR}/DebugLibs/gtest_main.lib
+	   optimized ${GTEST_LIBS_DIR}/ReleaseLibs/gtest_main.lib)
 endif()
 
 add_test(NAME ${TEST_NAME}
