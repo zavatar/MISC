@@ -5,7 +5,7 @@
 // Version
 #define MISC_VERSION			13
 #define MISC_VERSION_MAJOR		0
-#define MISC_VERSION_MINOR		1
+#define MISC_VERSION_MINOR		2
 
 //////////////////////////////////////////////////////////////////////////
 // Platform
@@ -167,6 +167,7 @@
 // Qualifiers
 #   if(MISC_ISVC)
 #		define MISC_TALIAS ::type
+#		define noexcept _THROW0()
 #   elif(MISC_ISGCC)
 #		define MISC_TALIAS
 #   endif//MISC_COMPILER

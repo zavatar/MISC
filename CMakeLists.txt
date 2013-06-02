@@ -16,7 +16,12 @@ endif()
 ################################
 # Add common source 
 
-
+if(CMAKE_COMPILER_IS_GNUCXX)
+	set(COMPILER_DEFS "-U__STRICT_ANSI__")
+elseif(MSVC)
+#vc 2012 fix for vararg templates
+    set(COMPILER_DEFS "-D_VARIADIC_MAX=10")
+endif()
 
 ################################
 # Add output directory

@@ -1,8 +1,9 @@
 #include <misc/misc.hpp>
 
-int main()
+#include "gtest/gtest.h"
+
+TEST(interval_tree_test, construct)
 {
-	int Error(0);
 	misc::interval_tree<int> itvt;
-	return Error;
+	EXPECT_TRUE(true);
 }
