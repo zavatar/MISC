@@ -110,13 +110,13 @@ namespace misc{
 		pointer address(reference __x) const { return std::addressof(__x); }
 		const_pointer address(const_reference __x) const { return std::addressof(__x); }
 
-		pool_alloc() _THROW0() {}
-		pool_alloc(const pool_alloc&) _THROW0() {}
-		template <class _Other> pool_alloc(const pool_alloc<_Other>&) _THROW0() {}
+		pool_alloc() noexcept {}
+		pool_alloc(const pool_alloc&) noexcept {}
+		template <class _Other> pool_alloc(const pool_alloc<_Other>&) noexcept {}
 		template<class _Other> pool_alloc<_Ty>& operator=(const pool_alloc<_Other>&) {
 			return (*this);
 		}
-		~pool_alloc() _THROW0() {}
+		~pool_alloc() noexcept {}
 
 		// __n is permitted to be 0.  The C++ standard says nothing about what
 		// the return value is when __n == 0.
@@ -130,10 +130,26 @@ namespace misc{
 		void construct(_Ty* __p, const _Ty& __val) { new(__p) _Ty(__val); }
 		void destroy(_Ty* __p) { __p->~_Ty(); }
 
-		size_type max_size() const _THROW0() 
+		size_type max_size() const noexcept
 		{ return size_t(-1) / sizeof(_Ty); }
 
 	};
+
+	template<class _Ty,
+	class _Other> inline
+		bool operator==(const pool_alloc<_Ty>&,
+		const pool_alloc<_Other>&) noexcept
+	{	// test for allocator equality
+		return (true);
+	}
+
+	template<class _Ty,
+	class _Other> inline
+		bool operator!=(const pool_alloc<_Ty>& _Left,
+		const pool_alloc<_Other>& _Right) noexcept
+	{	// test for allocator inequality
+		return (false);
+	}
 
 #endif
 } // namespace misc

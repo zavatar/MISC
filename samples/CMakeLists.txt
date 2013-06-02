@@ -33,6 +33,7 @@ endfunction()
 if(MSVC)
 	option(STLPort "Using STLPort" OFF)
 	if (STLPort)
+		# TODO: How to move this line to line9?
 		link_directories(${PROJECT_SOURCE_DIR}/common/stlport/lib)
 	endif()
 endif()

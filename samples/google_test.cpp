@@ -99,5 +99,6 @@ int main(int argc, char **argv)
 	//delete listeners.Release(listeners.default_result_printer());
 	listeners.Append(new listener);
 
-	return RUN_ALL_TESTS();
+	int ret_val = RUN_ALL_TESTS();
+	return 0;
 }
