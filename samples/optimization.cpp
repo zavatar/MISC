@@ -30,6 +30,11 @@ public:
 			*dest = (*dest op val);
 		}
 	}
+	void combine1a(T*dest) {
+		for (unsigned int i=0; i < iv.size(); i++) {
+			*dest = (*dest op iv[i]);
+		}
+	}
 	void combine2(T*dest) {
 		T* data = iv.data();
 		for (int i=0; i < len; i++) {
@@ -49,6 +54,21 @@ public:
 		T acc=*dest;
 		for (int i=0; i < len; i++) {
 			acc = (acc op data[i]);
+		}
+		*dest=acc;
+	}
+	void combine4a(T*dest) {
+		unsigned int L = iv.size();
+		T acc=*dest;
+		for (unsigned int i=0; i < L; i++) {
+			acc = (acc op iv[i]);
+		}
+		*dest=acc;
+	}
+	void combine4b(T*dest) {
+		T acc=*dest;
+		for (T& i: iv) {
+			acc = (acc op i);
 		}
 		*dest=acc;
 	}
@@ -113,27 +133,49 @@ int main()
 {
 	Opt<int> *opt1 = Opt<int>::getInstance();
 	auto opt2 = Opt<int>::getInstance();
-	misc::timer t;
 	int dest=1;
+	opt1->combine1(&dest); // warm up
+	opt1->combine2(&dest); // warm up
+	dest=1;
+	misc::timer t;
 	opt1->combine1(&dest);
-	printf("dest: %d, Time: %.3f\n", dest, t.query());
+	printf("combine1: %d, Time: %.3f\n", dest, t.query());
+
+	t.start();
+	opt1->combine1a(&dest);
+	printf("combine1a: %d, Time: %.3f\n", dest, t.query());
+
 	t.start();
 	opt1->combine2(&dest);
-	printf("dest: %d, Time: %.3f\n", dest, t.query());
+	printf("combine2: %d, Time: %.3f\n", dest, t.query());
+
 	t.start();
 	opt1->combine3(&dest);
-	printf("dest: %d, Time: %.3f\n", dest, t.query());
+	printf("combine3: %d, Time: %.3f\n", dest, t.query());
+
 	t.start();
 	opt1->combine4(&dest);
-	printf("dest: %d, Time: %.3f\n", dest, t.query());
+	printf("combine4: %d, Time: %.3f\n", dest, t.query());
+
+	t.start();
+	opt1->combine4a(&dest);
+	printf("combine4a: %d, Time: %.3f\n", dest, t.query());
+
+	t.start();
+	opt1->combine4b(&dest);
+	printf("combine4b: %d, Time: %.3f\n", dest, t.query());
+
 	t.start();
 	opt1->combine5(&dest);
-	printf("dest: %d, Time: %.3f\n", dest, t.query());
+	printf("combine5: %d, Time: %.3f\n", dest, t.query());
+
 	t.start();
 	opt1->combine6(&dest);
-	printf("dest: %d, Time: %.3f\n", dest, t.query());
+	printf("combine6: %d, Time: %.3f\n", dest, t.query());
+
 	t.start();
 	opt1->combine7(&dest);
-	printf("dest: %d, Time: %.3f\n", dest, t.query());
+	printf("combine7: %d, Time: %.3f\n", dest, t.query());
+
 	return 0;
 }
