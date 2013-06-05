@@ -7,8 +7,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <misc/misc.hpp>
-#include <chrono>
-#include <functional>
 #include <vector>
 // memory aliasing
 // side effect of function call
@@ -72,6 +70,57 @@ public:
 		}
 		*dest=acc;
 	}
+	// overload int, only +
+	void combine4sse2(int*dest) {
+		int*data = iv.data();
+		int acci = *dest;
+		int i=0;
+		__m128i acc = _mm_setzero_si128();
+		for (i=0; i < len-3; i+=4) {
+			acc = _mm_add_epi32(acc, _mm_loadu_si128((__m128i*)(data+i)));
+		}
+		for (; i < len; i++) {
+			acci = (acci + data[i]);
+		}
+		for (i=0; i < 4; i++) {
+			acci = (acci + ((int*)&acc)[i]);
+		}
+		*dest=acci;
+	}
+	// overload float, only +
+	void combine4sse2(float*dest) {
+		float*data = iv.data();
+		float acci = *dest;
+		int i=0;
+		__m128 acc = _mm_setzero_ps();
+		for (i=0; i < len-3; i+=4) {
+			acc = _mm_add_ps(acc, _mm_loadu_ps(data+i));
+		}
+		for (; i < len; i++) {
+			acci = (acci + data[i]);
+		}
+		for (i=0; i < 4; i++) {
+			acci = (acci + ((float*)&acc)[i]);
+		}
+		*dest=acci;
+	}
+	// only supported on Haswell
+// 	void combine4avx2(int*dest) {
+// 		int*data = iv.data();
+// 		int acci = *dest;
+// 		int i=0;
+// 		__m256i acc = _mm256_setzero_si256();
+// 		for (i=0; i < len-7; i+=8) {
+// 			acc = _mm256_add_epi32(acc, _mm256_loadu_si256((__m256i*)(data+i)));
+// 		}
+// 		for (; i < len; i++) {
+// 			acci = (acci + data[i]);
+// 		}
+// 		for (i=0; i < 8; i++) {
+// 			acci = (acci + ((int*)&acc)[i]);
+// 		}
+// 		*dest=acci;
+// 	}
 	void combine5(T*dest) {
 		T*data = iv.data();
 		T acc=*dest;
@@ -111,7 +160,7 @@ public:
 		*dest=acc;
 	}
 #undef op
-	static const int len = 1000000;
+	static const int len = 1000001;
 private:
 	std::vector<T> iv; // constructed in non-trivial default constructor list
 
@@ -131,51 +180,57 @@ private:
 
 int main()
 {
-	Opt<int> *opt1 = Opt<int>::getInstance();
-	auto opt2 = Opt<int>::getInstance();
-	int dest=1;
+	typedef int Ty;
+	Opt<Ty> *opt1 = Opt<Ty>::getInstance();
+	auto opt2 = Opt<Ty>::getInstance();
+	Ty dest=1;
 	opt1->combine1(&dest); // warm up
 	opt1->combine2(&dest); // warm up
+	std::cout<<std::fixed;
 	dest=1;
 	misc::timer t;
 	opt1->combine1(&dest);
-	printf("combine1: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine1:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine1a(&dest);
-	printf("combine1a: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine1a:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine2(&dest);
-	printf("combine2: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine2:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine3(&dest);
-	printf("combine3: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine3:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine4(&dest);
-	printf("combine4: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine4:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine4a(&dest);
-	printf("combine4a: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine4a:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine4b(&dest);
-	printf("combine4b: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine4b:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
+
+	t.start();
+	opt1->combine4sse2(&dest);
+	std::cout<<"combine4sse2:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine5(&dest);
-	printf("combine5: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine5:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine6(&dest);
-	printf("combine6: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine6:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine7(&dest);
-	printf("combine7: %d, Time: %.3f\n", dest, t.query());
+	std::cout<<"combine7:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
 
 	return 0;
 }

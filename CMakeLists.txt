@@ -9,18 +9,16 @@ if(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 	message(FATAL_ERROR "Source and binary directories must be different")
 endif(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-	#set ( CMAKE_VERBOSE_MAKEFILE ON )
-	#set ( CMAKE_RULE_MESSAGES OFF )
-	add_definitions(-std=c++11)
-endif()
-
 ################################
 # Add common source 
 
 if(CMAKE_COMPILER_IS_GNUCXX)
+	#set ( CMAKE_VERBOSE_MAKEFILE ON )
+	#set ( CMAKE_RULE_MESSAGES OFF )
+	add_definitions(-std=c++11 -mavx)
 	set(COMPILER_DEFS "-U__STRICT_ANSI__")
 elseif(MSVC)
+	#add_definitions(/arch:AVX)
 #vc 2012 fix for vararg templates
     set(COMPILER_DEFS "-D_VARIADIC_MAX=10")
 endif()

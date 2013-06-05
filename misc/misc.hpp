@@ -6,6 +6,7 @@
 
 #include "setup.hpp"
 
+#include "intrinsics.hpp"
 #include "timer.hpp"
 #include "allocator.hpp"
 #include "red_black_tree.hpp"
