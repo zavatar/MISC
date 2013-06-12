@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "misc/misc.hpp"
-#include <climits>
+#include <limits>
 #include <cmath>
 
 bool isBigEndian()
@@ -76,7 +76,7 @@ char fast_f2c_s8(float f) {
 
 int main()
 {
-	printf("isBigEndian: %d\n", isBigEndian());
+	std::cout<<"isBigEndian: "<<std::boolalpha<<isBigEndian()<<std::endl;
 
 	printf("%d\n", (0x007fffff));
 	printf("%f\n", fast_i2f_u23(0x007fffff));
