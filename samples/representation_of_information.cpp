@@ -11,6 +11,7 @@
 
 #include "misc/misc.hpp"
 #include <limits>
+#include <climits>
 #include <cmath>
 
 bool isBigEndian()
