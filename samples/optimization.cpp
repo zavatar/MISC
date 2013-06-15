@@ -56,9 +56,9 @@ public:
 		*dest=acc;
 	}
 	void combine4a(T*dest) {
-		unsigned int L = iv.size();
+		size_t L = iv.size();
 		T acc=*dest;
-		for (unsigned int i=0; i < L; i++) {
+		for (size_t i=0; i < L; i++) {
 			acc = (acc op iv[i]);
 		}
 		*dest=acc;
@@ -160,7 +160,7 @@ public:
 		*dest=acc;
 	}
 #undef op
-	static const int len = 1000001;
+	static const int len = 1024*1024*128;
 private:
 	std::vector<T> iv; // constructed in non-trivial default constructor list
 
@@ -190,7 +190,7 @@ int main()
 	dest=1;
 	misc::timer t;
 	opt1->combine1(&dest);
-	std::cout<<"combine1:\t"<<dest<<"\t Time: "<<t.query()<<std::endl;
+	std::cout<<"combine1:\t"<<std::hex<<dest<<" \t Time: "<<t.query()<<std::endl;
 
 	t.start();
 	opt1->combine1a(&dest);

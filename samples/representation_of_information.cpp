@@ -92,6 +92,7 @@ char fast_f2c_s8(float f) {
 
 int main()
 {
+	std::cout<<sizeof(char*)<<std::endl;
 	std::cout<<"isBigEndian: "<<std::boolalpha<<isBigEndian()<<std::endl;
 	std::cout << "int: " << INT_MIN << " .. " << INT_MAX << "\n";
 	std::cout << "long: " << LONG_MIN << " .. " << LONG_MAX << "\n";
