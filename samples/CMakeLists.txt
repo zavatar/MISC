@@ -28,6 +28,10 @@ function(CreateSample NAME)
 endfunction()
 
 ################################
+if(MSVC)
+	add_subdirectory(masm)
+endif()
+################################
 # Add STLPort
 
 if(MSVC)
