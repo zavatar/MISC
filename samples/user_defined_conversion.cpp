@@ -24,8 +24,8 @@ public:
 class istream2 : public std::istream {
 public:
 	// Schwarz Error
-	operator int() const {
-		return (int)this;
+	operator size_t() const {
+		return (size_t)this;
 	}
 };
 
