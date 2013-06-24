@@ -15,7 +15,6 @@ function(CreateSample NAME)
 		set_target_properties(${SAMPLE_NAME} PROPERTIES INCLUDE_DIRECTORIES 
 		${GTEST_INCLUDE_DIRS})
 		if(CMAKE_COMPILER_IS_GNUCXX)
-			target_link_libraries(${SAMPLE_NAME} pthread)
 			target_link_libraries(${SAMPLE_NAME}
 				${GTEST_LIBS_DIR}/libgtest.a
 				${GTEST_LIBS_DIR}/libgtest_main.a)
@@ -24,6 +23,10 @@ function(CreateSample NAME)
 				debug ${GTEST_LIBS_DIR}/DebugLibs/gtest.lib
 				optimized ${GTEST_LIBS_DIR}/ReleaseLibs/gtest.lib)
 		endif()
+	endif()
+	if(CMAKE_COMPILER_IS_GNUCXX)
+		target_link_libraries(${SAMPLE_NAME} -lpthread)
+		target_link_libraries(${SAMPLE_NAME} -lrt)
 	endif()
 endfunction()
 
@@ -52,3 +55,4 @@ foreach(Src ${SAMPLE_LIST})
 endforeach()
 
 include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${GTEST_INCLUDE_DIRS})

@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <misc/misc.hpp>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 // sample 1: unit test function
 TEST(TestCaseName, TestName)

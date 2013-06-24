@@ -83,7 +83,14 @@ void foreachVTable(size_t* p, size_t end) {
 		pFun();
 	}
 }
-
+void foreachVTable(size_t* p, char cn) {
+	typedef void(*Fun)(void);
+	for (int i=0; i<cn; i++) {
+		Fun pFun = (Fun)*((size_t*)*p+i);
+		printf("\tAddress: %p", pFun);
+		pFun();
+	}
+}
 void foreachVTable(size_t* p, bool n) {
 	printf("Try Debug on VC\n"); // TODO
 }
@@ -112,15 +119,15 @@ int main()
 	printf("Address of First Function in VTable: %p\n", *(size_t*)*(size_t*)&b);
 
 	printf("\nVTable of Base Class:\n");
-	foreachVTable((size_t*)&b, END(0));
+	foreachVTable((size_t*)&b, (char)3);
 
 	Derive1 d1;
 	printf("\nVTable of Derive1 Class:\n");
-	foreachVTable((size_t*)&d1, END(0));
+	foreachVTable((size_t*)&d1, (char)5);
 
 	Derive2 d2;
 	printf("\nVTable of Derive2 Class:\n");
-	foreachVTable((size_t*)&d2, END(0));
+	foreachVTable((size_t*)&d2, (char)5);
 
 	MultiDerive1 md1;
 	printf("\nVTable of MultiDerive1 Class:\n");

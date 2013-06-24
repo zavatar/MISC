@@ -160,7 +160,7 @@ public:
 		*dest=acc;
 	}
 #undef op
-	static const int len = 1024*1024*128;
+	static const int len = 1024*1024*32;
 private:
 	std::vector<T> iv; // constructed in non-trivial default constructor list
 
