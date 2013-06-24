@@ -15,7 +15,7 @@ endif(CMAKE_CURRENT_SOURCE_DIR EQUAL CMAKE_CURRENT_BINARY_DIR)
 if(CMAKE_COMPILER_IS_GNUCXX)
 	#set ( CMAKE_VERBOSE_MAKEFILE ON )
 	#set ( CMAKE_RULE_MESSAGES OFF )
-	add_definitions(-std=c++11) #-mavx caused Illegal Instruction on AWS
+	add_definitions(-march=native -mfpmath=sse -std=c++11) #-mavx caused Illegal Instruction on AWS
 	set(COMPILER_DEFS "-U__STRICT_ANSI__")
 elseif(MSVC)
 	#add_definitions(/arch:AVX)
