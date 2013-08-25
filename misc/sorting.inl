@@ -159,4 +159,84 @@ namespace misc{
 		__quicksort(a, a+n-1);
 	}
 
+	template <typename T>
+	bool binary_search(T *l, T *r, T val)
+	{
+		while (l <= r) {
+			T *m = l+(r-l)/2;
+			if (*m == val) return true;
+			else if (*m < val) l = m+1; // turn right
+			else r = m-1; // turn left
+		}
+		return false;
+	}
+
+	template <typename T>
+	bool binary_search_n(T *a, int n, T val)
+	{
+		return binary_search(a, a+n-1, val);
+	}
+
+	template <typename T>
+	void __nth_element(T *l, T *r, int nth)
+	{
+		T *first = l;
+		while (l <= r) {
+			T p = *r;
+			T *m = std::partition(l, r, [p](T &v){ return v<p; });
+			std::swap(*m, *r);
+			if (m-first == nth) return;
+			else if (m-first < nth) l = m+1; // turn right
+			else r = m-1; // turn left
+		}
+	}
+
+	template <typename T>
+	int __bfprt_partition(T *l, T *r)
+	{
+		const int G = 5; const int M = 2;
+		T *p = l;
+		int k = 0;
+		for (; p+G <= r; p+=G) {
+			insertion_sort_n(p, G);
+			std::swap(l[k++], p[M]);
+		}
+		insertion_sort_n(p, r-p+1);
+		std::swap(l[k++], p[(r-p)/2]);
+		return k-1;
+	}
+
+	template <typename T>
+	void __nth_element_bfprt(T *l, T *r, int nth)
+	{
+		if (r-l >= 16) {
+			int p = __bfprt_partition(l, r);
+			__nth_element_bfprt(l, l+p, p/2);
+			std::swap(l[p/2], *r);
+			T *m = std::partition(l, r, [r](T &v){ return v<*r; });
+			std::swap(*m, *r);
+			if (m-l < nth)
+				__nth_element_bfprt(m+1, r, nth-(m-l+1));
+			else if (m-l > nth)
+				__nth_element_bfprt(l, m-1, nth);
+		} else
+			insertion_sort_n(l, r-l+1);
+		//__nth_element(l, r, nth);
+	}
+
+	template <typename T>
+	void nth_element_n(T *a, int n, int nth)
+	{
+		//__nth_element(a, a+n-1, nth);
+		__nth_element_bfprt(a, a+n-1, nth);
+	}
+
+	template <typename T>
+	T nth_selection_n(T *a, int n, int nth)
+	{
+		//std::nth_element(a, a+nth, a+n);
+		nth_element_n(a, n, nth);
+		return a[nth];
+	}
+
 } // namespace misc

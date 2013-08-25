@@ -39,6 +39,15 @@ TEST(sorting_test, standard)
 		std::random_shuffle(a, a+N);
 		misc::quicksort_n(a, N);
 		EXPECT_TRUE(std::is_sorted(a, a+N));
+
+		// binary search (sorted)
+		EXPECT_TRUE(misc::binary_search_n(a, N, a[rand()%N]));
+		EXPECT_FALSE(misc::binary_search_n(a, N, N));
+
+		// order statistics
+		std::random_shuffle(a, a+N);
+		int nth = rand()%N;
+		EXPECT_EQ(misc::nth_selection_n(a, N, nth), nth);
 	}
 	
 }

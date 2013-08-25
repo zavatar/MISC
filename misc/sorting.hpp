@@ -25,6 +25,8 @@ namespace misc {
 // Partitions:
 // STL(algorithm): is_partitioned, partition, stable_partition, 
 //                 partition_copy, partition_point
+// Binary Search:
+// STL(algorithm): binary_search, equal_range, lower_bound/upper_bound.
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -49,9 +51,21 @@ namespace misc {
 	template <typename T>
 	void quicksort_n(T *a, int n);
 
-	// Introsort in STL
+	// Introsort in STL (median-of-3 quicksort & heapsort)
+
 	// Timsort using in Python
+	// http://en.wikipedia.org/wiki/Timsort
+
 	// Bitonic sorter in network (parallel algorithm)
+	// http://en.wikipedia.org/wiki/Bitonic_sorter
+
+	// Binary Search
+	template <typename T>
+	bool binary_search_n(T *a, int n, T val);
+
+	// Medians and Order Statistics
+	template <typename T>
+	T nth_selection_n(T *a, int n, int nth);
 
 } // misc
 
