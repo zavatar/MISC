@@ -67,6 +67,13 @@ namespace misc {
 	template <typename T>
 	T nth_selection_n(T *a, int n, int nth);
 
+	// Counting sort
+
+	// Radix sort
+
+	// Induce sort (suffix array) [Prefix Doubling]
+
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE

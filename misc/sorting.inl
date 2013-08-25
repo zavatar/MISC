@@ -221,7 +221,6 @@ namespace misc{
 				__nth_element_bfprt(l, m-1, nth);
 		} else
 			insertion_sort_n(l, r-l+1);
-		//__nth_element(l, r, nth);
 	}
 
 	template <typename T>
