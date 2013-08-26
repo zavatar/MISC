@@ -10,7 +10,7 @@ TEST(balanced_tree_test, standard)
 	std::for_each(a, a+N, [&i](int &a){ a=i++; });
 	srand( (unsigned int)time(NULL) );
 
-	misc::BST<int> bst;
+	misc::AVL<int> bst;
 
 	// test insert
 	std::random_shuffle(a, a+N);
@@ -18,7 +18,9 @@ TEST(balanced_tree_test, standard)
 
 	// test inorder
 	std::vector<int> inorder;
-	bst.inorder([&inorder](int &a){ inorder.push_back(a); });
+	bst.inorder([&inorder](misc::AVL<int>::node_pointer x){
+		inorder.push_back(x->key);
+	});
 	EXPECT_TRUE(std::is_sorted(inorder.begin(), inorder.end()));
 
 	// test minimum
@@ -30,11 +32,15 @@ TEST(balanced_tree_test, standard)
 	EXPECT_EQ(bst.getPredecessor(N/2), N/2-1);
 	EXPECT_EQ(bst.getSuccessor(N/2), N/2+1);
 
+	// test AVL balanced
+	bst.preorder([&bst](misc::AVL<int>::node_pointer x){
+		EXPECT_TRUE( abs(bst.height(x->l) - bst.height(x->r)) <= 1);
+	});
+
 	// test delete(search)
 	for (int i=0; i<N/2; i++) {
 		EXPECT_TRUE(bst.del(i));
 	}
 	EXPECT_FALSE(bst.find(N/2-1));
 	EXPECT_EQ(bst.getMin(), N/2);
-
 }

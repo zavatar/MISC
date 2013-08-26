@@ -28,14 +28,33 @@ namespace misc {
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T>
+	struct bst_node {
+		T key;
+		bst_node *p;
+		bst_node *l;
+		bst_node *r;
+	};
+
+	template <typename T>
+	struct avl_node {
+		T key;
+		avl_node *p;
+		avl_node *l;
+		avl_node *r;
+		int h;
+	};
+
+	// Could extract an abstract interface class BT.
+	// BT(key,l,r) ---> interfaces(insert,delete) && pre/in/post order walk
+	//     |
+	//    \|/
+	// BST(+parent) ---> search,minimum,maximum,predecessor,successor,insert,delete
+	//     |       \______________________
+	//    \|/                             \|
+	// AVL(+height) ---> insert,delete; RBT(+color) ---> insert,delete;
+	template <typename T, typename node_type = bst_node<T>>
 	class BST {
 		public:
-			typedef struct bt_node {
-				T key;
-				bt_node *p;
-				bt_node *l;
-				bt_node *r;
-			} node_type;
 			typedef node_type* node_pointer;
 			typedef typename pool_alloc<node_type >MISC_TALIAS alloc_type;
 
@@ -56,12 +75,28 @@ namespace misc {
 
 			bool find(T val){ return search(val)!=NULL; }
 
+			// Preorder Tree Walk
+			template <typename Fun>
+			void preorder(Fun fn);
+
 			// Inorder Tree Walk
 			template <typename Fun>
 			void inorder(Fun fn);
 
-		private:
+			// Postorder Tree Walk
+			template <typename Fun>
+			void postorder(Fun fn);
+
+		protected:
+
 			node_pointer root;
+
+			virtual void insertp(node_pointer z);
+
+			virtual void deletep(node_pointer z);
+
+		private:
+			
 			alloc_type alloc;
 
 			node_pointer minimum(node_pointer x);
@@ -74,13 +109,34 @@ namespace misc {
 
 			void transplant(node_pointer u, node_pointer v);
 
-			void deletep(node_pointer z);
-
 			node_pointer search_r(T val);
 
 			node_pointer search(T val);
 
 			void destroy(node_pointer x);
+	};
+
+	template <typename T, typename node_type = avl_node<T>>
+	class AVL : public BST<T, node_type> {
+		public:
+			typedef node_type* node_pointer;
+
+			int height(node_pointer x);
+		
+		protected:
+			virtual void insertp(node_pointer z);
+
+			virtual void deletep(node_pointer z);
+
+		private:
+
+			void update_height(node_pointer x);
+
+			void left_rotate(node_pointer x);
+
+			void right_rotate(node_pointer x);
+
+			void rebalance(node_pointer x);
 	};
 
 } // misc
