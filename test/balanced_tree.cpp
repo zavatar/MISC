@@ -7,25 +7,27 @@ template <typename T>
 class BinarySearchTreeTest : public testing::Test {
 protected:
 	typedef T test_type;
+	typedef typename test_type::value_type value_type;
+	typedef typename test_type::node_pointer node_pointer;
 
-	BinarySearchTreeTest() { bst = new T; }
+	BinarySearchTreeTest() { bst = new test_type; }
 
 	virtual ~BinarySearchTreeTest() { delete bst; }
 
 	virtual void SetUp() {
-		int i=0;
-		std::for_each(a, a+N, [&i](int &a){ a=i++; });
+		value_type i=0;
+		std::for_each(a, a+N, [&i](value_type &a){ a=i++; });
 		srand( (unsigned int)time(NULL) );
 
 		// test insert
 		std::random_shuffle(a, a+N);
-		std::for_each(a, a+N, [this](int &a){ this->bst->insert(a); });
+		std::for_each(a, a+N, [this](value_type &a){ this->bst->insert(a); });
 	}
 
-	typename T::base_type *bst;
+	typename test_type::base_type *bst;
 
-	static const int N = 97;
-	int a[N];
+	static const int N = 8;
+	value_type a[N];
 };
 
 #if GTEST_HAS_TYPED_TEST_P
@@ -36,8 +38,8 @@ TYPED_TEST_CASE_P(BinarySearchTreeTest);
 
 TYPED_TEST_P(BinarySearchTreeTest, InorderWalking) {
 	// test inorder
-	std::vector<int> inorder;
-	bst->inorder([&inorder](test_type::node_pointer x){
+	std::vector<value_type> inorder;
+	bst->inorder([&inorder](node_pointer x){
 		inorder.push_back(x->key);
 	});
 	EXPECT_TRUE(std::is_sorted(inorder.begin(), inorder.end()));
@@ -57,10 +59,10 @@ TYPED_TEST_P(BinarySearchTreeTest, Queries) {
 TYPED_TEST_P(BinarySearchTreeTest, Search) {
 	// test search(delete)
 	for (int i=0; i<N/2; i++) {
-		EXPECT_TRUE(bst->del(i));
+		EXPECT_TRUE(bst->del(value_type(i)));
 	}
-	EXPECT_FALSE(bst->find(N/2-1));
-	EXPECT_EQ(bst->getMin(), N/2);
+	EXPECT_FALSE(bst->find(value_type(N/2-1)));
+	EXPECT_EQ(bst->getMin(), value_type(N/2));
 }
 
 REGISTER_TYPED_TEST_CASE_P(
@@ -68,7 +70,7 @@ REGISTER_TYPED_TEST_CASE_P(
 	InorderWalking, Queries, Search
 	);
 
-typedef Types<misc::BST<int>, misc::AVL<int>> Implementations;
+typedef Types<misc::BST<float>, misc::AVL<float>> Implementations;
 
 INSTANTIATE_TYPED_TEST_CASE_P(BSTInstance,
 							  BinarySearchTreeTest,
@@ -76,12 +78,16 @@ INSTANTIATE_TYPED_TEST_CASE_P(BSTInstance,
 
 #endif  // GTEST_HAS_TYPED_TEST_P
 
-class AVLTest : public BinarySearchTreeTest<misc::AVL<int>> {};
+class AVLTest : public BinarySearchTreeTest<misc::AVL<int>> {
+protected:
+	typedef misc::AVL<int> test_type;
+	typedef test_type::node_pointer node_pointer;
+};
 
 TEST_F(AVLTest, Balanced) {
-	auto avl = static_cast<AVLTest::test_type*>(bst);
+	auto avl = static_cast<test_type*>(bst);
 	// test AVL balanced
-	avl->preorder([avl](test_type::node_pointer x){
+	avl->preorder([avl](node_pointer x){
 		EXPECT_TRUE( abs(avl->height(x->l) - avl->height(x->r)) <= 1);
 	});
 }
