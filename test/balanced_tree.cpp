@@ -28,15 +28,13 @@ protected:
 	int a[N];
 };
 
-#if GTEST_HAS_TYPED_TEST
+#if GTEST_HAS_TYPED_TEST_P
 
 using testing::Types;
 
-typedef Types<misc::BST<int>, misc::AVL<int>> Implementations;
+TYPED_TEST_CASE_P(BinarySearchTreeTest);
 
-TYPED_TEST_CASE(BinarySearchTreeTest, Implementations);
-
-TYPED_TEST(BinarySearchTreeTest, InorderWalking) {
+TYPED_TEST_P(BinarySearchTreeTest, InorderWalking) {
 	// test inorder
 	std::vector<int> inorder;
 	bst->inorder([&inorder](test_type::node_pointer x){
@@ -45,7 +43,7 @@ TYPED_TEST(BinarySearchTreeTest, InorderWalking) {
 	EXPECT_TRUE(std::is_sorted(inorder.begin(), inorder.end()));
 }
 
-TYPED_TEST(BinarySearchTreeTest, Queries) {
+TYPED_TEST_P(BinarySearchTreeTest, Queries) {
 	// test minimum
 	EXPECT_EQ(bst->getMin(), 0);
 	// test maximum
@@ -56,7 +54,7 @@ TYPED_TEST(BinarySearchTreeTest, Queries) {
 	EXPECT_EQ(bst->getSuccessor(N/2), N/2+1);
 }
 
-TYPED_TEST(BinarySearchTreeTest, Search) {
+TYPED_TEST_P(BinarySearchTreeTest, Search) {
 	// test search(delete)
 	for (int i=0; i<N/2; i++) {
 		EXPECT_TRUE(bst->del(i));
@@ -65,7 +63,18 @@ TYPED_TEST(BinarySearchTreeTest, Search) {
 	EXPECT_EQ(bst->getMin(), N/2);
 }
 
-#endif  // GTEST_HAS_TYPED_TEST
+REGISTER_TYPED_TEST_CASE_P(
+	BinarySearchTreeTest,
+	InorderWalking, Queries, Search
+	);
+
+typedef Types<misc::BST<int>, misc::AVL<int>> Implementations;
+
+INSTANTIATE_TYPED_TEST_CASE_P(BSTInstance,
+							  BinarySearchTreeTest,
+							  Implementations);
+
+#endif  // GTEST_HAS_TYPED_TEST_P
 
 class AVLTest : public BinarySearchTreeTest<misc::AVL<int>> {};
 
