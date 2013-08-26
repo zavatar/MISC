@@ -161,6 +161,38 @@ namespace misc {
 	};
 #endif
 
+	// Skip Lists
+	// http://igoro.com/archive/skip-lists-are-fascinating/
+	// http://kunigami.wordpress.com/2012/09/25/skip-lists-in-python/
+	template <typename T>
+	class skip_lists {
+		public:
+			struct node_type {
+				T key;
+				std::vector<node_type*> lnxt;
+				node_type(T k, int level) {
+					key = k;
+					lnxt.resize(level, NULL);
+				}
+			};
+
+			skip_lists() { head = new node_type(0, 1); }
+			~skip_lists() { delete head; }
+
+			void insert(T val);
+
+			bool del(T val);
+
+			bool find(T val);
+
+			template <typename Fun>
+			void traversal(Fun fn);
+
+		private:
+
+			node_type* head;
+	};
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE

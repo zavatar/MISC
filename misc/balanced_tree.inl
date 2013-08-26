@@ -302,4 +302,69 @@ namespace misc{
 		}
 	}
 
+//////////////////////////////////////////////////////////////////////////
+
+	template <typename T>
+	void skip_lists<T>::insert( T val )
+	{
+		int level = 0;
+		while (rand()&1) {
+			level++;
+			if (level == head->lnxt.size()) {
+				head->lnxt.push_back(NULL);
+				break;//why?
+			}
+		}
+		node_type* newnode = new node_type(val, level+1);
+		node_type* cur = head;
+		for (int i=head->lnxt.size()-1; i>=0; i--) {
+			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i])
+				if (cur->lnxt[i]->key > val)
+					break;
+			if (i <= level) {
+				newnode->lnxt[i] = cur->lnxt[i];
+				cur->lnxt[i] = newnode;
+			}
+		}
+	}
+
+	template <typename T>
+	bool skip_lists<T>::del( T val )
+	{
+		node_type* cur = head;
+		bool found = false;
+		for (int i=head->lnxt.size()-1; i>=0; i--) {
+			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
+				if (cur->lnxt[i]->key > val) break;
+				if (cur->lnxt[i]->key == val) {
+					found = true;
+					cur->lnxt[i] = cur->lnxt[i]->lnxt[i];
+					break;
+				}
+			}
+		}
+		return found;
+	}
+
+	template <typename T>
+	bool skip_lists<T>::find( T val )
+	{
+		node_type* cur = head;
+		for (int i=head->lnxt.size()-1; i>=0; i--) {
+			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
+				if (cur->lnxt[i]->key > val) break;
+				if (cur->lnxt[i]->key == val) return true;
+			}
+		}
+		return false;
+	}
+
+	template <typename T> template <typename Fun>
+	void skip_lists<T>::traversal( Fun fn )
+	{
+		for (node_type* cur = head->lnxt[0]; cur!=NULL; cur = cur->lnxt[0])
+			fn(cur->key);
+	}
+
+
 } // namespace misc

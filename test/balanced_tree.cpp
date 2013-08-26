@@ -23,7 +23,7 @@ protected:
 
 	typename T::base_type *bst;
 
-	static const int N = 8;
+	static const int N = 97;
 	typename T::value_type a[N];
 };
 
@@ -87,4 +87,40 @@ TEST_F(AVLTest, Balanced) {
 	avl->preorder([avl](node_pointer x){
 		EXPECT_TRUE( abs(avl->height(x->l) - avl->height(x->r)) <= 1);
 	});
+}
+
+TEST(skip_lists_test, standard) {
+	const int N = 97;
+	int a[N];
+	int i=0;
+	std::for_each(a, a+N, [&i](int &a){ a=i++; });
+	srand( (unsigned int)time(NULL) );
+
+	misc::skip_lists<int> skips;
+
+	// test insert
+	std::random_shuffle(a, a+N);
+	std::for_each(a, a+N, [&skips](int &a){ skips.insert(a); });
+
+	// test traversal
+	std::vector<int> order;
+	skips.traversal([&order](int x){
+		order.push_back(x);
+	});
+	EXPECT_TRUE(std::is_sorted(order.begin(), order.end()));
+
+	// test search(delete)
+	for (int i=0; i<N/4; i++) {
+		EXPECT_TRUE(skips.del(i));
+	}
+	EXPECT_FALSE(skips.find(N/4-1));
+	EXPECT_TRUE(skips.find(N/4+1));
+	for (int i=0; i<N/4; i++) {
+		skips.del(rand()%(2*N));
+	}
+	order.clear();
+	skips.traversal([&order](int x){
+		order.push_back(x);
+	});
+	EXPECT_TRUE(std::is_sorted(order.begin(), order.end()));
 }
