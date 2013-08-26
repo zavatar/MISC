@@ -1,5 +1,0 @@
-namespace misc{
-
-
-
-} // namespace misc

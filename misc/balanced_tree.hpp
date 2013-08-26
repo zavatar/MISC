@@ -58,7 +58,11 @@ namespace misc {
 			typedef T value_type;
 			typedef BST<T, node_type> base_type;
 			typedef node_type* node_pointer;
-			typedef typename pool_alloc<node_type >MISC_TALIAS alloc_type;
+			#   if(MISC_ISVC)
+			typedef typename pool_alloc<node_type>::type alloc_type;
+			#   elif(MISC_ISGCC)
+			typedef pool_alloc<node_type> alloc_type;
+			#   endif
 
 			BST(){ root = NULL; }
 			~BST(){ destroy(root); }
@@ -118,6 +122,7 @@ namespace misc {
 			void destroy(node_pointer x);
 	};
 
+	// AVL
 	template <typename T, typename node_type = avl_node<T>>
 	class AVL : public BST<T, node_type> {
 		public:
@@ -128,6 +133,7 @@ namespace misc {
 			int height(node_pointer x);
 		
 		protected:
+
 			virtual void insertp(node_pointer z);
 
 			virtual void deletep(node_pointer z);
@@ -142,6 +148,18 @@ namespace misc {
 
 			void rebalance(node_pointer x);
 	};
+
+	// Red_Black trees (RBT)
+	template <typename _Kty,
+		typename _Pr = std::less<_Kty>,
+		typename _Alloc = pool_alloc<_Kty> >
+#if MISC_ISCXX11
+		using red_black_tree = std::set<_Kty, _Pr, _Alloc>;
+#else
+	struct red_black_tree {
+		typedef std::set<_Kty, _Pr, _Alloc> type;
+	};
+#endif
 
 } // misc
 
