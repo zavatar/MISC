@@ -55,6 +55,8 @@ namespace misc {
 	template <typename T, typename node_type = bst_node<T>>
 	class BST {
 		public:
+			typedef T value_type;
+			typedef BST<T, node_type> base_type;
 			typedef node_type* node_pointer;
 			typedef typename pool_alloc<node_type >MISC_TALIAS alloc_type;
 
@@ -119,6 +121,8 @@ namespace misc {
 	template <typename T, typename node_type = avl_node<T>>
 	class AVL : public BST<T, node_type> {
 		public:
+			typedef T value_type;
+			typedef BST<T, node_type> base_type;
 			typedef node_type* node_pointer;
 
 			int height(node_pointer x);
