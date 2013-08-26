@@ -61,7 +61,7 @@ namespace misc{
 	template <typename T, typename node_type>
 	void BST<T,node_type>::insert( T val )
 	{
-		node_pointer z = BST<T,node_type>::alloc.allocate(1);
+		node_pointer z = this->alloc.allocate(1);
 		z->key = val; z->p = z->l = z->r = NULL;
 		insertp(z);
 	}
@@ -167,7 +167,7 @@ namespace misc{
 			y->l = z->l;
 			y->l->p = y;
 		}
-		BST<T,node_type>::alloc.deallocate(z, 1);
+		this->alloc.deallocate(z, 1);
 	}
 
 	template <typename T, typename node_type>
@@ -202,7 +202,7 @@ namespace misc{
 		if (x != NULL) {
 			destroy(x->l);
 			destroy(x->r);
-			BST<T,node_type>::alloc.deallocate(x, 1);
+			this->alloc.deallocate(x, 1);
 		}
 	}
 
@@ -246,7 +246,7 @@ namespace misc{
 		node_pointer y = x->r;
 		y->p = x->p;
 		if (y->p == NULL)
-			BST<T,node_type>::root = y;
+			this->root = y;
 		else {
 			if (y->p->l == x)
 				y->p->l = y;
@@ -268,7 +268,7 @@ namespace misc{
 		node_pointer y = x->l;
 		y->p = x->p;
 		if (y->p == NULL)
-			BST<T,node_type>::root = y;
+			this->root = y;
 		else {
 			if (y->p->l == x)
 				y->p->l = y;

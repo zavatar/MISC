@@ -6,28 +6,25 @@
 template <typename T>
 class BinarySearchTreeTest : public testing::Test {
 protected:
-	typedef T test_type;
-	typedef typename test_type::value_type value_type;
-	typedef typename test_type::node_pointer node_pointer;
 
-	BinarySearchTreeTest() { bst = new test_type; }
+	BinarySearchTreeTest() { bst = new T; }
 
 	virtual ~BinarySearchTreeTest() { delete bst; }
 
 	virtual void SetUp() {
-		value_type i=0;
-		std::for_each(a, a+N, [&i](value_type &a){ a=i++; });
+		typename T::value_type i=0;
+		std::for_each(a, a+N, [&i](typename T::value_type &a){ a=i++; });
 		srand( (unsigned int)time(NULL) );
 
 		// test insert
 		std::random_shuffle(a, a+N);
-		std::for_each(a, a+N, [this](value_type &a){ this->bst->insert(a); });
+		std::for_each(a, a+N, [this](typename T::value_type &a){ this->bst->insert(a); });
 	}
 
-	typename test_type::base_type *bst;
+	typename T::base_type *bst;
 
 	static const int N = 8;
-	value_type a[N];
+	typename T::value_type a[N];
 };
 
 #if GTEST_HAS_TYPED_TEST_P
@@ -38,8 +35,8 @@ TYPED_TEST_CASE_P(BinarySearchTreeTest);
 
 TYPED_TEST_P(BinarySearchTreeTest, InorderWalking) {
 	// test inorder
-	std::vector<value_type> inorder;
-	bst->inorder([&inorder](node_pointer x){
+	std::vector<typename TypeParam::value_type> inorder;
+	this->bst->inorder([&inorder](typename TypeParam::node_pointer x){
 		inorder.push_back(x->key);
 	});
 	EXPECT_TRUE(std::is_sorted(inorder.begin(), inorder.end()));
@@ -47,22 +44,22 @@ TYPED_TEST_P(BinarySearchTreeTest, InorderWalking) {
 
 TYPED_TEST_P(BinarySearchTreeTest, Queries) {
 	// test minimum
-	EXPECT_EQ(bst->getMin(), 0);
+	EXPECT_EQ(this->bst->getMin(), 0);
 	// test maximum
-	EXPECT_EQ(bst->getMax(), N-1);
+	EXPECT_EQ(this->bst->getMax(), this->N-1);
 
 	// test predecessor/successor
-	EXPECT_EQ(bst->getPredecessor(N/2), N/2-1);
-	EXPECT_EQ(bst->getSuccessor(N/2), N/2+1);
+	EXPECT_EQ(this->bst->getPredecessor(this->N/2), this->N/2-1);
+	EXPECT_EQ(this->bst->getSuccessor(this->N/2), this->N/2+1);
 }
 
 TYPED_TEST_P(BinarySearchTreeTest, Search) {
 	// test search(delete)
-	for (int i=0; i<N/2; i++) {
-		EXPECT_TRUE(bst->del(value_type(i)));
+	for (int i=0; i<this->N/2; i++) {
+		EXPECT_TRUE(this->bst->del(typename TypeParam::value_type(i)));
 	}
-	EXPECT_FALSE(bst->find(value_type(N/2-1)));
-	EXPECT_EQ(bst->getMin(), value_type(N/2));
+	EXPECT_FALSE(this->bst->find(typename TypeParam::value_type(this->N/2-1)));
+	EXPECT_EQ(this->bst->getMin(), typename TypeParam::value_type(this->N/2));
 }
 
 REGISTER_TYPED_TEST_CASE_P(
