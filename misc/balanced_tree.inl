@@ -305,6 +305,22 @@ namespace misc{
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T>
+	T skip_lists<T>::getPredecessor( T val )
+	{
+		node_pointer p = search(val);
+		if (p == NULL) throw;
+		return p->key;
+	}
+
+	template <typename T>
+	T skip_lists<T>::getSuccessor( T val )
+	{
+		node_pointer p = search(val);
+		if (p == NULL || p->lnxt[0] == NULL || p->lnxt[0]->lnxt[0] == NULL) throw;
+		return p->lnxt[0]->lnxt[0]->key;
+	}
+
+	template <typename T>
 	void skip_lists<T>::insert( T val )
 	{
 		int level = 0;
@@ -315,8 +331,8 @@ namespace misc{
 				break;//why?
 			}
 		}
-		node_type* newnode = new node_type(val, level+1);
-		node_type* cur = head;
+		node_pointer newnode = new node_type(val, level+1);
+		node_pointer cur = head;
 		for (int i=head->lnxt.size()-1; i>=0; i--) {
 			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i])
 				if (cur->lnxt[i]->key > val)
@@ -331,7 +347,7 @@ namespace misc{
 	template <typename T>
 	bool skip_lists<T>::del( T val )
 	{
-		node_type* cur = head;
+		node_pointer cur = head;
 		bool found = false;
 		for (int i=head->lnxt.size()-1; i>=0; i--) {
 			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
@@ -346,24 +362,24 @@ namespace misc{
 		return found;
 	}
 
-	template <typename T>
-	bool skip_lists<T>::find( T val )
-	{
-		node_type* cur = head;
-		for (int i=head->lnxt.size()-1; i>=0; i--) {
-			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
-				if (cur->lnxt[i]->key > val) break;
-				if (cur->lnxt[i]->key == val) return true;
-			}
-		}
-		return false;
-	}
-
 	template <typename T> template <typename Fun>
 	void skip_lists<T>::traversal( Fun fn )
 	{
-		for (node_type* cur = head->lnxt[0]; cur!=NULL; cur = cur->lnxt[0])
+		for (node_pointer cur = head->lnxt[0]; cur!=NULL; cur = cur->lnxt[0])
 			fn(cur->key);
+	}
+
+	template <typename T>
+	typename skip_lists<T>::node_pointer skip_lists<T>::search( T val )
+	{
+		node_pointer cur = head;
+		for (int i=head->lnxt.size()-1; i>=0; i--) {
+			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
+				if (cur->lnxt[i]->key > val) break;
+				if (cur->lnxt[i]->key == val) return cur;
+			}
+		}
+		return NULL;
 	}
 
 

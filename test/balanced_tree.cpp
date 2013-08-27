@@ -109,6 +109,14 @@ TEST(skip_lists_test, standard) {
 	});
 	EXPECT_TRUE(std::is_sorted(order.begin(), order.end()));
 
+	// test minimum
+	EXPECT_EQ(skips.getMin(), 0);
+	// test maximum
+	EXPECT_EQ(skips.getMax(), N-1);
+	// test predecessor/successor
+	EXPECT_EQ(skips.getPredecessor(N/2), N/2-1);
+	EXPECT_EQ(skips.getSuccessor(N/2), N/2+1);
+
 	// test search(delete)
 	for (int i=0; i<N/4; i++) {
 		EXPECT_TRUE(skips.del(i));

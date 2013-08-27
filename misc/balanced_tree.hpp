@@ -175,22 +175,38 @@ namespace misc {
 					lnxt.resize(level, NULL);
 				}
 			};
+			typedef node_type* node_pointer;
 
 			skip_lists() { head = new node_type(0, 1); }
 			~skip_lists() { delete head; }
+
+			T getMin(){ return head->lnxt[0] == NULL ? NULL : head->lnxt[0]->key; }
+
+			T getMax(){
+				node_pointer cur = head;
+				for (int i=head->lnxt.size()-1; i>=0; i--)
+					for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]);
+				return cur->key;
+			}
+
+			T getPredecessor(T val);
+
+			T getSuccessor(T val);
 
 			void insert(T val);
 
 			bool del(T val);
 
-			bool find(T val);
+			bool find(T val){ return search(val)!=NULL; }
 
 			template <typename Fun>
 			void traversal(Fun fn);
 
 		private:
 
-			node_type* head;
+			node_pointer head;
+
+			node_pointer search(T val);
 	};
 
 } // misc
