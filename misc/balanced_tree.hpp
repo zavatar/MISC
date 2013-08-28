@@ -52,6 +52,38 @@ namespace misc {
 	//     |       \______________________
 	//    \|/                             \|
 	// AVL(+height) ---> insert,delete; RBT(+color) ---> insert,delete;
+	template <typename T>
+	class dynamic_set {
+		public:
+			typedef typename T::value_type value_type;
+
+			value_type getMin(){ return obj.getMin(); }
+
+			value_type getMax(){ return obj.getMax(); }
+
+			value_type getPredecessor(value_type val){ return obj.getPredecessor(val); }
+
+			value_type getSuccessor(value_type val){ return obj.getSuccessor(val); }
+
+			void insert(value_type val){ obj.insert(val); }
+
+			bool del(value_type val){ return obj.del(val); }
+
+			bool find(value_type val){ return obj.find(val); }
+
+			// virtual template interface ?
+			// http://stackoverflow.com/questions/2354210/can-a-member-function-template-be-virtual
+			//  type erasure
+			// http://www.cplusplus.com/articles/oz18T05o/
+			template <typename Fun>
+			void traversal(Fun fn) { obj.traversal(fn); }
+
+			T* getObj(){ return &obj; }
+
+		private:
+			T obj;
+	};
+
 	template <typename T, typename node_type = bst_node<T>>
 	class BST {
 		public:
@@ -65,7 +97,7 @@ namespace misc {
 			#   endif
 
 			BST(){ root = NULL; }
-			~BST(){ destroy(root); }
+			virtual ~BST(){ destroy(root); }
 
 			T getMin(){ return minimum(root)->key; }
 
@@ -80,6 +112,9 @@ namespace misc {
 			bool del(T val);
 
 			bool find(T val){ return search(val)!=NULL; }
+
+			template <typename Fun>
+			void traversal(Fun fn){ inorder(fn); }
 
 			// Preorder Tree Walk
 			template <typename Fun>
@@ -167,6 +202,7 @@ namespace misc {
 	template <typename T>
 	class skip_lists {
 		public:
+			typedef T value_type;
 			struct node_type {
 				T key;
 				std::vector<node_type*> lnxt;

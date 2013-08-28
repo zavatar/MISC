@@ -372,7 +372,7 @@ namespace misc{
 	void skip_lists<T>::traversal( Fun fn )
 	{
 		for (node_pointer cur = head->lnxt[0]; cur!=NULL; cur = cur->lnxt[0])
-			fn(cur->key);
+			fn(cur);
 	}
 
 	template <typename T>
