@@ -136,6 +136,10 @@ namespace misc {
 
 			virtual void deletep(node_pointer z);
 
+			virtual void left_rotate(node_pointer x);
+
+			virtual void right_rotate(node_pointer x);
+
 		private:
 			
 			alloc_type alloc;
@@ -173,13 +177,13 @@ namespace misc {
 
 			virtual void deletep(node_pointer z);
 
+			virtual void left_rotate(node_pointer x);
+
+			virtual void right_rotate(node_pointer x);
+
 		private:
 
 			void update_height(node_pointer x);
-
-			void left_rotate(node_pointer x);
-
-			void right_rotate(node_pointer x);
 
 			void rebalance(node_pointer x);
 	};

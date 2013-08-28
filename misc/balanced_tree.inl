@@ -171,6 +171,46 @@ namespace misc{
 	}
 
 	template <typename T, typename node_type>
+	void BST<T, node_type>::left_rotate( node_pointer x )
+	{
+		node_pointer y = x->r;
+		y->p = x->p;
+		if (y->p == NULL)
+			this->root = y;
+		else {
+			if (y->p->l == x)
+				y->p->l = y;
+			else if (y->p->r == x)
+				y->p->r = y;
+		}
+		x->r = y->l;
+		if (x->r != NULL)
+			x->r->p = x;
+		y->l = x;
+		x->p = y;
+	}
+
+	template <typename T, typename node_type>
+	void BST<T, node_type>::right_rotate( node_pointer x )
+	{
+		node_pointer y = x->l;
+		y->p = x->p;
+		if (y->p == NULL)
+			this->root = y;
+		else {
+			if (y->p->l == x)
+				y->p->l = y;
+			else if (y->p->r == x)
+				y->p->r = y;
+		}
+		x->l = y->r;
+		if (x->l != NULL)
+			x->l->p = x;
+		y->r = x;
+		x->p = y;
+	}
+
+	template <typename T, typename node_type>
 	typename BST<T,node_type>::node_pointer BST<T,node_type>::search_r( T val )
 	{
 		std::function<void(node_pointer)> search_fun = 
@@ -243,45 +283,17 @@ namespace misc{
 	template <typename T, typename node_type>
 	void AVL<T,node_type>::left_rotate( node_pointer x )
 	{
-		node_pointer y = x->r;
-		y->p = x->p;
-		if (y->p == NULL)
-			this->root = y;
-		else {
-			if (y->p->l == x)
-				y->p->l = y;
-			else if (y->p->r == x)
-				y->p->r = y;
-		}
-		x->r = y->l;
-		if (x->r != NULL)
-			x->r->p = x;
-		y->l = x;
-		x->p = y;
+		BST<T,node_type>::left_rotate(x);
 		update_height(x);
-		update_height(y);
+		update_height(x->p);
 	}
 
 	template <typename T, typename node_type>
 	void AVL<T,node_type>::right_rotate( node_pointer x )
 	{
-		node_pointer y = x->l;
-		y->p = x->p;
-		if (y->p == NULL)
-			this->root = y;
-		else {
-			if (y->p->l == x)
-				y->p->l = y;
-			else if (y->p->r == x)
-				y->p->r = y;
-		}
-		x->l = y->r;
-		if (x->l != NULL)
-			x->l->p = x;
-		y->r = x;
-		x->p = y;
+		BST<T,node_type>::right_rotate(x);
 		update_height(x);
-		update_height(y);
+		update_height(x->p);
 	}
 
 	template <typename T, typename node_type>
