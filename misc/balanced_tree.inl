@@ -400,5 +400,106 @@ namespace misc{
 		return NULL;
 	}
 
+//////////////////////////////////////////////////////////////////////////
+
+	template <typename T, typename node_type>
+	int SBT<T, node_type>::size( node_pointer x )
+	{
+		if (x == NULL) return 0;
+		else return x->s;
+	}
+
+	template <typename T, typename node_type /*= sbt_node<T>*/>
+	int misc::SBT<T, node_type>::lsize( node_pointer x )
+	{
+		if (x == NULL) return -1;
+		else return size(x->l);
+	}
+
+	template <typename T, typename node_type /*= sbt_node<T>*/>
+	int misc::SBT<T, node_type>::rsize( node_pointer x )
+	{
+		if (x == NULL) return -1;
+		else return size(x->r);
+	}
+
+	template <typename T, typename node_type>
+	void SBT<T, node_type>::update_size( node_pointer x )
+	{
+		x->s = size(x->l) + size(x->r) + 1;
+	}
+
+	template <typename T, typename node_type>
+	void SBT<T, node_type>::insertp( node_pointer z )
+	{
+		z->s = 1;
+		std::function<void(node_pointer&)> insert_fun = 
+			[z, &insert_fun, this](node_pointer& node) {
+				node->s++;
+				if (z->key < node->key) {
+					if (node->l == NULL) {
+						node->l = z;
+						z->p = node;
+					} else
+						insert_fun(node->l);
+				} else {
+					if (node->r == NULL) {
+						node->r = z;
+						z->p = node;
+					} else
+						insert_fun(node->r);
+				}
+				this->maintain(node, z->key >= node->key);
+		};
+		if (this->root == NULL)
+			this->root = z;
+		else
+			insert_fun(this->root);
+	}
+
+	template <typename T, typename node_type>
+	void SBT<T, node_type>::left_rotate( node_pointer x )
+	{
+		BST<T,node_type>::left_rotate(x);
+		update_size(x);
+		update_size(x->p);
+	}
+
+	template <typename T, typename node_type>
+	void SBT<T, node_type>::right_rotate( node_pointer x )
+	{
+		BST<T,node_type>::right_rotate(x);
+		update_size(x);
+		update_size(x->p);
+	}
+
+	template <typename T, typename node_type>
+	void SBT<T, node_type>::maintain( node_pointer x, bool f )
+	{
+		if (x == NULL) return;
+		if (f == false) {
+			if (lsize(x->l) > size(x->r)) // case 1
+				right_rotate(x);
+			else if (rsize(x->l) > size(x->r)) { // case 2
+				left_rotate(x->l);
+				right_rotate(x);
+			} else
+				return;
+		} else { // f == true
+			if (rsize(x->r) > size(x->l)) // case 1'
+				left_rotate(x);
+			else if (lsize(x->r) > size(x->l)) { // case 2'
+				right_rotate(x->r);
+				left_rotate(x);
+			} else
+				return;
+		}
+		maintain(x->l, false);
+		maintain(x->r, true);
+		maintain(x, false);
+		maintain(x, true);
+	}
+
+
 
 } // namespace misc

@@ -19,7 +19,7 @@ protected:
 
 	misc::dynamic_set<T> dyset;
 
-	static const int N = 97;
+	static const int N = 6;
 	typename T::value_type a[N];
 };
 
@@ -63,7 +63,12 @@ REGISTER_TYPED_TEST_CASE_P(
 	InorderWalking, Queries, Search
 	);
 
-typedef Types<misc::BST<float>, misc::AVL<float>, misc::skip_lists<int>> Implementations;
+typedef Types<
+	misc::BST<float>,
+	misc::AVL<float>,
+	misc::skip_lists<int>,
+	misc::SBT<int>
+> Implementations;
 
 INSTANTIATE_TYPED_TEST_CASE_P(BSTInstance,
 							  DynamicSetTest,

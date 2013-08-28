@@ -249,6 +249,47 @@ namespace misc {
 			node_pointer search(T val);
 	};
 
+	template <typename T>
+	struct sbt_node {
+		T key;
+		sbt_node *p;
+		sbt_node *l;
+		sbt_node *r;
+		int s;
+	};
+
+	template <typename T, typename node_type = sbt_node<T>>
+	class SBT : public BST<T, node_type> {
+		public:
+			typedef T value_type;
+			typedef BST<T, node_type> base_type;
+			typedef node_type* node_pointer;
+
+			int size(node_pointer x);
+
+		protected:
+
+			virtual void insertp(node_pointer z);
+
+			//virtual void deletep(node_pointer z);
+
+			virtual void left_rotate(node_pointer x);
+
+			virtual void right_rotate(node_pointer x);
+
+		private:
+
+			int lsize(node_pointer x);
+
+			int rsize(node_pointer x);
+
+			void update_size(node_pointer x);
+
+			void maintain(node_pointer x, bool f);
+	};
+
+
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE
