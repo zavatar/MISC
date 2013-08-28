@@ -307,17 +307,23 @@ namespace misc{
 	template <typename T>
 	T skip_lists<T>::getPredecessor( T val )
 	{
-		node_pointer p = search(val);
-		if (p == NULL) throw;
-		return p->key;
+		node_pointer cur = head, pre = NULL;
+		for (int i=head->lnxt.size()-1; i>=0; i--) {
+			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
+				if (cur->lnxt[i]->key >= val) break;
+				else pre = cur->lnxt[i];
+			}
+		}
+		if (pre == NULL) throw;
+		return pre->key;
 	}
 
 	template <typename T>
 	T skip_lists<T>::getSuccessor( T val )
 	{
 		node_pointer p = search(val);
-		if (p == NULL || p->lnxt[0] == NULL || p->lnxt[0]->lnxt[0] == NULL) throw;
-		return p->lnxt[0]->lnxt[0]->key;
+		if (p == NULL || p->lnxt[0] == NULL) throw;
+		return p->lnxt[0]->key;
 	}
 
 	template <typename T>
@@ -376,7 +382,7 @@ namespace misc{
 		for (int i=head->lnxt.size()-1; i>=0; i--) {
 			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
 				if (cur->lnxt[i]->key > val) break;
-				if (cur->lnxt[i]->key == val) return cur;
+				if (cur->lnxt[i]->key == val) return cur->lnxt[i];
 			}
 		}
 		return NULL;
