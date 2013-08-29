@@ -19,7 +19,7 @@ protected:
 
 	misc::dynamic_set<T> dyset;
 
-	static const int N = 6;
+	static const int N = 97;
 	typename T::value_type a[N];
 };
 
@@ -47,15 +47,38 @@ TYPED_TEST_P(DynamicSetTest, Queries) {
 	// test predecessor/successor
 	EXPECT_EQ(this->dyset.getPredecessor(this->N/2), this->N/2-1);
 	EXPECT_EQ(this->dyset.getSuccessor(this->N/2), this->N/2+1);
+	try {
+		this->dyset.getPredecessor(-1);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	try {
+		this->dyset.getPredecessor(0);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	try {
+		this->dyset.getSuccessor(typename TypeParam::value_type(this->N));
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	try {
+		this->dyset.getSuccessor(typename TypeParam::value_type(this->N-1));
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
 }
 
 TYPED_TEST_P(DynamicSetTest, Search) {
 	// test search(delete)
-	for (int i=0; i<this->N/2; i++) {
+	for (int i=0; i<this->N/4; i++) {
 		EXPECT_TRUE(this->dyset.del(typename TypeParam::value_type(i)));
+		EXPECT_FALSE(this->dyset.del(typename TypeParam::value_type(i)));
 	}
-	EXPECT_FALSE(this->dyset.find(typename TypeParam::value_type(this->N/2-1)));
-	EXPECT_EQ(this->dyset.getMin(), typename TypeParam::value_type(this->N/2));
+	EXPECT_TRUE(this->dyset.find(typename TypeParam::value_type(this->N/2-1)));
+	EXPECT_FALSE(this->dyset.find(typename TypeParam::value_type(this->N/4-1)));
+	EXPECT_FALSE(this->dyset.find(typename TypeParam::value_type(this->N)));
+
+	int i = this->N/4;
+	this->dyset.traversal([&i](typename TypeParam::node_pointer x){
+		EXPECT_EQ(x->key, i++);
+	});
 }
 
 REGISTER_TYPED_TEST_CASE_P(
@@ -86,6 +109,20 @@ TEST_F(AVLTest, Balanced) {
 	auto avl = dyset.getObj();
 	// test AVL balanced
 	avl->preorder([avl](node_pointer x){
-		EXPECT_TRUE( abs(avl->height(x->l) - avl->height(x->r)) <= 1);
+		EXPECT_TRUE(avl->isbalanced(x));
+	});
+}
+
+class SBTTest : public DynamicSetTest<misc::SBT<int>> {
+protected:
+	typedef misc::SBT<int> test_type;
+	typedef test_type::node_pointer node_pointer;
+};
+
+TEST_F(SBTTest, Balanced) {
+	auto sbt = dyset.getObj();
+	// test SBT balanced
+	sbt->preorder([sbt](node_pointer x){
+		EXPECT_TRUE(sbt->isbalanced(x));
 	});
 }

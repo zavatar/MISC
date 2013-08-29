@@ -14,10 +14,10 @@ namespace misc {
 //					B_trees/2-3-4 trees
 //					Red_Black trees (RBT)
 //					Skip Lists
-//					Treaps
+//					Treaps (high probability balanced?)
 //					*Splay tree
 //					*Scapegoat tree
-//					*Size Balanced tree (SBT)
+//					*Size Balanced tree (SBT) (order statistic tree)
 //
 // Augmenting BT:	Interval Tree
 //					Segment Tree
@@ -61,9 +61,11 @@ namespace misc {
 
 			value_type getMax(){ return obj.getMax(); }
 
-			value_type getPredecessor(value_type val){ return obj.getPredecessor(val); }
+			value_type getPredecessor(value_type val)
+			{ return obj.getPredecessor(val); }
 
-			value_type getSuccessor(value_type val){ return obj.getSuccessor(val); }
+			value_type getSuccessor(value_type val)
+			{ return obj.getSuccessor(val); }
 
 			void insert(value_type val){ obj.insert(val); }
 
@@ -136,6 +138,7 @@ namespace misc {
 
 			virtual void deletep(node_pointer z);
 
+			// should abstract to balanced BST interface
 			virtual void left_rotate(node_pointer x);
 
 			virtual void right_rotate(node_pointer x);
@@ -169,7 +172,9 @@ namespace misc {
 			typedef BST<T, node_type> base_type;
 			typedef node_type* node_pointer;
 
-			int height(node_pointer x);
+			bool isbalanced(node_pointer x){ 
+				return x == NULL ? true : abs(height(x->l) - height(x->r)) <= 1; 
+			}
 		
 		protected:
 
@@ -182,6 +187,8 @@ namespace misc {
 			virtual void right_rotate(node_pointer x);
 
 		private:
+
+			int height(node_pointer x);
 
 			void update_height(node_pointer x);
 
@@ -265,7 +272,11 @@ namespace misc {
 			typedef BST<T, node_type> base_type;
 			typedef node_type* node_pointer;
 
-			int size(node_pointer x);
+			bool isbalanced(node_pointer x){
+				if (x == NULL) return true;
+				else return size(x->r) >= std::max(lsize(x->l), rsize(x->l)) && // property a
+					size(x->l) >= std::max(lsize(x->r), rsize(x->r)); // property b
+			}
 
 		protected:
 
@@ -278,6 +289,8 @@ namespace misc {
 			virtual void right_rotate(node_pointer x);
 
 		private:
+
+			int size(node_pointer x);
 
 			int lsize(node_pointer x);
 

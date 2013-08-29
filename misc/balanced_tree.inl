@@ -46,16 +46,20 @@ namespace misc{
 	T BST<T,node_type>::getPredecessor( T val )
 	{
 		node_pointer p = search(val);
-		if (p == NULL) throw;
-		return predecessor(p)->key;
+		if (p == NULL) throw 0;
+		p = predecessor(p);
+		if (p == NULL) throw 1;
+		return p->key;
 	}
 
 	template <typename T, typename node_type>
 	T BST<T,node_type>::getSuccessor( T val )
 	{
 		node_pointer p = search(val);
-		if (p == NULL) throw;
-		return successor(p)->key;
+		if (p == NULL) throw 0;
+		p = successor(p);
+		if (p == NULL) throw 1;
+		return p->key;
 	}
 
 	template <typename T, typename node_type>
@@ -273,11 +277,7 @@ namespace misc{
 	template <typename T, typename node_type>
 	void AVL<T,node_type>::update_height( node_pointer x )
 	{
-		x->h = 
-#ifndef max
-		std::
-#endif // !max
-		max(height(x->l), height(x->r)) + 1;
+		x->h = std::max(height(x->l), height(x->r)) + 1;
 	}
 
 	template <typename T, typename node_type>
@@ -320,13 +320,14 @@ namespace misc{
 	T skip_lists<T>::getPredecessor( T val )
 	{
 		node_pointer cur = head, pre = NULL;
+		if (head->lnxt[0] == NULL || val < head->lnxt[0]->key) throw 0;
 		for (int i=head->lnxt.size()-1; i>=0; i--) {
 			for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]) {
 				if (cur->lnxt[i]->key >= val) break;
 				else pre = cur->lnxt[i];
 			}
 		}
-		if (pre == NULL) throw;
+		if (pre == NULL) throw 1;
 		return pre->key;
 	}
 
@@ -334,7 +335,8 @@ namespace misc{
 	T skip_lists<T>::getSuccessor( T val )
 	{
 		node_pointer p = search(val);
-		if (p == NULL || p->lnxt[0] == NULL) throw;
+		if (p == NULL) throw 0;
+		if (p->lnxt[0] == NULL) throw 1;
 		return p->lnxt[0]->key;
 	}
 

@@ -9,7 +9,7 @@
 #include <vector>
 #include <set>
 
-
+#define NOMINMAX
 
 #include "setup.hpp"
 
