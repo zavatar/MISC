@@ -444,19 +444,55 @@ namespace misc{
 						z->p = node;
 					} else
 						insert_fun(node->l);
+					this->maintain(node, false);
 				} else {
 					if (node->r == NULL) {
 						node->r = z;
 						z->p = node;
 					} else
 						insert_fun(node->r);
+					this->maintain(node, true);
 				}
-				this->maintain(node, z->key >= node->key);
 		};
 		if (this->root == NULL)
 			this->root = z;
 		else
 			insert_fun(this->root);
+	}
+
+	template <typename T, typename node_type>
+	void SBT<T, node_type>::deletep( node_pointer z )
+	{
+		std::function<void(node_pointer)> delete_fun = 
+			[z, &delete_fun, this](node_pointer node) {
+				if (node == NULL) return;
+				if (z->key < node->key) {
+					node->s--;
+					delete_fun(node->l);
+					this->maintain(node, true);
+				} else if (z->key > node->key) {
+					node->s--;
+					delete_fun(node->r);
+					this->maintain(node, false);
+				} else {
+					if (node->l == NULL) {
+						this->transplant(node, node->r);
+						this->alloc.deallocate(node, 1);
+						return;
+					} else if (node->r == NULL) {
+						this->transplant(node, node->l);
+						this->alloc.deallocate(node, 1);
+						return;
+					} else {
+						node_pointer y = this->minimum(node->r);
+						node->key = y->key;
+						node->s--;
+						delete_fun(node->r);
+						this->maintain(node, false);
+					}
+				}
+		};
+		delete_fun(this->root);
 	}
 
 	template <typename T, typename node_type>

@@ -108,6 +108,9 @@ protected:
 TEST_F(AVLTest, Balanced) {
 	auto avl = dyset.getObj();
 	// test AVL balanced
+	for (int i=0; i<this->N/2; i++) {
+		EXPECT_TRUE(avl->del(i));
+	}
 	avl->preorder([avl](node_pointer x){
 		EXPECT_TRUE(avl->isbalanced(x));
 	});
@@ -122,6 +125,9 @@ protected:
 TEST_F(SBTTest, Balanced) {
 	auto sbt = dyset.getObj();
 	// test SBT balanced
+	for (int i=0; i<this->N/2; i++) {
+		EXPECT_TRUE(sbt->del(i));
+	}
 	sbt->preorder([sbt](node_pointer x){
 		EXPECT_TRUE(sbt->isbalanced(x));
 	});

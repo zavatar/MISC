@@ -134,6 +134,8 @@ namespace misc {
 
 			node_pointer root;
 
+			alloc_type alloc;
+
 			virtual void insertp(node_pointer z);
 
 			virtual void deletep(node_pointer z);
@@ -143,19 +145,20 @@ namespace misc {
 
 			virtual void right_rotate(node_pointer x);
 
+			void transplant(node_pointer u, node_pointer v);
+			node_pointer minimum(node_pointer x);
+
 		private:
 			
-			alloc_type alloc;
+			
 
-			node_pointer minimum(node_pointer x);
+			
 
 			node_pointer maximum(node_pointer x);
 
 			node_pointer predecessor(node_pointer x);
 
 			node_pointer successor(node_pointer x);
-
-			void transplant(node_pointer u, node_pointer v);
 
 			node_pointer search_r(T val);
 
@@ -282,7 +285,7 @@ namespace misc {
 
 			virtual void insertp(node_pointer z);
 
-			//virtual void deletep(node_pointer z);
+			virtual void deletep(node_pointer z);
 
 			virtual void left_rotate(node_pointer x);
 
