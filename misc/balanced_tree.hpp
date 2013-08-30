@@ -276,7 +276,7 @@ namespace misc {
 			skip_lists() { head = new node_type(0, 1); }
 			~skip_lists() { delete head; }
 
-			T getMin(){ return head->lnxt[0] == NULL ? NULL : head->lnxt[0]->key; }
+	  T getMin(){ return head->lnxt[0] == NULL ? T(0) : head->lnxt[0]->key; }
 
 			T getMax(){
 				node_pointer cur = head;
