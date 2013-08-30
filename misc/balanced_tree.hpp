@@ -19,7 +19,8 @@ namespace misc {
 //					*Scapegoat tree
 //					*Size Balanced tree (SBT) (order statistic tree)
 //
-// Augmenting BT:	Interval Tree
+// Augmenting BT:	Order statistic tree based on RBT
+//					Interval Tree
 //					Segment Tree
 //					Range Tree
 //
