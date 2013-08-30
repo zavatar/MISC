@@ -108,8 +108,18 @@ protected:
 TEST_F(AVLTest, Balanced) {
 	auto avl = dyset.getObj();
 	// test AVL balanced
-	for (int i=0; i<this->N/2; i++) {
+	avl->preorder([avl](node_pointer x){
+		EXPECT_TRUE(avl->isbalanced(x));
+	});
+	int gaps = this->N/5;
+	for (int i=0; i<gaps; i++) {
 		EXPECT_TRUE(avl->del(i));
+	}
+	for (int i=0; i<gaps; i++) {
+		EXPECT_TRUE(avl->del(2*gaps+i));
+	}
+	for (int i=0; i<gaps; i++) {
+		EXPECT_TRUE(avl->del(4*gaps+i));
 	}
 	avl->preorder([avl](node_pointer x){
 		EXPECT_TRUE(avl->isbalanced(x));
@@ -140,8 +150,18 @@ protected:
 TEST_F(SBTTest, Balanced) {
 	auto sbt = dyset.getObj();
 	// test SBT balanced
-	for (int i=0; i<this->N/2; i++) {
+	sbt->preorder([sbt](node_pointer x){
+		EXPECT_TRUE(sbt->isbalanced(x));
+	});
+	int gaps = this->N/5;
+	for (int i=0; i<gaps; i++) {
 		EXPECT_TRUE(sbt->del(i));
+	}
+	for (int i=0; i<gaps; i++) {
+		EXPECT_TRUE(sbt->del(2*gaps+i));
+	}
+	for (int i=0; i<gaps; i++) {
+		EXPECT_TRUE(sbt->del(4*gaps+i));
 	}
 	sbt->preorder([sbt](node_pointer x){
 		EXPECT_TRUE(sbt->isbalanced(x));
