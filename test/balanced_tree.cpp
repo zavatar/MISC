@@ -114,6 +114,21 @@ TEST_F(AVLTest, Balanced) {
 	avl->preorder([avl](node_pointer x){
 		EXPECT_TRUE(avl->isbalanced(x));
 	});
+
+	// special case: delete 5 -> delete 6'
+	//          ____5____
+	//        _3_     ___8___
+	//      _2   4   6'_     _10_
+	//     1            7   9    11_
+	//                             12
+	avl->clear();
+	int arr[12] = {5,3,8,2,4,6,10,1,7,9,11,12};
+	for (int i=0; i<12; i++)
+		avl->insert(arr[i]);
+	EXPECT_TRUE(avl->del(5));
+	avl->preorder([avl](node_pointer x){
+		EXPECT_TRUE(avl->isbalanced(x));
+	});
 }
 
 class SBTTest : public DynamicSetTest<misc::SBT<int>> {

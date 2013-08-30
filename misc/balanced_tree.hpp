@@ -130,6 +130,8 @@ namespace misc {
 			template <typename Fun>
 			void postorder(Fun fn);
 
+			void clear(){ destroy(root); root = NULL;}
+
 		protected:
 
 			node_pointer root;
@@ -138,7 +140,7 @@ namespace misc {
 
 			virtual void insertp(node_pointer z);
 
-			virtual void deletep(node_pointer z);
+			virtual void deletep(node_pointer &z);
 
 			// should abstract to balanced BST interface
 			virtual void left_rotate(node_pointer x);
@@ -146,13 +148,8 @@ namespace misc {
 			virtual void right_rotate(node_pointer x);
 
 			void transplant(node_pointer u, node_pointer v);
+
 			node_pointer minimum(node_pointer x);
-
-		private:
-			
-			
-
-			
 
 			node_pointer maximum(node_pointer x);
 
@@ -163,6 +160,8 @@ namespace misc {
 			node_pointer search_r(T val);
 
 			node_pointer search(T val);
+
+		private:
 
 			void destroy(node_pointer x);
 	};
@@ -183,7 +182,7 @@ namespace misc {
 
 			virtual void insertp(node_pointer z);
 
-			virtual void deletep(node_pointer z);
+			virtual void deletep(node_pointer &z);
 
 			virtual void left_rotate(node_pointer x);
 
@@ -285,7 +284,7 @@ namespace misc {
 
 			virtual void insertp(node_pointer z);
 
-			virtual void deletep(node_pointer z);
+			virtual void deletep(node_pointer &z);
 
 			virtual void left_rotate(node_pointer x);
 

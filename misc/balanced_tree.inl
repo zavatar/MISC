@@ -154,7 +154,7 @@ namespace misc{
 	}
 
 	template <typename T, typename node_type>
-	void BST<T,node_type>::deletep( node_pointer z )
+	void BST<T,node_type>::deletep( node_pointer &z )
 	{
 		if (z->l == NULL)
 			transplant(z, z->r);
@@ -162,16 +162,13 @@ namespace misc{
 			transplant(z, z->l);
 		else {
 			node_pointer y = minimum(z->r);
-			if (y->p != z) {
-				transplant(y, y->r);
-				y->r = z->r;
-				y->r->p = y;
-			}
-			transplant(z, y);
-			y->l = z->l;
-			y->l->p = y;
+			z->key = y->key;
+			transplant(y, y->r); // y->l == NULL
+			z = y;
 		}
+		node_pointer ret = z->p;
 		this->alloc.deallocate(z, 1);
+		z = ret;
 	}
 
 	template <typename T, typename node_type>
@@ -260,11 +257,10 @@ namespace misc{
 	}
 
 	template <typename T, typename node_type>
-	void AVL<T,node_type>::deletep( node_pointer z )
+	void AVL<T,node_type>::deletep( node_pointer &z )
 	{
-		node_pointer p = z->p;
 		BST<T,node_type>::deletep(z);
-		rebalance(p);
+		rebalance(z);
 	}
 
 	template <typename T, typename node_type>
@@ -461,7 +457,7 @@ namespace misc{
 	}
 
 	template <typename T, typename node_type>
-	void SBT<T, node_type>::deletep( node_pointer z )
+	void SBT<T, node_type>::deletep( node_pointer &z )
 	{
 		std::function<void(node_pointer)> delete_fun = 
 			[z, &delete_fun, this](node_pointer node) {
