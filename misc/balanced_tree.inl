@@ -401,21 +401,42 @@ namespace misc{
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T, typename node_type>
+	T SBT<T, node_type>::getNth( int r )
+	{
+		node_pointer p = nth(this->root, r);
+		if (p == NULL) throw 0;
+		return p->key;
+	}
+
+	template <typename T, typename node_type>
+	typename SBT<T, node_type>::node_pointer SBT<T, node_type>::nth( node_pointer p, int r )
+	{
+		if (p == NULL) return NULL;
+		int i = size(p->l) + 1;
+		if (r == i)
+			return p;
+		else if (r < i)
+			return nth(p->l, r);
+		else
+			return nth(p->r, r-i);
+	}
+
+	template <typename T, typename node_type>
 	int SBT<T, node_type>::size( node_pointer x )
 	{
 		if (x == NULL) return 0;
 		else return x->s;
 	}
 
-	template <typename T, typename node_type /*= sbt_node<T>*/>
-	int misc::SBT<T, node_type>::lsize( node_pointer x )
+	template <typename T, typename node_type>
+	int SBT<T, node_type>::lsize( node_pointer x )
 	{
 		if (x == NULL) return -1;
 		else return size(x->l);
 	}
 
-	template <typename T, typename node_type /*= sbt_node<T>*/>
-	int misc::SBT<T, node_type>::rsize( node_pointer x )
+	template <typename T, typename node_type>
+	int SBT<T, node_type>::rsize( node_pointer x )
 	{
 		if (x == NULL) return -1;
 		else return size(x->r);
@@ -454,41 +475,6 @@ namespace misc{
 			this->root = z;
 		else
 			insert_fun(this->root);
-	}
-
-	template <typename T, typename node_type>
-	void SBT<T, node_type>::deletep( node_pointer &z )
-	{
-		std::function<void(node_pointer)> delete_fun = 
-			[z, &delete_fun, this](node_pointer node) {
-				if (node == NULL) return;
-				if (z->key < node->key) {
-					node->s--;
-					delete_fun(node->l);
-					this->maintain(node, true);
-				} else if (z->key > node->key) {
-					node->s--;
-					delete_fun(node->r);
-					this->maintain(node, false);
-				} else {
-					if (node->l == NULL) {
-						this->transplant(node, node->r);
-						this->alloc.deallocate(node, 1);
-						return;
-					} else if (node->r == NULL) {
-						this->transplant(node, node->l);
-						this->alloc.deallocate(node, 1);
-						return;
-					} else {
-						node_pointer y = this->minimum(node->r);
-						node->key = y->key;
-						node->s--;
-						delete_fun(node->r);
-						this->maintain(node, false);
-					}
-				}
-		};
-		delete_fun(this->root);
 	}
 
 	template <typename T, typename node_type>

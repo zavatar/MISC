@@ -280,17 +280,21 @@ namespace misc {
 					size(x->l) >= std::max(lsize(x->r), rsize(x->r)); // property b
 			}
 
+			T getNth(int r);
+
 		protected:
 
 			virtual void insertp(node_pointer z);
 
-			virtual void deletep(node_pointer &z);
+			//virtual void deletep(node_pointer &z);
 
 			virtual void left_rotate(node_pointer x);
 
 			virtual void right_rotate(node_pointer x);
 
 		private:
+
+			node_pointer nth(node_pointer p, int r);
 
 			int size(node_pointer x);
 
@@ -302,8 +306,6 @@ namespace misc {
 
 			void maintain(node_pointer x, bool f);
 	};
-
-
 
 } // misc
 
