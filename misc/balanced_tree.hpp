@@ -19,10 +19,23 @@ namespace misc {
 //					*Scapegoat tree
 //					*Size Balanced tree (SBT) (order statistic tree)
 //
-// Augmenting BT:	Order statistic tree (based on AVL)
-//					Interval Tree (based on AVL)
-//					Segment Tree
-//					Range Tree
+// Augmenting Tree:	1.Order statistic tree (based on AVL)
+//					2.Interval Tree (based on AVL)
+//					  (Input: interval/point; Output: all intervals overlapping)
+//						1. Centered interval tree
+//						2. Above (Augmented tree 2001)
+//						3. Medial/Length oriented tree
+//					  $Hard to K-D; O(n) Space, faster in one-d;
+//					3.Segment Tree
+//					  (Input: point; Output: all intervals)
+//					  $Easy to K-D; Counting queries; 
+//					4.Range Tree (Balanced BST)
+//					  (Input: range(interval); Output: all points)
+//					  $faster query, worse starage than k-d tree; O(nlgn) space;
+//					5.K-d Tree (Space Partition)
+//					  Organizing points in k-dimensional space
+//					6.Quadtree(2-d)/Octree(3-d) (Space Partition)
+//
 //
 // Binary space partitioning (BSP) trees: Quadtree, Octree, k-d tree.
 //
