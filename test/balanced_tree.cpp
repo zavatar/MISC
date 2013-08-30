@@ -92,6 +92,7 @@ typedef Types<
 	misc::skip_lists<int>,
 	misc::SBT<int>,
 	misc::red_black_tree<int>,
+	misc::order_statistic_tree<int>,
 	misc::itv_tree<float>
 > Implementations;
 
@@ -187,6 +188,28 @@ TEST_F(SBTTest, Rank) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+class order_statistic_treeTest
+	: public DynamicSetTest<misc::order_statistic_tree<int>> {
+protected:
+	typedef misc::order_statistic_tree<int> test_type;
+	typedef test_type::node_pointer node_pointer;
+};
+
+TEST_F(order_statistic_treeTest, Rank) {
+	auto ost = dyset.getObj();
+	// test order_statistic_tree Rank
+	try {
+		ost->getNth(0);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	EXPECT_EQ(ost->getNth(1), 0);
+	try {
+		ost->getNth(this->N+1);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	EXPECT_EQ(ost->getNth(this->N), this->N-1);
+}
 
 template <typename T>
 class itv_treeTest : public testing::Test  {

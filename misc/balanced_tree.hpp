@@ -19,7 +19,7 @@ namespace misc {
 //					*Scapegoat tree
 //					*Size Balanced tree (SBT) (order statistic tree)
 //
-// Augmenting BT:	Order statistic tree based on RBT
+// Augmenting BT:	Order statistic tree (based on AVL)
 //					Interval Tree (based on AVL)
 //					Segment Tree
 //					Range Tree
@@ -355,6 +355,38 @@ namespace misc {
 	};
 
 //////////////////////////////////////////////////////////////////////////
+
+	template <typename T>
+	struct statistics_node {
+		T key;
+		int s;
+		statistics_node *p;
+		statistics_node *l;
+		statistics_node *r;
+		int h;
+	};
+
+	template <typename T, typename node_type = statistics_node<T>>
+	class order_statistic_tree : public AVL<T, node_type> {
+		public:
+			typedef T value_type;
+			typedef AVL<T, node_type> base_type;
+			typedef node_type* node_pointer;
+
+			T getNth(int r);
+
+		protected:
+
+			virtual void insertp(node_pointer z);
+
+			virtual void update_from_lr(node_pointer x);
+
+		private:
+
+			node_pointer nth(node_pointer p, int r);
+
+			int size(node_pointer x);
+	};
 
 	template <typename T>
 	struct interval {

@@ -410,7 +410,8 @@ namespace misc{
 	}
 
 	template <typename T, typename node_type>
-	typename SBT<T, node_type>::node_pointer SBT<T, node_type>::nth( node_pointer p, int r )
+	typename SBT<T, node_type>::node_pointer
+		SBT<T, node_type>::nth( node_pointer p, int r )
 	{
 		if (p == NULL) return NULL;
 		int i = size(p->l) + 1;
@@ -519,6 +520,50 @@ namespace misc{
 		maintain(x->r, true);
 		maintain(x, false);
 		maintain(x, true);
+	}
+
+//////////////////////////////////////////////////////////////////////////
+
+	template <typename T, typename node_type>
+	void order_statistic_tree<T, node_type>::insertp( node_pointer z )
+	{
+		z->s = 1;
+		AVL<T,node_type>::insertp(z);
+	}
+
+	template <typename T, typename node_type>
+	int order_statistic_tree<T, node_type>::size( node_pointer x )
+	{
+		if (x == NULL) return 0;
+		else return x->s;
+	}
+
+	template <typename T, typename node_type>
+	void order_statistic_tree<T, node_type>::update_from_lr( node_pointer x )
+	{
+		x->s = size(x->l) + size(x->r) + 1;
+	}
+
+	template <typename T, typename node_type>
+	T order_statistic_tree<T, node_type>::getNth( int r )
+	{
+		node_pointer p = nth(this->root, r);
+		if (p == NULL) throw 0;
+		return p->key;
+	}
+
+	template <typename T, typename node_type>
+	typename order_statistic_tree<T, node_type>::node_pointer 
+		order_statistic_tree<T, node_type>::nth( node_pointer p, int r )
+	{
+		if (p == NULL) return NULL;
+		int i = size(p->l) + 1;
+		if (r == i)
+			return p;
+		else if (r < i)
+			return nth(p->l, r);
+		else
+			return nth(p->r, r-i);
 	}
 
 //////////////////////////////////////////////////////////////////////////
