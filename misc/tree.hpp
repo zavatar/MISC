@@ -1,5 +1,5 @@
-#ifndef misc_balanced_tree
-#define misc_balanced_tree
+#ifndef misc_tree
+#define misc_tree
 
 namespace misc {
 
@@ -443,7 +443,7 @@ namespace misc {
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE
-#include "balanced_tree.inl"
+#include "tree.inl"
 #endif // !MISC_EXTERNAL_TEMPLATE
 
-#endif // !misc_balanced_tree
+#endif // !misc_tree

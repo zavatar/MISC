@@ -17,6 +17,7 @@
 #include "timer.hpp"
 #include "allocator.hpp"
 #include "sorting.hpp"
-#include "balanced_tree.hpp"
+#include "tree.hpp"
+#include "hashing.hpp"
 
 #endif//misc_misc
