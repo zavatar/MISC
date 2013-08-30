@@ -20,7 +20,7 @@ namespace misc {
 //					*Size Balanced tree (SBT) (order statistic tree)
 //
 // Augmenting BT:	Order statistic tree based on RBT
-//					Interval Tree
+//					Interval Tree (based on AVL)
 //					Segment Tree
 //					Range Tree
 //
@@ -189,6 +189,8 @@ namespace misc {
 
 			virtual void right_rotate(node_pointer x);
 
+			virtual void update_from_lr(node_pointer x){}
+
 		private:
 
 			int height(node_pointer x);
@@ -350,6 +352,47 @@ namespace misc {
 			void update_size(node_pointer x);
 
 			void maintain(node_pointer x, bool f);
+	};
+
+//////////////////////////////////////////////////////////////////////////
+
+	template <typename T>
+	struct interval {
+		union {T key;T low;};
+		T high;
+		T maxh;
+		interval *p;
+		interval *l;
+		interval *r;
+		int h;
+	};
+
+	template <typename T, typename node_type = interval<T>>
+	class itv_tree : public AVL<T, node_type> {
+		public:
+			typedef T value_type;
+			typedef AVL<T, node_type> base_type;
+			typedef node_type* node_pointer;
+
+			void insert(T val);
+
+			void insert(T low, T high);
+
+			bool find(T val){ return search(val, val)!=NULL; }
+
+			bool find(T low, T high){ return search(low, high)!=NULL; }
+
+		protected:
+
+			virtual void update_from_lr(node_pointer x);
+
+		private:
+
+			T maxhigh(node_pointer x);
+
+			node_pointer search(T low, T high);
+
+			bool isOverlap(node_pointer x, T low, T high);
 	};
 
 } // misc

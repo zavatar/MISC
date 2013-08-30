@@ -274,6 +274,7 @@ namespace misc{
 	void AVL<T,node_type>::update_height( node_pointer x )
 	{
 		x->h = std::max(height(x->l), height(x->r)) + 1;
+		update_from_lr(x);
 	}
 
 	template <typename T, typename node_type>
@@ -520,6 +521,61 @@ namespace misc{
 		maintain(x, true);
 	}
 
+//////////////////////////////////////////////////////////////////////////
+
+	template <typename T, typename node_type>
+	void itv_tree<T, node_type>::insert( T val )
+	{
+		node_pointer z = this->alloc.allocate(1);
+		z->key = val; z->p = z->l = z->r = NULL;
+		z->high = val;
+		z->maxh = val;
+		AVL<T,node_type>::insertp(z);
+	}
+
+	template <typename T, typename node_type>
+	void itv_tree<T, node_type>::insert( T low, T high )
+	{
+		if (high < low) return;
+		node_pointer z = this->alloc.allocate(1);
+		z->key = low; z->p = z->l = z->r = NULL;
+		z->high = high;
+		z->maxh = high;
+		AVL<T,node_type>::insertp(z);
+	}
+
+	template <typename T, typename node_type>
+	bool itv_tree<T, node_type>::isOverlap( node_pointer x, T low, T high )
+	{
+		return x->low <= high && x->high >= low;
+	}
+
+	template <typename T, typename node_type>
+	typename itv_tree<T,node_type>::node_pointer
+		itv_tree<T, node_type>::search( T low, T high )
+	{
+		node_pointer x = this->root;
+		while (x != NULL && !isOverlap(x, low, high)) {
+			if (x->l != NULL && x->l->maxh >= low)
+				x = x->l;
+			else
+				x = x->r;
+		}
+		return x;
+	}
+
+	template <typename T, typename node_type>
+	T itv_tree<T, node_type>::maxhigh( node_pointer x )
+	{
+		if (x == NULL) return std::numeric_limits<T>::min();
+		else return x->maxh;
+	}
+
+	template <typename T, typename node_type>
+	void itv_tree<T, node_type>::update_from_lr( node_pointer x )
+	{
+		x->maxh = std::max(x->high, std::max(maxhigh(x->l), maxhigh(x->r)));
+	}
 
 
 } // namespace misc

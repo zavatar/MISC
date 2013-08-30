@@ -91,7 +91,8 @@ typedef Types<
 	misc::AVL<float>,
 	misc::skip_lists<int>,
 	misc::SBT<int>,
-	misc::red_black_tree<int>
+	misc::red_black_tree<int>,
+	misc::itv_tree<float>
 > Implementations;
 
 INSTANTIATE_TYPED_TEST_CASE_P(BSTInstance,
@@ -184,3 +185,47 @@ TEST_F(SBTTest, Rank) {
 	} catch (...) { EXPECT_TRUE(true); }
 	EXPECT_EQ(sbt->getNth(this->N), this->N-1);
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+class itv_treeTest : public testing::Test  {
+protected:
+
+	virtual void SetUp() {
+		// case from Introduction to Algorithms
+		T low[10] = {16,8,25,5,15,17,26,0,6,19};
+		T high[10]= {21,9,30,8,23,19,26,3,10,20};
+
+		// test insert
+		for (int i=0; i<10; i++)
+			itv.insert(low[i], high[i]);
+	}
+
+	misc::itv_tree<T> itv;
+};
+
+#if GTEST_HAS_TYPED_TEST_P
+
+using testing::Types;
+
+TYPED_TEST_CASE_P(itv_treeTest);
+
+TYPED_TEST_P(itv_treeTest, Search) {
+	// test search
+	EXPECT_TRUE(this->itv.find(22, 25));
+	EXPECT_FALSE(this->itv.find(11, 14));
+}
+
+REGISTER_TYPED_TEST_CASE_P(
+	itv_treeTest,
+	Search
+	);
+
+typedef Types<int, float> itv_treeTypes;
+
+INSTANTIATE_TYPED_TEST_CASE_P(itv_treeInstance,
+							  itv_treeTest,
+							  itv_treeTypes);
+
+#endif  // GTEST_HAS_TYPED_TEST_P
