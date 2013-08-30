@@ -1,0 +1,3 @@
+namespace misc{
+
+} // namespace misc
