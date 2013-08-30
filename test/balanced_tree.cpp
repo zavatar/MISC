@@ -90,7 +90,8 @@ typedef Types<
 	misc::BST<float>,
 	misc::AVL<float>,
 	misc::skip_lists<int>,
-	misc::SBT<int>
+	misc::SBT<int>,
+	misc::red_black_tree<int>
 > Implementations;
 
 INSTANTIATE_TYPED_TEST_CASE_P(BSTInstance,

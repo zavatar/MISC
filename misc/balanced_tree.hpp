@@ -198,16 +198,60 @@ namespace misc {
 	};
 
 	// Red_Black trees (RBT)
-	template <typename _Kty,
-		typename _Pr = std::less<_Kty>,
-		typename _Alloc = pool_alloc<_Kty> >
-#if MISC_ISCXX11
-		using red_black_tree = std::set<_Kty, _Pr, _Alloc>;
-#else
-	struct red_black_tree {
-		typedef std::set<_Kty, _Pr, _Alloc> type;
+	template <typename T>
+	class red_black_tree {
+		public:
+			typedef T value_type;
+			typedef struct {
+				T key;
+			} node_type;
+			typedef node_type* node_pointer;
+			#   if(MISC_ISVC)
+			typedef typename pool_alloc<T>::type _Alloc;
+			#   elif(MISC_ISGCC)
+			typedef pool_alloc<T> _Alloc;
+			#   endif
+			typedef std::set<T, std::less<T>, _Alloc> proxy_type;
+
+			T getMin(){ return *(rbt.begin()); }
+
+			T getMax(){ return *(rbt.rbegin()); }
+
+			T getPredecessor(T val){
+				auto p = rbt.find(val);
+				if (p == rbt.end()) throw 0;
+				if (p == rbt.begin()) throw 1;
+				return *(--p);
+			}
+
+			T getSuccessor(T val){
+				auto p = rbt.find(val);
+				if (p == rbt.end()) throw 0;
+				if (++p == rbt.end()) throw 1;
+				return *p;
+			}
+
+			void insert(T val){ rbt.insert(val); }
+
+			bool del(T val){ return rbt.erase(val)>0; }
+
+			bool find(T val){ return rbt.find(val)!=rbt.end(); }
+
+			template <typename Fun>
+			void traversal(Fun fn){
+				std::for_each(rbt.begin(), rbt.end(), [&fn](T key){
+					node_type wrapper;
+					wrapper.key = key;
+					fn(&wrapper);
+				});
+			}
+
+			void clear(){ rbt.clear(); }
+
+		private:
+
+			proxy_type rbt;
 	};
-#endif
 
 	// Skip Lists
 	// http://igoro.com/archive/skip-lists-are-fascinating/
