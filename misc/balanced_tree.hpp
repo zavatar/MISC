@@ -14,12 +14,13 @@ namespace misc {
 //					B_trees/2-3-4 trees
 //					Red_Black trees (RBT)
 //					Skip Lists
-//					Treaps
+//					Treaps (high probability balanced?)
 //					*Splay tree
 //					*Scapegoat tree
-//					*Size Balanced tree (SBT)
+//					*Size Balanced tree (SBT) (order statistic tree)
 //
-// Augmenting BT:	Interval Tree
+// Augmenting BT:	Order statistic tree based on RBT
+//					Interval Tree
 //					Segment Tree
 //					Range Tree
 //
@@ -52,6 +53,40 @@ namespace misc {
 	//     |       \______________________
 	//    \|/                             \|
 	// AVL(+height) ---> insert,delete; RBT(+color) ---> insert,delete;
+	template <typename T>
+	class dynamic_set {
+		public:
+			typedef typename T::value_type value_type;
+
+			value_type getMin(){ return obj.getMin(); }
+
+			value_type getMax(){ return obj.getMax(); }
+
+			value_type getPredecessor(value_type val)
+			{ return obj.getPredecessor(val); }
+
+			value_type getSuccessor(value_type val)
+			{ return obj.getSuccessor(val); }
+
+			void insert(value_type val){ obj.insert(val); }
+
+			bool del(value_type val){ return obj.del(val); }
+
+			bool find(value_type val){ return obj.find(val); }
+
+			// virtual template interface ?
+			// http://stackoverflow.com/questions/2354210/can-a-member-function-template-be-virtual
+			//  type erasure
+			// http://www.cplusplus.com/articles/oz18T05o/
+			template <typename Fun>
+			void traversal(Fun fn) { obj.traversal(fn); }
+
+			T* getObj(){ return &obj; }
+
+		private:
+			T obj;
+	};
+
 	template <typename T, typename node_type = bst_node<T>>
 	class BST {
 		public:
@@ -65,7 +100,7 @@ namespace misc {
 			#   endif
 
 			BST(){ root = NULL; }
-			~BST(){ destroy(root); }
+			virtual ~BST(){ destroy(root); }
 
 			T getMin(){ return minimum(root)->key; }
 
@@ -81,6 +116,9 @@ namespace misc {
 
 			bool find(T val){ return search(val)!=NULL; }
 
+			template <typename Fun>
+			void traversal(Fun fn){ inorder(fn); }
+
 			// Preorder Tree Walk
 			template <typename Fun>
 			void preorder(Fun fn);
@@ -93,17 +131,24 @@ namespace misc {
 			template <typename Fun>
 			void postorder(Fun fn);
 
+			void clear(){ destroy(root); root = NULL;}
+
 		protected:
 
 			node_pointer root;
 
+			alloc_type alloc;
+
 			virtual void insertp(node_pointer z);
 
-			virtual void deletep(node_pointer z);
+			virtual void deletep(node_pointer &z);
 
-		private:
-			
-			alloc_type alloc;
+			// should abstract to balanced BST interface
+			virtual void left_rotate(node_pointer x);
+
+			virtual void right_rotate(node_pointer x);
+
+			void transplant(node_pointer u, node_pointer v);
 
 			node_pointer minimum(node_pointer x);
 
@@ -113,11 +158,11 @@ namespace misc {
 
 			node_pointer successor(node_pointer x);
 
-			void transplant(node_pointer u, node_pointer v);
-
 			node_pointer search_r(T val);
 
 			node_pointer search(T val);
+
+		private:
 
 			void destroy(node_pointer x);
 	};
@@ -130,36 +175,182 @@ namespace misc {
 			typedef BST<T, node_type> base_type;
 			typedef node_type* node_pointer;
 
-			int height(node_pointer x);
+			bool isbalanced(node_pointer x){ 
+				return x == NULL ? true : abs(height(x->l) - height(x->r)) <= 1; 
+			}
 		
 		protected:
 
 			virtual void insertp(node_pointer z);
 
-			virtual void deletep(node_pointer z);
+			virtual void deletep(node_pointer &z);
+
+			virtual void left_rotate(node_pointer x);
+
+			virtual void right_rotate(node_pointer x);
 
 		private:
 
+			int height(node_pointer x);
+
 			void update_height(node_pointer x);
-
-			void left_rotate(node_pointer x);
-
-			void right_rotate(node_pointer x);
 
 			void rebalance(node_pointer x);
 	};
 
 	// Red_Black trees (RBT)
-	template <typename _Kty,
-		typename _Pr = std::less<_Kty>,
-		typename _Alloc = pool_alloc<_Kty> >
-#if MISC_ISCXX11
-		using red_black_tree = std::set<_Kty, _Pr, _Alloc>;
-#else
-	struct red_black_tree {
-		typedef std::set<_Kty, _Pr, _Alloc> type;
+	template <typename T>
+	class red_black_tree {
+		public:
+			typedef T value_type;
+			typedef struct {
+				T key;
+			} node_type;
+			typedef node_type* node_pointer;
+			#   if(MISC_ISVC)
+			typedef typename pool_alloc<T>::type _Alloc;
+			#   elif(MISC_ISGCC)
+			typedef pool_alloc<T> _Alloc;
+			#   endif
+			typedef std::set<T, std::less<T>, _Alloc> proxy_type;
+
+			T getMin(){ return *(rbt.begin()); }
+
+			T getMax(){ return *(rbt.rbegin()); }
+
+			T getPredecessor(T val){
+				auto p = rbt.find(val);
+				if (p == rbt.end()) throw 0;
+				if (p == rbt.begin()) throw 1;
+				return *(--p);
+			}
+
+			T getSuccessor(T val){
+				auto p = rbt.find(val);
+				if (p == rbt.end()) throw 0;
+				if (++p == rbt.end()) throw 1;
+				return *p;
+			}
+
+			void insert(T val){ rbt.insert(val); }
+
+			bool del(T val){ return rbt.erase(val)>0; }
+
+			bool find(T val){ return rbt.find(val)!=rbt.end(); }
+
+			template <typename Fun>
+			void traversal(Fun fn){
+				std::for_each(rbt.begin(), rbt.end(), [&fn](T key){
+					node_type wrapper;
+					wrapper.key = key;
+					fn(&wrapper);
+				});
+			}
+
+			void clear(){ rbt.clear(); }
+
+		private:
+
+			proxy_type rbt;
 	};
-#endif
+
+	// Skip Lists
+	// http://igoro.com/archive/skip-lists-are-fascinating/
+	// http://kunigami.wordpress.com/2012/09/25/skip-lists-in-python/
+	template <typename T>
+	class skip_lists {
+		public:
+			typedef T value_type;
+			struct node_type {
+				T key;
+				std::vector<node_type*> lnxt;
+				node_type(T k, int level) {
+					key = k;
+					lnxt.resize(level, NULL);
+				}
+			};
+			typedef node_type* node_pointer;
+
+			skip_lists() { head = new node_type(0, 1); }
+			~skip_lists() { delete head; }
+
+			T getMin(){ return head->lnxt[0] == NULL ? NULL : head->lnxt[0]->key; }
+
+			T getMax(){
+				node_pointer cur = head;
+				for (int i=head->lnxt.size()-1; i>=0; i--)
+					for (; cur->lnxt[i] != NULL; cur = cur->lnxt[i]);
+				return cur->key;
+			}
+
+			T getPredecessor(T val);
+
+			T getSuccessor(T val);
+
+			void insert(T val);
+
+			bool del(T val);
+
+			bool find(T val){ return search(val)!=NULL; }
+
+			template <typename Fun>
+			void traversal(Fun fn);
+
+		private:
+
+			node_pointer head;
+
+			node_pointer search(T val);
+	};
+
+	template <typename T>
+	struct sbt_node {
+		T key;
+		sbt_node *p;
+		sbt_node *l;
+		sbt_node *r;
+		int s;
+	};
+
+	template <typename T, typename node_type = sbt_node<T>>
+	class SBT : public BST<T, node_type> {
+		public:
+			typedef T value_type;
+			typedef BST<T, node_type> base_type;
+			typedef node_type* node_pointer;
+
+			bool isbalanced(node_pointer x){
+				if (x == NULL) return true;
+				else return size(x->r) >= std::max(lsize(x->l), rsize(x->l)) && // property a
+					size(x->l) >= std::max(lsize(x->r), rsize(x->r)); // property b
+			}
+
+			T getNth(int r);
+
+		protected:
+
+			virtual void insertp(node_pointer z);
+
+			//virtual void deletep(node_pointer &z);
+
+			virtual void left_rotate(node_pointer x);
+
+			virtual void right_rotate(node_pointer x);
+
+		private:
+
+			node_pointer nth(node_pointer p, int r);
+
+			int size(node_pointer x);
+
+			int lsize(node_pointer x);
+
+			int rsize(node_pointer x);
+
+			void update_size(node_pointer x);
+
+			void maintain(node_pointer x, bool f);
+	};
 
 } // misc
 

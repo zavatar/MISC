@@ -4,12 +4,8 @@
 
 // T : (BST, AVL, ...)
 template <typename T>
-class BinarySearchTreeTest : public testing::Test {
+class DynamicSetTest : public testing::Test {
 protected:
-
-	BinarySearchTreeTest() { bst = new T; }
-
-	virtual ~BinarySearchTreeTest() { delete bst; }
 
 	virtual void SetUp() {
 		typename T::value_type i=0;
@@ -18,12 +14,12 @@ protected:
 
 		// test insert
 		std::random_shuffle(a, a+N);
-		std::for_each(a, a+N, [this](typename T::value_type &a){ this->bst->insert(a); });
+		std::for_each(a, a+N, [this](typename T::value_type &a){ this->dyset.insert(a); });
 	}
 
-	typename T::base_type *bst;
+	misc::dynamic_set<T> dyset;
 
-	static const int N = 8;
+	static const int N = 97;
 	typename T::value_type a[N];
 };
 
@@ -31,60 +27,160 @@ protected:
 
 using testing::Types;
 
-TYPED_TEST_CASE_P(BinarySearchTreeTest);
+TYPED_TEST_CASE_P(DynamicSetTest);
 
-TYPED_TEST_P(BinarySearchTreeTest, InorderWalking) {
-	// test inorder
-	std::vector<typename TypeParam::value_type> inorder;
-	this->bst->inorder([&inorder](typename TypeParam::node_pointer x){
-		inorder.push_back(x->key);
+TYPED_TEST_P(DynamicSetTest, InorderWalking) {
+	// test traversal
+	std::vector<typename TypeParam::value_type> traversal;
+	this->dyset.traversal([&traversal](typename TypeParam::node_pointer x){
+		traversal.push_back(x->key);
 	});
-	EXPECT_TRUE(std::is_sorted(inorder.begin(), inorder.end()));
+	EXPECT_TRUE(std::is_sorted(traversal.begin(), traversal.end()));
 }
 
-TYPED_TEST_P(BinarySearchTreeTest, Queries) {
+TYPED_TEST_P(DynamicSetTest, Queries) {
 	// test minimum
-	EXPECT_EQ(this->bst->getMin(), 0);
+	EXPECT_EQ(this->dyset.getMin(), 0);
 	// test maximum
-	EXPECT_EQ(this->bst->getMax(), this->N-1);
+	EXPECT_EQ(this->dyset.getMax(), this->N-1);
 
 	// test predecessor/successor
-	EXPECT_EQ(this->bst->getPredecessor(this->N/2), this->N/2-1);
-	EXPECT_EQ(this->bst->getSuccessor(this->N/2), this->N/2+1);
+	EXPECT_EQ(this->dyset.getPredecessor(this->N/2), this->N/2-1);
+	EXPECT_EQ(this->dyset.getSuccessor(this->N/2), this->N/2+1);
+	try {
+		this->dyset.getPredecessor(-1);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	try {
+		this->dyset.getPredecessor(0);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	try {
+		this->dyset.getSuccessor(typename TypeParam::value_type(this->N));
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	try {
+		this->dyset.getSuccessor(typename TypeParam::value_type(this->N-1));
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
 }
 
-TYPED_TEST_P(BinarySearchTreeTest, Search) {
+TYPED_TEST_P(DynamicSetTest, Search) {
 	// test search(delete)
-	for (int i=0; i<this->N/2; i++) {
-		EXPECT_TRUE(this->bst->del(typename TypeParam::value_type(i)));
+	for (int i=0; i<this->N/4; i++) {
+		EXPECT_TRUE(this->dyset.del(typename TypeParam::value_type(i)));
+		EXPECT_FALSE(this->dyset.del(typename TypeParam::value_type(i)));
 	}
-	EXPECT_FALSE(this->bst->find(typename TypeParam::value_type(this->N/2-1)));
-	EXPECT_EQ(this->bst->getMin(), typename TypeParam::value_type(this->N/2));
+	EXPECT_TRUE(this->dyset.find(typename TypeParam::value_type(this->N/2-1)));
+	EXPECT_FALSE(this->dyset.find(typename TypeParam::value_type(this->N/4-1)));
+	EXPECT_FALSE(this->dyset.find(typename TypeParam::value_type(this->N)));
+
+	int i = this->N/4;
+	this->dyset.traversal([&i](typename TypeParam::node_pointer x){
+		EXPECT_EQ(x->key, i++);
+	});
 }
 
 REGISTER_TYPED_TEST_CASE_P(
-	BinarySearchTreeTest,
+	DynamicSetTest,
 	InorderWalking, Queries, Search
 	);
 
-typedef Types<misc::BST<float>, misc::AVL<float>> Implementations;
+typedef Types<
+	misc::BST<float>,
+	misc::AVL<float>,
+	misc::skip_lists<int>,
+	misc::SBT<int>,
+	misc::red_black_tree<int>
+> Implementations;
 
 INSTANTIATE_TYPED_TEST_CASE_P(BSTInstance,
-							  BinarySearchTreeTest,
+							  DynamicSetTest,
 							  Implementations);
 
 #endif  // GTEST_HAS_TYPED_TEST_P
 
-class AVLTest : public BinarySearchTreeTest<misc::AVL<int>> {
+class AVLTest : public DynamicSetTest<misc::AVL<int>> {
 protected:
 	typedef misc::AVL<int> test_type;
 	typedef test_type::node_pointer node_pointer;
 };
 
 TEST_F(AVLTest, Balanced) {
-	auto avl = static_cast<test_type*>(bst);
+	auto avl = dyset.getObj();
 	// test AVL balanced
 	avl->preorder([avl](node_pointer x){
-		EXPECT_TRUE( abs(avl->height(x->l) - avl->height(x->r)) <= 1);
+		EXPECT_TRUE(avl->isbalanced(x));
 	});
+	int gaps = this->N/5;
+	for (int i=0; i<gaps; i++) {
+		EXPECT_TRUE(avl->del(i));
+	}
+	for (int i=0; i<gaps; i++) {
+		EXPECT_TRUE(avl->del(2*gaps+i));
+	}
+	for (int i=0; i<gaps; i++) {
+		EXPECT_TRUE(avl->del(4*gaps+i));
+	}
+	avl->preorder([avl](node_pointer x){
+		EXPECT_TRUE(avl->isbalanced(x));
+	});
+
+	// special case: delete 5 -> delete 6'
+	//          ____5____
+	//        _3_     ___8___
+	//      _2   4   6'_     _10_
+	//     1            7   9    11_
+	//                             12
+	avl->clear();
+	int arr[12] = {5,3,8,2,4,6,10,1,7,9,11,12};
+	for (int i=0; i<12; i++)
+		avl->insert(arr[i]);
+	EXPECT_TRUE(avl->del(5));
+	avl->preorder([avl](node_pointer x){
+		EXPECT_TRUE(avl->isbalanced(x));
+	});
+}
+
+class SBTTest : public DynamicSetTest<misc::SBT<int>> {
+protected:
+	typedef misc::SBT<int> test_type;
+	typedef test_type::node_pointer node_pointer;
+};
+
+TEST_F(SBTTest, Balanced) {
+	// N=10250 will fail AND del may break the balance!!!
+// 	auto sbt = dyset.getObj();
+// 	// test SBT balanced
+// 	sbt->preorder([sbt](node_pointer x){
+// 		EXPECT_TRUE(sbt->isbalanced(x));
+// 	});
+// 	int gaps = this->N/5;
+// 	for (int i=0; i<gaps; i++) {
+// 		EXPECT_TRUE(sbt->del(i));
+// 	}
+// 	for (int i=0; i<gaps; i++) {
+// 		EXPECT_TRUE(sbt->del(2*gaps+i));
+// 	}
+// 	for (int i=0; i<gaps; i++) {
+// 		EXPECT_TRUE(sbt->del(4*gaps+i));
+// 	}
+// 	sbt->preorder([sbt](node_pointer x){
+// 		EXPECT_TRUE(sbt->isbalanced(x));
+// 	});
+}
+
+TEST_F(SBTTest, Rank) {
+	auto sbt = dyset.getObj();
+	// test SBT Rank
+	try {
+		sbt->getNth(0);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	EXPECT_EQ(sbt->getNth(1), 0);
+	try {
+		sbt->getNth(this->N+1);
+		EXPECT_TRUE(false);
+	} catch (...) { EXPECT_TRUE(true); }
+	EXPECT_EQ(sbt->getNth(this->N), this->N-1);
 }
