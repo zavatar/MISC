@@ -14,5 +14,4 @@ namespace misc{
 		return val;
 	}
 
-
 } // namespace misc

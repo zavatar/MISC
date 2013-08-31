@@ -47,6 +47,16 @@ namespace misc {
 	template<typename T>
 	struct FNV_1a<T *>: public FNV_1a_base<T *>{};
 
+	template<typename Elem, typename Traits, typename Alloc>
+	struct FNV_1a<std::basic_string<Elem, Traits, Alloc>> {
+		typedef std::basic_string<Elem, Traits, Alloc> T;
+
+		size_t operator()(const T& val) const {
+			return FNV_1a_fun((const unsigned char*)val.c_str(),
+				val.size() * sizeof(T));
+		}
+	};
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE
