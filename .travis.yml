@@ -1,0 +1,17 @@
+language: cpp
+compiler:
+  - gcc
+ 
+# Change this to your needs
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  
+script: make
+
+notifications:
+   email:
+     - zhumeng1989@gmail.com
+   on_success: change
+   on_failure: always
