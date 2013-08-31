@@ -57,6 +57,16 @@ namespace misc {
 		}
 	};
 
+	// http://stackoverflow.com/questions/98153/whats-the-best-hashing-algorithm-to-use-on-a-stl-string-when-using-hash-map
+	inline size_t Paul_Larson_hash(const char* s)
+	{
+		const size_t SALT = 0;
+		size_t h = SALT;
+		while (*s)
+			h = h * 101 + (unsigned char) *s++;
+		return h;
+	}
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE
