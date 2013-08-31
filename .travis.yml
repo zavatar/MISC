@@ -1,7 +1,6 @@
 language: cpp
 
 compiler:
-  - clang
   - gcc
  
 before_install:
@@ -16,7 +15,8 @@ before_script:
   - cd build
   - cmake ..
   
-script: make
+script:
+  - make && make test
 
 branches:
   only:
