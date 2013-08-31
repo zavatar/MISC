@@ -18,6 +18,11 @@ TEST(FNV_1a_Test, Standard)
 	// float
 	EXPECT_EQ(misc::FNV_1a<bool>()(.0f), misc::FNV_1a<bool>()(-.0f));
 
+	// std::string
 	std::string str = "Stand back! I've got jimmies!";
 	EXPECT_EQ(misc::FNV_1a<std::string>()(str), misc::FNV_1a<std::string>()(str));
+
+	// Paul_Larson_hash
+	EXPECT_EQ(misc::Paul_Larson_hash(str.c_str()),
+		misc::Paul_Larson_hash(str.c_str()));
 }
