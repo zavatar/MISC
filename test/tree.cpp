@@ -25,8 +25,6 @@ protected:
 
 #if GTEST_HAS_TYPED_TEST_P
 
-using testing::Types;
-
 TYPED_TEST_CASE_P(DynamicSetTest);
 
 TYPED_TEST_P(DynamicSetTest, InorderWalking) {
@@ -86,7 +84,7 @@ REGISTER_TYPED_TEST_CASE_P(
 	InorderWalking, Queries, Search
 	);
 
-typedef Types<
+typedef testing::Types<
 	misc::BST<float>,
 	misc::AVL<float>,
 	misc::skip_lists<int>,
@@ -230,8 +228,6 @@ protected:
 
 #if GTEST_HAS_TYPED_TEST_P
 
-using testing::Types;
-
 TYPED_TEST_CASE_P(itv_treeTest);
 
 TYPED_TEST_P(itv_treeTest, Search) {
@@ -245,7 +241,7 @@ REGISTER_TYPED_TEST_CASE_P(
 	Search
 	);
 
-typedef Types<int, float> itv_treeTypes;
+typedef testing::Types<int, float> itv_treeTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(itv_treeInstance,
 							  itv_treeTest,

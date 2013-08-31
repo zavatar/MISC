@@ -8,6 +8,7 @@
 #include <functional>
 #include <vector>
 #include <set>
+#include <unordered_set>
 
 #define NOMINMAX
 
