@@ -16,14 +16,27 @@
 
 #ifdef MISC_FORCE_PLATFORM_UNKNOWN
 #	define MISC_PLATFORM MISC_PLATFORM_UNKNOWN
-#elif defined(_WIN32)
+#elif (_WIN32 || _WIN64)
 #	define MISC_PLATFORM MISC_PLATFORM_WINDOWS
+#		if _WIN64
+#			define ENVIRONMENT64
+#		else
+#			define ENVIRONMENT32
+#		endif
 #elif defined(__linux)
 #   define MISC_PLATFORM MISC_PLATFORM_LINUX
 #elif defined(__unix)
 #   define MISC_PLATFORM MISC_PLATFORM_UNIX
 #else
 #	define MISC_PLATFORM MISC_PLATFORM_UNKNOWN
+#endif
+
+#if __GNUC__
+#	if __x86_64__ || __ppc64__
+#		define ENVIRONMENT64
+#	else
+#		define ENVIRONMENT32
+#	endif
 #endif
 
 // Report platform detection
@@ -40,6 +53,17 @@
 #	else
 #		error("MISC: platform not detected")
 #	endif
+#endif
+
+#if(defined(MISC_MESSAGES) && !defined(MISC_MESSAGE_X86_64_DISPLAYED))
+#	define MISC_MESSAGE_X86_64_DISPLAYED
+#	ifdef ENVIRONMENT64
+		static_assert(sizeof(size_t) == 8, "This code is for 64-bit size_t.");
+#		pragma message("MISC: X64")
+#	else
+		static_assert(sizeof(size_t) == 4, "This code is for 32-bit size_t.");
+#		pragma message("MISC: X86")
+#	endif // ENVIRONMENT64
 #endif
 
 //////////////////////////////////////////////////////////////////////////
