@@ -5,6 +5,9 @@ namespace misc {
 
 //////////////////////////////////////////////////////////////////////////
 //
+// refer to: http://programmers.stackexchange.com/questions/49550/which-hashing-algorithm-is-best-for-uniqueness-and-speed
+// https://code.google.com/p/smhasher/wiki/MurmurHash3
+//
 // Hash Function: FNV-1a (vs stl)
 //
 // Hash Table: STL unordered_set (open address)
