@@ -3,6 +3,32 @@
 
 namespace misc {
 
+//////////////////////////////////////////////////////////////////////////
+//
+// Dynamic Programming
+//  1. Fibonacci Numbers
+//  2. Rod Cutting
+//  3. Matrix-chain Multiplication
+//  4. Longest Common Subsequence (LCS)
+//  5. Optimal BST
+//  6. Text Justification
+//  7. All Shortest Path
+//  8. Black Jack
+//  9. String Subproblems
+// 10. Parenthesization
+// 11. Edit Distance
+// 12. Knapsack
+// 13. Seam Carving
+// 14. Piano/Guitar Fingering
+// 15. Tetris Training
+// 16. Super Mario Bros
+//
+// Greedy Programming
+//  1. Minimum Spanning Trees
+//  2. Dijkstra Shortest Path (BFS)
+//  3. Bellman-Ford Shortest Path (supporting negative weight)
+//
+//////////////////////////////////////////////////////////////////////////
 
 } // misc
 
