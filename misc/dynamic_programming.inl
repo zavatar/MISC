@@ -14,8 +14,7 @@ namespace misc{
 
 	template <typename T>
 	void rod_cutting_bottomup( T *r, int *s, T *p, int n )
-	{
-		// r[i] = max(p[j]+r[i-j]), j = [1,i]
+	{ // r[i] = max(p[j]+r[i-j]), j = [1,i]
 		for (int i=0; i<=n; i++) {
 			r[i] = p[i];
 			s[i] = i;
@@ -30,7 +29,7 @@ namespace misc{
 
 	template <typename T, typename Fun>
 	T rod_cutting( T *p, int n, Fun fn )
-	{ // Reconstruct
+	{
 		std::unique_ptr<T[]> r(new T[n+1]);
 		std::unique_ptr<int[]> s(new int[n+1]);
 		rod_cutting_bottomup(r.get(), s.get(), p, n);
@@ -42,7 +41,7 @@ namespace misc{
 
 	template <typename T>
 	T rod_cutting( T *p, int n )
-	{ // Reconstruct
+	{
 		std::unique_ptr<T[]> r(new T[n+1]);
 		std::unique_ptr<int[]> s(new int[n+1]);
 		rod_cutting_bottomup(r.get(), s.get(), p, n);
@@ -64,6 +63,7 @@ namespace misc{
 		std::vector<int> m;
 		std::vector<int> p;
 		int L = LIS(m, p, x, n);
+		// Reconstruct
 		for (int k=m[L]; k>=0; k=p[k])
 			fn(x[k]);
 		return L;
