@@ -50,6 +50,11 @@ namespace misc {
 	// O(nlgn) time, O(n) space. If use DP, O(n^2) time
 	// http://en.wikipedia.org/wiki/Longest_increasing_subsequence
 	// http://www.geeksforgeeks.org/longest-monotonically-increasing-subsequence-size-n-log-n/
+	// X[i]: String
+	// M[j]: The index in X of the last element of IS with length j and smallest tail.
+	// P[i]: The index in X of the pre element of IS end with X[i].
+	// Binary Search: note X[M[0]]-X[M[1]]...X[M[L]] is nondecreasing,
+	//				  find biggest j, s.t. X[M[j]] < X[i]
 	template <typename T>
 	int LIS(T *x, int n);
 

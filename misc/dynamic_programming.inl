@@ -83,7 +83,7 @@ namespace misc{
 				p[i] = m[L];
 				L++;
 			} else {
-				// Binary Search max j, s.t. x[m[j]]<x[i]
+				// Binary Search biggest j, s.t. x[m[j]]<x[i]
 				int l=1, r=L, j=0;
 				while (l<=r) {
 					int mid = l+(r-l)/2;
