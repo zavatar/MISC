@@ -29,19 +29,14 @@ namespace misc{
 	}
 
 	template <typename T, typename Fun>
-	void rod_cutting_reconstruct( T *r, int *s, int n, Fun fn )
-	{ // Reconstruct
-		for (int i=n; i>0; i-=s[i])
-			fn(s[i]);
-	}
-
-	template <typename T, typename Fun>
 	T rod_cutting( T *p, int n, Fun fn )
 	{ // Reconstruct
 		std::unique_ptr<T[]> r(new T[n+1]);
 		std::unique_ptr<int[]> s(new int[n+1]);
 		rod_cutting_bottomup(r.get(), s.get(), p, n);
-		rod_cutting_reconstruct(r.get(), s.get(), n, fn);
+		// Reconstruct
+		for (int i=n; i>0; i-=s[i])
+			fn(s[i]);
 		return r[n];
 	}
 
@@ -52,6 +47,61 @@ namespace misc{
 		std::unique_ptr<int[]> s(new int[n+1]);
 		rod_cutting_bottomup(r.get(), s.get(), p, n);
 		return r[n];
+	}
+
+	template <typename T>
+	int LIS( T *x, int n )
+	{
+		if (n<1) return n;
+		std::vector<int> m;
+		std::vector<int> p;
+		return LIS(m, p, x, n);
+	}
+
+	template <typename T, typename Fun>
+	int LIS( T *x, int n, Fun fn )
+	{
+		std::vector<int> m;
+		std::vector<int> p;
+		int L = LIS(m, p, x, n);
+		for (int k=m[L]; k>=0; k=p[k])
+			fn(x[k]);
+		return L;
+	}
+
+	template <typename T>
+	int LIS( std::vector<int> &m, std::vector<int> &p, T *x, int n )
+	{
+		m.resize(2, 0);
+		p.resize(n, -1);
+		int L = 1;
+		for (int i=1; i<n; i++) {
+			if (x[i] < x[m[1]]) // smallest
+				m[1] = i;
+			else if (x[i] > x[m[L]]) { // biggest
+				m.push_back(i);
+				p[i] = m[L];
+				L++;
+			} else {
+				// Binary Search max j, s.t. x[m[j]]<x[i]
+				int l=1, r=L, j=0;
+				while (l<=r) {
+					int mid = l+(r-l)/2;
+					if (x[i] < x[m[mid]])
+						r = mid-1;
+					else if (x[i] > x[m[mid]])
+						l = mid+1;
+					else {
+						j = mid-1;
+						break;
+					}
+				}
+				if (l>r) j = r;
+				m[j+1] = i;
+				p[i] = m[j];
+			}
+		}
+		return L;
 	}
 
 } // namespace misc
