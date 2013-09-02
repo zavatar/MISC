@@ -8,7 +8,7 @@ namespace misc {
 // Dynamic Programming
 //  1. Fibonacci Numbers
 //  2. Rod Cutting
-//  3. Matrix-chain Multiplication
+// *3. Matrix-chain Multiplication
 //  4. Longest Common Subsequence (LCS) <--> Longest Increasing Subsequence (LIS)
 //  5. Optimal BST
 //  6. Text Justification
@@ -32,6 +32,7 @@ namespace misc {
 
 	// 1. Fibonacci Numbers
 	// O(n) (Could be O(lgn), using Matrix Form)
+	// http://www.geeksforgeeks.org/program-for-nth-fibonacci-number/
 	inline unsigned int fibonacci_n(int n);
 
 	// 2. Rod Cutting, r[i] = max(p[j]+r[i-j]), j = [1,i]
@@ -76,6 +77,9 @@ namespace misc {
 
 	template <typename T>
 	int fastLIS(std::vector<int> &m, std::vector<int> &p, T *x, int n);
+
+	// 11. Edit Distance
+	// http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
 
 } // misc
 
