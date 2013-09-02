@@ -30,6 +30,9 @@ namespace misc {
 //
 //////////////////////////////////////////////////////////////////////////
 
+	// O(n) (Could be O(lgn), using Matrix Form)
+	inline unsigned int fibonacci_n(int n);
+
 	template <typename T> // O(n^2)
 	void rod_cutting_bottomup(T *r, int *s, T *p, int n);
 
@@ -41,6 +44,7 @@ namespace misc {
 
 	template <typename T> // O(n^2)
 	T rod_cutting(T *p, int n);
+
 
 } // misc
 

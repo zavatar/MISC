@@ -1,5 +1,17 @@
 namespace misc{
 
+	unsigned int fibonacci_n( int n )
+	{
+		unsigned int f[2];
+		f[0]=0; f[1]=1;
+		if (n == 0) return f[0];
+		else if (n == 1) return f[1];
+		int b = 0;
+		for (int i=1; i<n; i++, b=1-b)
+			f[b] = f[b] + f[1-b];
+		return f[1-b];
+	}
+
 	template <typename T>
 	void rod_cutting_bottomup( T *r, int *s, T *p, int n )
 	{

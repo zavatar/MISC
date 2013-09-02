@@ -2,6 +2,15 @@
 
 #include "gtest/gtest.h"
 
+TEST(Fibonacci_Test, Standard)
+{
+	EXPECT_EQ(misc::fibonacci_n(0), 0);
+	EXPECT_EQ(misc::fibonacci_n(1), 1);
+	EXPECT_EQ(misc::fibonacci_n(2), 1);
+	EXPECT_EQ(misc::fibonacci_n(3), 2);
+	EXPECT_EQ(misc::fibonacci_n(20), 6765);
+}
+
 TEST(Rod_Cutting_Test, CLRS)
 {
 	float p[11] = {0,1,5,8,9,10,17,17,20,24,30};
