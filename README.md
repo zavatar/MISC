@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/PetterS/monte-carlo-tree-search.png)](https://travis-ci.org/PetterS/monte-carlo-tree-search)
+[![Build Status](https://travis-ci.org/zhumeng1989/MISC.png)](https://travis-ci.org/zhumeng1989/MISC)
 
 MISC
 -----------
