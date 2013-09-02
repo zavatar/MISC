@@ -30,6 +30,18 @@ namespace misc {
 //
 //////////////////////////////////////////////////////////////////////////
 
+	template <typename T> // O(n^2)
+	void rod_cutting_bottomup(T *r, int *s, T *p, int n);
+
+	template <typename T, typename Fun> // O(n)
+	void rod_cutting_reconstruct(T *r, int *s, int n, Fun fn);
+
+	template <typename T, typename Fun> // O(n^2)+O(n)
+	T rod_cutting(T *p, int n, Fun fn);
+
+	template <typename T> // O(n^2)
+	T rod_cutting(T *p, int n);
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE
