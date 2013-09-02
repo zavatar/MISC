@@ -49,20 +49,48 @@ namespace misc{
 	}
 
 	template <typename T>
-	int LIS( T *x, int n )
+	int misc::LCS( T *x, int m, T *y, int n )
+	{
+		return 0;
+	}
+
+	template <typename T, typename Fun>
+	int misc::LIS( T *x, int n, Fun fn )
+	{ // lis[i] = 1+max(lis[j]), x[j]<x[i]
+		std::vector<int> lis(n, 1);
+		std::vector<int> s(n, -1);
+		int idx = 0;
+		for (int i=1; i<n; i++) {
+			for (int j=0; j<i; j++) {
+				if (lis[i] < lis[j]+1 && x[j] < x[i]) {
+					lis[i] = lis[j]+1;
+					s[i] = j;
+				}
+			}
+			if (lis[i]>lis[i-1])
+				idx = i;
+		}
+		// Reconstruct
+		for (int i=idx; i>=0 ; i=s[i])
+			fn(x[i]);
+		return lis[idx];
+	}
+
+	template <typename T>
+	int fastLIS( T *x, int n )
 	{
 		if (n<1) return n;
 		std::vector<int> m;
 		std::vector<int> p;
-		return LIS(m, p, x, n);
+		return fastLIS(m, p, x, n);
 	}
 
 	template <typename T, typename Fun>
-	int LIS( T *x, int n, Fun fn )
+	int fastLIS( T *x, int n, Fun fn )
 	{
 		std::vector<int> m;
 		std::vector<int> p;
-		int L = LIS(m, p, x, n);
+		int L = fastLIS(m, p, x, n);
 		// Reconstruct
 		for (int k=m[L]; k>=0; k=p[k])
 			fn(x[k]);
@@ -70,7 +98,7 @@ namespace misc{
 	}
 
 	template <typename T>
-	int LIS( std::vector<int> &m, std::vector<int> &p, T *x, int n )
+	int fastLIS( std::vector<int> &m, std::vector<int> &p, T *x, int n )
 	{
 		m.resize(2, 0);
 		p.resize(n, -1);

@@ -11,8 +11,8 @@ TEST(Fibonacci_Test, Standard)
 	EXPECT_EQ(misc::fibonacci_n(20), 6765);
 }
 
-TEST(Rod_Cutting_Test, CLRS)
-{
+TEST(Rod_Cutting_Test, SpecialCase)
+{ // from CLRS
 	float p[11] = {0,1,5,8,9,10,17,17,20,24,30};
 	float rt[11] = {0,1,5,8,10,13,17,18,22,25,30};
 	int st[11] = {0,1,2,3,2,2,6,1,2,3,10};
@@ -32,13 +32,28 @@ TEST(Rod_Cutting_Test, CLRS)
 	}
 }
 
-TEST(LIS_Test, Case)
+TEST(LIS_Test, SpecialCase)
 { // http://en.wikipedia.org/wiki/Longest_increasing_subsequence
 	int x[16] = {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
-	int r[6] = {0, 2, 6, 9, 11, 15};
-	EXPECT_EQ(misc::LIS(x, 16), 6);
+	int r0[6] = {0, 2, 6, 9, 11, 15};
+	EXPECT_EQ(misc::fastLIS(x, 16), 6);
+	
 	int k=6;
-	misc::LIS(x, 16, [&r,&k](int a){
-		EXPECT_EQ(a, r[--k]);
+	misc::fastLIS(x, 16, [&r0,&k](int a){
+		EXPECT_EQ(a, r0[--k]);
 	});
+
+	int r1[6] = {0, 4, 6, 9, 13, 15};
+	k = 6;
+	int l = misc::LIS(x, 16, [&r1,&k](int a){
+		EXPECT_EQ(a, r1[--k]);
+	});
+	EXPECT_EQ(l, 6);
+}
+
+TEST(LCS_Test, SpecialCase)
+{ // http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+	char x[5] = {'A','G','C','A','T'};
+	char y[3] = {'G','A','C'};
+	misc::LCS(x, 5, y, 3);
 }
