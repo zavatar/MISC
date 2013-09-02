@@ -49,13 +49,13 @@ namespace misc{
 	}
 
 	template <typename T>
-	int misc::LCS( T *x, int m, T *y, int n )
+	int LCS( T *x, int m, T *y, int n )
 	{
 		return 0;
 	}
 
 	template <typename T, typename Fun>
-	int misc::LIS( T *x, int n, Fun fn )
+	int LIS( T *x, int n, Fun fn )
 	{ // lis[i] = 1+max(lis[j]), x[j]<x[i]
 		std::vector<int> lis(n, 1);
 		std::vector<int> s(n, -1);
