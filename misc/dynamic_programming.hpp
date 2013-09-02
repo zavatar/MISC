@@ -49,8 +49,8 @@ namespace misc {
 	// http://www.geeksforgeeks.org/dynamic-programming-set-4-longest-common-subsequence/
 	// LCS(Xm,Yn) = LCS(Xm-1,Yn-1) + 1, X[m-1]==Y[n-1]
 	//			  = max(LCS(Xm-1,Yn), LCS(Xm,Yn-1)), X[m-1]!=Y[n-1]
-	template <typename T>
-	int LCS(T *x, int m, T *y, int n);
+	template <typename T, typename Fun>
+	int LCS(T *x, int m, T *y, int n, Fun fn);
 
 	// 4.<--> Longest Increasing Subsequence (LIS)
 	// DP, O(n^2) time

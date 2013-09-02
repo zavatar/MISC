@@ -55,5 +55,18 @@ TEST(LCS_Test, SpecialCase)
 { // http://en.wikipedia.org/wiki/Longest_common_subsequence_problem
 	char x[5] = {'A','G','C','A','T'};
 	char y[3] = {'G','A','C'};
-	misc::LCS(x, 5, y, 3);
+	int l = misc::LCS(x, 5, y, 3, [&x,&y](int i, int j){
+		EXPECT_EQ(x[i], y[j]);
+	});
+	EXPECT_EQ(l, 2);
+
+	char x1[] = "ACCGGTCGAGTGCGCGGAAGCCGGCCGAA"; // 29
+	char y1[] = "GTCGTTCGGAATGCCGTTGCTCTGTAAA"; // 28
+	char z1[] = "GTCGTCGGAAGCCGGCCGAA"; // 20
+	int k = 20;
+	int l1 = misc::LCS(x1, 29, y1, 28, [&x1,&y1,&z1,&k](int i, int j){
+		EXPECT_EQ(x1[i], y1[j]);
+		EXPECT_EQ(x1[i], z1[--k]);
+	});
+	EXPECT_EQ(l1, 20);
 }

@@ -48,10 +48,37 @@ namespace misc{
 		return r[n];
 	}
 
-	template <typename T>
-	int LCS( T *x, int m, T *y, int n )
+	template <typename T, typename Fun>
+	int LCS( T *x, int m, T *y, int n, Fun fn )
 	{
-		return 0;
+		std::vector<std::vector<T>> L(m+1, std::vector<T>(n+1));
+		// 1:right, 2:right_down, 3:down
+		std::vector<std::vector<T>> F(m+1, std::vector<T>(n+1));
+		for (int i=0; i<=m; i++) {
+			for (int j=0; j<=n; j++) {
+				if (i==0 || j==0)
+					L[i][j] = F[i][j] = 0;
+				else if (x[i-1] == y[j-1]) {
+					L[i][j] = L[i-1][j-1] + 1;
+					F[i][j] = 2;
+				} else if (L[i-1][j] > L[i][j-1]) {
+					L[i][j] = L[i-1][j];
+					F[i][j] = 1;
+				} else {
+					L[i][j] = L[i][j-1];
+					F[i][j] = 3;
+				}
+			}
+		}
+		for (int i=m,j=n; i>0 && j>0; ) {
+			T f = F[i][j];
+			if (f == 1) i--;
+			else if (f == 2) {
+				fn(i-1, j-1); i--; j--;
+			} else if (f == 3) j--;
+			else break;
+		}
+		return L[m][n];
 	}
 
 	template <typename T, typename Fun>
