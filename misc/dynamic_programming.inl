@@ -51,9 +51,9 @@ namespace misc{
 	template <typename T, typename Fun>
 	int LCS( T *x, int m, T *y, int n, Fun fn )
 	{
-		std::vector<std::vector<T>> L(m+1, std::vector<T>(n+1));
-		// 1:right, 2:right_down, 3:down
-		std::vector<std::vector<T>> F(m+1, std::vector<T>(n+1));
+		std::vector<std::vector<int>> L(m+1, std::vector<int>(n+1));
+		// 1:left/right, 2:left_up/right_down, 3:up/down
+		std::vector<std::vector<char>> F(m+1, std::vector<char>(n+1));
 		for (int i=0; i<=m; i++) {
 			for (int j=0; j<=n; j++) {
 				if (i==0 || j==0)
@@ -63,19 +63,19 @@ namespace misc{
 					F[i][j] = 2;
 				} else if (L[i-1][j] > L[i][j-1]) {
 					L[i][j] = L[i-1][j];
-					F[i][j] = 1;
+					F[i][j] = 3;
 				} else {
 					L[i][j] = L[i][j-1];
-					F[i][j] = 3;
+					F[i][j] = 1;
 				}
 			}
 		}
 		for (int i=m,j=n; i>0 && j>0; ) {
-			T f = F[i][j];
-			if (f == 1) i--;
+			char f = F[i][j];
+			if (f == 1) j--;
 			else if (f == 2) {
 				fn(i-1, j-1); i--; j--;
-			} else if (f == 3) j--;
+			} else if (f == 3) i--;
 			else break;
 		}
 		return L[m][n];
@@ -157,6 +157,58 @@ namespace misc{
 			}
 		}
 		return L;
+	}
+
+	template <typename T, typename Fun>
+	int misc::edit_distance( T *x, int m, T *y, int n, Fun fn )
+	{
+		std::vector<std::vector<int>> E(m+1, std::vector<int>(n+1));
+		// 1:left/right, 2:left_up/right_down, 3:up/down
+		std::vector<std::vector<char>> F(m+1, std::vector<char>(n+1));
+		const int D = 1;
+		const int R = 1;
+		const int I = 1;
+		for (int i=0; i<=m; i++) {
+			for (int j=0; j<=n; j++) {
+				if (i==0) {
+					E[0][j] = j;
+					F[0][j] = 0;
+				} else if (j==0) {
+					E[i][0] = i;
+					F[i][0] = 0;
+				} else {
+					int u = E[i-1][j] + D;
+					int l = E[i][j-1] + I;
+					int lu= E[i-1][j-1] + (x[i-1]==y[j-1]?0:R);
+					if (u < lu) {
+						if (u < l) { // u
+							E[i][j] = u;
+							F[i][j] = 3;
+						} else { // l
+							E[i][j] = l;
+							F[i][j] = 1;
+						}
+					} else { // lu <= u
+						if (l < lu) { // l
+							E[i][j] = l;
+							F[i][j] = 1;
+						} else { // lu
+							E[i][j] = lu;
+							F[i][j] = 2;
+						}
+					}
+				}
+			}
+		}
+		for (int i=m,j=n; i>0 && j>0; ) {
+			char f = F[i][j];
+			if (f == 1) j--;
+			else if (f == 2) {
+				fn(i-1, j-1); i--; j--;
+			} else if (f == 3) i--;
+			else break;
+		}
+		return E[m][n];
 	}
 
 } // namespace misc

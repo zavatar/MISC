@@ -70,3 +70,20 @@ TEST(LCS_Test, SpecialCase)
 	});
 	EXPECT_EQ(l1, 20);
 }
+
+TEST(edit_distance_Test, SpecialCase)
+{
+	char x[5] = {'A','G','C','A','T'};
+	char y[3] = {'G','A','C'};
+	int e = misc::edit_distance(x, 5, y, 3, [&x,&y](int i, int j){
+		printf("%c,%c\n", x[i], y[j]);
+	});
+	EXPECT_EQ(e, 3);
+
+	char x1[] = "ACCGGTCGAGTGCGCGGAAGCCGGCCGAA"; // 29
+	char y1[] = "GTCGTTCGGAATGCCGTTGCTCTGTAAA"; // 28
+	int e1 = misc::LCS(x1, 29, y1, 28, [&x1,&y1](int i, int j){
+		printf("%c,%c\n", x1[i], y1[j]);
+	});
+	EXPECT_EQ(e1, 20);
+}

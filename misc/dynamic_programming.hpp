@@ -80,6 +80,9 @@ namespace misc {
 
 	// 11. Edit Distance
 	// http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
+	// E(i,j) = min(E(i-1,j)+D, E(i,j-1)+I, E(i-1,j-1)+X[i]==Y[j]?0:R)
+	template <typename T, typename Fun>
+	int edit_distance(T *x, int m, T *y, int n, Fun fn);
 
 } // misc
 
