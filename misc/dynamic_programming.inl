@@ -160,7 +160,7 @@ namespace misc{
 	}
 
 	template <typename T, typename Fun>
-	int misc::edit_distance( T *x, int m, T *y, int n, Fun fn )
+	int edit_distance( T *x, int m, T *y, int n, Fun fn )
 	{
 		std::vector<std::vector<int>> E(m+1, std::vector<int>(n+1));
 		// 1:left/right, 2:left_up/right_down, 3:up/down
