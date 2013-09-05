@@ -14,7 +14,7 @@ namespace misc{
 
 	template <typename T>
 	void rod_cutting_bottomup( T *r, int *s, T *p, int n )
-	{ // r[i] = max(p[j]+r[i-j]), j = [1,i]
+	{
 		for (int i=0; i<=n; i++) {
 			r[i] = p[i];
 			s[i] = i;
@@ -83,7 +83,7 @@ namespace misc{
 
 	template <typename T, typename Fun>
 	int LIS( T *x, int n, Fun fn )
-	{ // lis[i] = 1+max(lis[j]), x[j]<x[i]
+	{
 		std::vector<int> lis(n, 1);
 		std::vector<int> s(n, -1);
 		int idx = 0;
