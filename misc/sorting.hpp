@@ -28,6 +28,18 @@ namespace misc {
 // Binary Search:
 // STL(algorithm): binary_search, equal_range, lower_bound/upper_bound.
 //
+// Fibonacci Heap: 
+// OP   | List |Sorted| BBST      | heap |FiHeap
+// push | O(1) | O(n) |O(lgn)	  |O(lgn)| O(1)
+// max  | O(n) | O(1) |O(lgn)	  | O(1) | O(1)
+// pop  | O(n) | O(1) |O(lgn)	  |O(lgn)|O(lgn)
+// inc  | O(1) | O(n) |O(lgn)	  |O(lgn)| O(1)
+// merge| O(1) |O(m+n)|O(mlg(n+m))|O(n+m)| O(1)
+//
+// Disjoint Sets: Find, Union, Make_Set
+//  1. Linked lists, O(n) Find or Union
+//  2. Forests, (union by rank and path compression), O(amortized const) Find and Union
+//
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T>

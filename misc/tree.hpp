@@ -39,6 +39,8 @@ namespace misc {
 //
 // Binary space partitioning (BSP) trees: Quadtree, Octree, k-d tree.
 //
+// Van Emde Boas tree: O(lglgn) every operation, for unique int keys range in 0~n-1
+//
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T>
