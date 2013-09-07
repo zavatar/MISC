@@ -12,6 +12,8 @@ namespace misc {
 //
 // Hash Table: STL unordered_set (open address)
 //
+// Rabin-Karp algorithm (Rolling hash)
+//
 //////////////////////////////////////////////////////////////////////////
 
 	inline size_t FNV_1a_fun(const unsigned char* buf, size_t count);
