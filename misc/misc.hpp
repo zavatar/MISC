@@ -22,5 +22,6 @@
 #include "tree.hpp"
 #include "hashing.hpp"
 #include "dynamic_programming.hpp"
+#include "graph.hpp"
 
 #endif//misc_misc
