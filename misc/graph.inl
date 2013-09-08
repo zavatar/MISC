@@ -1,18 +1,40 @@
 namespace misc{
 
-	MISC_FUNC_QUALIFIER void Graph::resetcp()
-	{
-		colors.assign(colors.size(), white);
-		parents.assign(parents.size(), -1);
-	}
-
-	MISC_FUNC_QUALIFIER Graph::Graph( id_type V )
+	MISC_FUNC_QUALIFIER Graph::Graph( int V )
 	{
 		adjs.resize(V);
 		colors.resize(V, white);
 		parents.resize(V, -1);
 	}
 
+	MISC_FUNC_QUALIFIER void Graph::resize( int V )
+	{
+		adjs.resize(V);
+		colors.resize(V, white);
+		parents.resize(V, -1);
+	}
+
+	MISC_FUNC_QUALIFIER void Graph::clear()
+	{
+		adjs.clear();
+		colors.clear();
+		parents.clear();
+	}
+
+	MISC_FUNC_QUALIFIER bool Graph::visited( id_type v )
+	{
+		if (v < id_type(colors.size()))
+			return colors[v]!=white;
+		else
+			return false;
+	}
+
+	MISC_FUNC_QUALIFIER void Graph::resetcp()
+	{
+		colors.assign(colors.size(), white);
+		parents.assign(parents.size(), -1);
+	}
+	
 	MISC_FUNC_QUALIFIER void Graph::addEdge( id_type u, id_type v )
 	{
 		id_type ex = std::max(u,v)+1;
@@ -100,6 +122,29 @@ namespace misc{
 		DFS([](id_type){}, [&](id_type v){S.push(v);});
 		for (; S.size() != 0; S.pop())
 			fn(S.top());
+	}
+
+	MISC_FUNC_QUALIFIER void Graph::transpose( Graph& gt )
+	{
+		gt.clear();
+		gt.resize(adjs.size());
+		for (id_type v=0; v<id_type(adjs.size()); v++)
+			std::for_each(adjs[v].begin(), adjs[v].end(),[&](id_type u){
+				gt.addEdge(u, v);
+		});
+	}
+
+	MISC_FUNC_QUALIFIER void Graph::SCC()
+	{
+		Graph gt;
+		transpose(gt);
+
+		topological_sort([&](id_type v){
+			if (!gt.visited(v)) {
+				gt.DFS_visit(v, [](id_type u){printf("%d\t",u);}, [](id_type){});
+				printf("\n");
+			}
+		});
 	}
 
 } // namespace misc

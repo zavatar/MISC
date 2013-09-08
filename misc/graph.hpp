@@ -8,7 +8,7 @@ namespace misc {
 // adjacency lists & adjacency matrices
 // 1. BFS, Breadth-first tree
 // 2. DFS, topologically sorting (DAG, directed acyclic graph)
-//         strongly connected components
+//         strongly connected components (SCC)
 // 3. MST, Prim & Kruskal
 // 4. Single-Source Shortest Paths, Bellman-Ford(negative), DAG, Dijkstra,
 //                                  Difference Constraints
@@ -25,7 +25,13 @@ namespace misc {
 			typedef int id_type;
 
 			Graph(){}
-			Graph(id_type V);
+			Graph(int V);
+
+			void clear();
+
+			void resize(int V);
+
+			bool visited(id_type v);
 
 			void addEdge(id_type u, id_type v);
 
@@ -42,7 +48,15 @@ namespace misc {
 			void DFS(id_type v, startFun sf, finishFun ff);
 
 			template <typename Fun>
+			void BFS_visit(id_type s, Fun fn);
+
+			template <typename startFun, typename finishFun>
+			void DFS_visit(id_type v, startFun sf, finishFun ff);
+
+			template <typename Fun>
 			void topological_sort(Fun fn);
+
+			void SCC();
 
 		private:
 
@@ -56,11 +70,7 @@ namespace misc {
 
 			void resetcp();
 
-			template <typename Fun>
-			void BFS_visit(id_type s, Fun fn);
-
-			template <typename startFun, typename finishFun>
-			void DFS_visit(id_type v, startFun sf, finishFun ff);
+			void transpose(Graph& gt);
 
 	};
 

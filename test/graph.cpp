@@ -22,5 +22,16 @@ TEST(Graph_Test, Standard)
 
 	g.BFS(dummyfun);
 
-	g.topological_sort(printfun);
+	g.topological_sort(dummyfun);
+
+	g.clear();
+//////////////////////////////////////////////////////////////////////////
+	// case from CLRS Figure 22.9
+	int e[28] = {0,1,1,2,2,3,3,2,4,0,1,4,1,5,2,6,3,7,4,5,5,6,6,5,6,7,7,7};
+	for (int i=0; i<28; i+=2)
+		g.addEdge(e[i], e[i+1]);
+	
+	g.SCC();
+
+	g.clear();
 }
