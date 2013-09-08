@@ -2,84 +2,99 @@ namespace misc{
 
 	MISC_FUNC_QUALIFIER Graph::Graph( int V )
 	{
-		adjs.resize(V);
-		colors.resize(V, white);
-		parents.resize(V, -1);
-	}
-
-	MISC_FUNC_QUALIFIER void Graph::resize( int V )
-	{
-		adjs.resize(V);
-		colors.resize(V, white);
-		parents.resize(V, -1);
+		root.resize(V);
 	}
 
 	MISC_FUNC_QUALIFIER void Graph::clear()
 	{
-		adjs.clear();
-		colors.clear();
-		parents.clear();
+		root.clear();
+	}
+
+	MISC_FUNC_QUALIFIER void Graph::resize( int V )
+	{
+		root.resize(V);
+	}
+
+	MISC_FUNC_QUALIFIER Graph::color_type Graph::getColor( id_type v )
+	{
+		return root[v].color;
+	}
+
+	MISC_FUNC_QUALIFIER void Graph::setColor( id_type v, color_type c )
+	{
+		root[v].color = c;
 	}
 
 	MISC_FUNC_QUALIFIER bool Graph::visited( id_type v )
 	{
-		if (v < id_type(colors.size()))
-			return colors[v]!=white;
-		else
-			return false;
+		return getColor(v) != white;
 	}
 
-	MISC_FUNC_QUALIFIER void Graph::resetcp()
+	MISC_FUNC_QUALIFIER void Graph::clearColor()
 	{
-		colors.assign(colors.size(), white);
-		parents.assign(parents.size(), -1);
+		std::for_each(root.begin(), root.end(), [](Vertex&v){
+			v.color = white;
+		});
 	}
 	
-	MISC_FUNC_QUALIFIER void Graph::addEdge( id_type u, id_type v )
+	MISC_FUNC_QUALIFIER void Graph::addEdge( id_type u, id_type v, weight_type w )
 	{
 		id_type ex = std::max(u,v)+1;
-		if (ex > id_type(adjs.size())) {
-			adjs.resize(ex);
-			colors.resize(ex, white);
-			parents.resize(ex, -1);
+		if (ex > id_type(root.size())) {
+			root.resize(ex);
 		}
-		adjs[u].push_back(v);
+		root[u].adj.push_back(Edge(v,w));
+	}
+
+	template <typename Fun>
+	MISC_FUNC_QUALIFIER void Graph::foreachAdj( id_type v, Fun fn )
+	{
+		std::for_each(root[v].adj.begin(), root[v].adj.end(), [&](Edge&e){
+			fn(e.u);
+		});
+	}
+
+	template <typename Fun>
+	MISC_FUNC_QUALIFIER void Graph::foreachEdge( Fun fn )
+	{
+		typedef std::tuple<weight_type, id_type, id_type> edge_type;
+		std::vector<edge_type> edges;
+		for (id_type v=0; v<id_type(root.size()); v++)
+			std::for_each(root[v].adj.begin(), root[v].adj.end(), [&](Edge&e){
+				edges.push_back(std::make_tuple(e.w, v, e.u));
+			});
+		std::sort(edges.begin(), edges.end());
+		std::for_each(edges.begin(), edges.end(), [&](edge_type&t){
+			fn(std::get<0>(t), std::get<1>(t), std::get<2>(t));
+		});
 	}
 
 	template <typename Fun>
 	MISC_FUNC_QUALIFIER void Graph::BFS( Fun fn )
 	{
-		resetcp();
-		for (id_type v=0; v<id_type(adjs.size()); v++)
-			if (colors[v] == white)
+		clearColor();
+		for (id_type v=0; v<id_type(root.size()); v++)
+			if (getColor(v) == white)
 				BFS_visit(v, fn);
-	}
-
-	template <typename Fun>
-	MISC_FUNC_QUALIFIER void Graph::BFS( id_type v, Fun fn )
-	{
-		resetcp();
-		BFS_visit(v, fn);
 	}
 
 	template <typename Fun>
 	MISC_FUNC_QUALIFIER void Graph::BFS_visit( id_type s, Fun fn )
 	{
-		colors[s] = gray;
+		setColor(s, gray);
 		fn(s);
 		std::queue<id_type> Q;
 		Q.push(s);
 		while (Q.size() != 0) {
 			id_type v = Q.front();
-			std::for_each(adjs[v].begin(), adjs[v].end(), [&](id_type u){
-				if (colors[u] == white) {
-					parents[u] = v;
-					colors[u] = gray;
+			foreachAdj(v, [&](id_type u){
+				if (getColor(u) == white) {
+					setColor(u, gray);
 					fn(u);
 					Q.push(u);
 				}
 			});
-			colors[v] = black;
+			setColor(v, black);
 			Q.pop();
 		}
 	}
@@ -87,31 +102,22 @@ namespace misc{
 	template <typename startFun, typename finishFun>
 	MISC_FUNC_QUALIFIER void Graph::DFS( startFun sf, finishFun ff )
 	{
-		resetcp();
-		for (id_type v=0; v<id_type(adjs.size()); v++)
-			if (colors[v] == white)
+		clearColor();
+		for (id_type v=0; v<id_type(root.size()); v++)
+			if (getColor(v) == white)
 				DFS_visit(v, sf, ff);
-	}
-
-	template <typename startFun, typename finishFun>
-	MISC_FUNC_QUALIFIER void Graph::DFS( id_type v, startFun sf, finishFun ff )
-	{
-		resetcp();
-		DFS_visit(v, sf, ff);
 	}
 
 	template <typename startFun, typename finishFun>
 	MISC_FUNC_QUALIFIER void Graph::DFS_visit( id_type v, startFun sf, finishFun ff )
 	{
-		colors[v] = gray;
+		setColor(v, gray);
 		sf(v);
-		std::for_each(adjs[v].begin(), adjs[v].end(), [&](id_type u){
-			if (colors[u] == white) {
-				parents[u] = v;
+		foreachAdj(v, [&](id_type u){
+			if (getColor(u) == white)
 				DFS_visit(u, sf, ff);
-			}
 		});
-		colors[v] = black;
+		setColor(v, black);
 		ff(v);
 	}
 
@@ -127,24 +133,59 @@ namespace misc{
 	MISC_FUNC_QUALIFIER void Graph::transpose( Graph& gt )
 	{
 		gt.clear();
-		gt.resize(adjs.size());
-		for (id_type v=0; v<id_type(adjs.size()); v++)
-			std::for_each(adjs[v].begin(), adjs[v].end(),[&](id_type u){
+		gt.resize(root.size());
+		for (id_type v=0; v<id_type(root.size()); v++)
+			foreachAdj(v, [&](id_type u){
 				gt.addEdge(u, v);
-		});
+			});
 	}
 
 	MISC_FUNC_QUALIFIER void Graph::SCC()
 	{
+		auto dummyfun = [](int){};
+		auto printfun = [](int v){printf("%d\t", v);};
+
 		Graph gt;
 		transpose(gt);
 
 		topological_sort([&](id_type v){
 			if (!gt.visited(v)) {
-				gt.DFS_visit(v, [](id_type u){printf("%d\t",u);}, [](id_type){});
+				gt.DFS_visit(v, printfun, dummyfun);
 				printf("\n");
 			}
 		});
+	}
+
+	template <typename Fun>
+	MISC_FUNC_QUALIFIER Graph::weight_type Graph::Kruskal_MST(Fun fn)
+	{
+		int V = root.size();
+		std::vector<int> rank(V);
+		std::vector<id_type> parent(V);
+
+		boost::disjoint_sets<int*, id_type*> dsets(&rank[0], &parent[0]);
+		for (id_type v=0; v<id_type(root.size()); v++)
+			dsets.make_set(v);
+
+		weight_type ret = 0;
+		foreachEdge([&](weight_type w, id_type v, id_type u){
+			id_type vp = dsets.find_set(v);
+			id_type up = dsets.find_set(u);
+			if (vp != up) {
+				fn(v, u);
+				ret += w;
+				dsets.link(vp, up);
+			}
+		});
+
+		return ret;
+	}
+
+	template <typename Fun>
+	MISC_FUNC_QUALIFIER Graph::weight_type Graph::Prim_MST(Fun fn)
+	{ // Need priority-queue (min-heap) supported decreasing.
+	  // TODO: modify max_heapify in sorting.inl to support Structure
+		return 0;
 	}
 
 } // namespace misc

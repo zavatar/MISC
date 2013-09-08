@@ -13,6 +13,7 @@
 #include <list>
 #include <queue>
 #include <stack>
+#include <tuple>
 
 #define NOMINMAX
 

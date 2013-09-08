@@ -1,6 +1,8 @@
 #ifndef misc_graph
 #define misc_graph
 
+#include "boost/pending/disjoint_sets.hpp"
+
 namespace misc {
 
 //////////////////////////////////////////////////////////////////////////
@@ -23,6 +25,7 @@ namespace misc {
 		public:
 
 			typedef int id_type;
+			typedef float weight_type;
 
 			Graph(){}
 			Graph(int V);
@@ -33,19 +36,19 @@ namespace misc {
 
 			bool visited(id_type v);
 
-			void addEdge(id_type u, id_type v);
+			void addEdge(id_type u, id_type v, weight_type w = 1);
+
+			template <typename Fun>
+			void foreachAdj(id_type v, Fun fn);
+
+			template <typename Fun>
+			void foreachEdge(Fun fn);
 
 			template <typename Fun>
 			void BFS(Fun fn);
 
-			template <typename Fun>
-			void BFS(id_type v, Fun fn);
-
 			template <typename startFun, typename finishFun>
 			void DFS(startFun sf, finishFun ff);
-
-			template <typename startFun, typename finishFun>
-			void DFS(id_type v, startFun sf, finishFun ff);
 
 			template <typename Fun>
 			void BFS_visit(id_type s, Fun fn);
@@ -58,17 +61,36 @@ namespace misc {
 
 			void SCC();
 
+			template <typename Fun>
+			weight_type Kruskal_MST(Fun fn);
+
+			template <typename Fun>
+			weight_type Prim_MST(Fun fn);
+
 		private:
 
 			enum color_type {white, gray, green, red, black};
 
-			std::vector<std::list<id_type>> adjs;
+			struct Edge {
+				id_type u;
+				weight_type w;
+				Edge():w(1){}
+				Edge(id_type _u,weight_type _w):u(_u),w(_w){}
+			};
 
-			std::vector<color_type> colors;
+			struct Vertex {
+				color_type color;
+				std::list<Edge> adj;
+				Vertex():color(white){}
+			};
 
-			std::vector<id_type> parents;
+			std::vector<Vertex> root;
 
-			void resetcp();
+			color_type getColor(id_type v);
+
+			void setColor(id_type v, color_type c);
+
+			void clearColor();
 
 			void transpose(Graph& gt);
 

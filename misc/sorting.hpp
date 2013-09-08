@@ -36,6 +36,7 @@ namespace misc {
 // inc  | O(1) | O(n) |O(lgn)	  |O(lgn)| O(1)
 // merge| O(1) |O(m+n)|O(mlg(n+m))|O(n+m)| O(1)
 //
+// http://www.boost.org/doc/libs/1_54_0/libs/disjoint_sets/disjoint_sets.html
 // Disjoint Sets: Find, Union, Make_Set
 //  1. Linked lists, O(n) Find or Union
 //  2. Forests, (union by rank and path compression), O(amortized const) Find and Union
