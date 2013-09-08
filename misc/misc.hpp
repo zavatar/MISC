@@ -10,6 +10,9 @@
 #include <vector>
 #include <set>
 #include <unordered_set>
+#include <list>
+#include <queue>
+#include <stack>
 
 #define NOMINMAX
 

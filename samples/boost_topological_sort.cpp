@@ -14,8 +14,8 @@ int main()
 	//begin
 	using namespace boost;
 
-	/* Topological sort will need to color the graph.  Here we use an
-		internal decorator, so we "property" the color to the graph.
+	/* Topological sort will need to colors the graph.  Here we use an
+		internal decorator, so we "property" the colors to the graph.
 		*/
 	typedef adjacency_list<vecS, vecS, directedS, 
 	property<vertex_color_t, default_color_type> > Graph;
