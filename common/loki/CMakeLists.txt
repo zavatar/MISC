@@ -10,7 +10,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 elseif(MSVC)
   set (Loki_BUILD_COMMAND make.msvc.bat)
   set (Loki_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/loki/src)
-  set (Loki_PATCH patch -t ${Loki_BINARY_DIR}/SmallObj.cpp -i ${CMAKE_CURRENT_SOURCE_DIR}/SmallObj.cpp.patch)
+  set (Loki_PATCH svn revert ${Loki_BINARY_DIR}/SmallObj.cpp
+  COMMAND patch ${Loki_BINARY_DIR}/SmallObj.cpp -i ${CMAKE_CURRENT_SOURCE_DIR}/SmallObj.cpp.patch)
 endif()
 
 ExternalProject_Add(loki
