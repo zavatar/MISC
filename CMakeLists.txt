@@ -48,6 +48,7 @@ endif()
 ################################
 # Add subdirectory
 
+add_subdirectory(common/loki)
 add_subdirectory(misc)
 add_subdirectory(test)
 add_subdirectory(samples)
