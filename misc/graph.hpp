@@ -8,7 +8,7 @@ namespace misc {
 //////////////////////////////////////////////////////////////////////////
 //
 // adjacency lists & adjacency matrices
-// 1. BFS, Breadth-first tree
+// 1. BFS, Breadth-first tree, Shortest paths
 // 2. DFS, topologically sorting (DAG, directed acyclic graph)
 //         strongly connected components (SCC)
 // 3. MST, Prim & Kruskal

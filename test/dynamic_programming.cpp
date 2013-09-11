@@ -84,3 +84,4 @@ TEST(palindrome_partitioning_Test, SpecialCase)
 	EXPECT_EQ(misc::palindrome_partitioningOn3(str, 14), 3);
 	EXPECT_EQ(misc::palindrome_partitioningOn2(str, 14), 3);
 }
+

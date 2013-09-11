@@ -6,17 +6,17 @@ public:
 		// DO NOT write int main() function
 		int n = s.length();
 		if (n<2) return 0;
-		std::vector<int> M(n,0);
-		std::vector<std::vector<bool>> P(n,std::vector<bool>(n,false));
+		vector<int> M(n,0);
+		vector<vector<bool>> P(n,vector<bool>(n,false));
 		for(int i=1; i<n; i++) {
 			if (s[0] == s[i] && (i<3 || P[1][i-1]))
 				M[i] = 0;
 			else {
-				M[i] = std::min(i, M[i-1]+1);
+				M[i] = min(i, M[i-1]+1);
 				for (int k=i-1; k>0; k--) {
 					if (s[k] == s[i] && (i-k<3 || P[k+1][i-1])) {
 						P[k][i] = true;
-						M[i] = std::min(M[i], M[k-1]+1);
+						M[i] = min(M[i], M[k-1]+1);
 					}
 				}  
 			}
@@ -28,8 +28,8 @@ public:
 class Solution {
 public:
 
-	void DFS(string&s, int i, std::vector<std::vector<bool>>&P,
-		std::vector<std::vector<string>>&R, std::vector<string>&S){
+	void DFS(string&s, int i, vector<vector<bool>>&P,
+		vector<vector<string>>&R, vector<string>&S){
 			int n = s.size();
 			if (i==n) {
 				R.push_back(S);
@@ -48,7 +48,7 @@ public:
 		// Start typing your C/C++ solution below
 		// DO NOT write int main() function
 		int n = s.size();
-		std::vector<std::vector<bool>> P(n,std::vector<bool>(n,false));
+		vector<vector<bool>> P(n,vector<bool>(n,false));
 		for(int i=n-1; i>=0; i--) {
 			P[i][i] = true;
 			for(int k=i-1; k<n; k++) {
@@ -56,8 +56,8 @@ public:
 					P[i][k] = true;
 			}
 		}
-		std::vector<std::vector<string>> results;
-		std::vector<string> ts;
+		vector<vector<string>> results;
+		vector<string> ts;
 		DFS(s,0, P, results, ts);
 		return results;
 	}
@@ -147,9 +147,9 @@ public:
 	int longestConsecutive(vector<int> &num) {
 		// Start typing your C/C++ solution below
 		// DO NOT write int main() function
-		std::unordered_map<int,int> m;
+		unordered_map<int,int> m;
 		int n = num.size();
-		std::vector<bool> visited(n, false);
+		vector<bool> visited(n, false);
 		for (int i=0; i<n; i++)
 			m[num[i]] = i;
 		int ml = 0;
@@ -162,8 +162,42 @@ public:
 				visited[m[k]] = true;
 			for(int k=j-1; m.find(k)!=m.end() && !visited[m[k]]; k--,l++)
 				visited[m[k]] = true;
-			ml = std::max(ml, l);
+			ml = max(ml, l);
 		}
 		return ml;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Word Ladder
+class Solution {
+public:
+	int ladderLength(string start, string end, unordered_set<string> &dict) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int dis = 1;
+		dict.erase(start);
+		dict.erase(end);
+		queue<string> Q;
+		Q.push(start);
+		while(!Q.empty()) {
+			string w = Q.front();
+			int n = w.size();
+			for(int i=0; i<n; i++) {
+				for(char c = 'a'; c <= 'z'; c++) {
+					if (c == w[i]) continue;
+					string tw = w;
+					tw[i] = c;
+					if(tw == end)
+						return dis+1;
+					if(dict.find(tw)!=dict.end()) {
+						Q.push(tw);
+						dict.erase(tw);
+					}
+				}
+			}
+			Q.pop();
+			dis++;
+		}
+		return 0;
 	}
 };
