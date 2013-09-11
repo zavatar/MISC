@@ -268,5 +268,315 @@ public:
 
 	vector<vector<string> > pathes;
 };
+//////////////////////////////////////////////////////////////////////////
+// Valid Palindrome
+class Solution {
+public:
+	bool isAlphanumeric(const char&c) {
+		return (c>='a'&&c<='z') || (c>='A'&&c<='Z') || (c>='0'&&c<='9');
+	}
+	bool isPalindrome(string s) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int n = s.size();
+		string st;
+		st.reserve(n);
+		for (int i=0; i<n; i++)
+			if (isAlphanumeric(s[i]))
+				st.push_back(s[i]);
+		n = st.size();
+		if (n == 0) return true;
+		for(int i=0,j=n-1; i<j; i++,j--)
+			if(tolower(st[i])!=tolower(st[j]))
+				return false;
+		return true;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Binary Tree Maximum Path Sum
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
 
+    int travel(TreeNode *r) {
+        if(r == NULL) return 0;
+        int lmax = travel(r->left);
+        int rmax = travel(r->right);
+        maxval = max(maxval,r->val);
+        maxsum = max(maxsum, lmax+rmax+r->val);
+        return max(max(lmax,rmax)+r->val,0);
+    }
+
+    int maxPathSum(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        maxval = numeric_limits<int>::min();
+        maxsum = 0;
+        travel(root);
+        if (maxval <= 0) return maxval;
+        else return maxsum;
+    }
+    int maxval, maxsum;
+};
+//////////////////////////////////////////////////////////////////////////
+// Best Time to Buy and Sell Stock
+class Solution {
+public:
+	int maxProfit(vector<int> &prices) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int maxval = 0;
+		int n = prices.size();
+		if (n <= 1) return 0;
+		int curmin = prices[0];
+		for (int i=1; i<n; i++) {
+			curmin = min(curmin, prices[i]);
+			maxval = max(maxval, prices[i]-curmin);
+		}
+		return maxval;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Best Time to Buy and Sell Stock II
+// O(n^2), Large data timeout
+class Solution {
+public:
+	int maxProfit(vector<int> &prices) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int n = prices.size();
+		if (n <= 1) return 0;
+		vector<int> C(n+1,0);
+		for (int i=n-1; i>=0; i--) {
+			int maxval = 0;
+			int curmin = prices[i];
+			for (int k=i+1; k<n; k++) {
+				curmin = min(curmin, prices[k]);
+				maxval = max(maxval, prices[k]-curmin);
+				C[i] = max(maxval + C[k+1], C[i]);
+			}
+		}
+		return C[0];
+	}
+};
+// O(n)
+class Solution {
+public:
+	int maxProfit(vector<int> &prices) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int n = prices.size();
+		if (n <= 1) return 0;
+		int maxval = 0;
+		int curmin = prices[0];
+		int curmax = prices[0];
+		for (int i=1; 1; ) {
+			curmin = curmax;
+			for (; i<n && prices[i]<=curmin; i++)
+				curmin = prices[i];
+			if (i>=n) break;
+			curmax = curmin;
+			for (; i<n && prices[i]>=curmax; i++)
+				curmax = prices[i];
+			maxval += curmax-curmin;
+		}
+		return maxval;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Best Time to Buy and Sell Stock III
+class Solution {
+public:
+	int maxProfit(vector<int> &prices) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int maxval = 0;
+		int n = prices.size();
+		if (n <= 1) return 0;
+		int curmin = prices[0];
+		vector<int> l2r(n,0);
+		for (int i=1; i<n; i++) {
+			curmin = min(curmin, prices[i]);
+			maxval = max(maxval, prices[i]-curmin);
+			l2r[i] = maxval;
+		}
+		maxval = 0;
+		int curmax = prices[n-1];
+		vector<int> r2l(n,0);
+		for (int i=n-2; i>=0; i--) {
+			curmax = max(curmax, prices[i]);
+			maxval = max(maxval, curmax-prices[i]);
+			r2l[i] = maxval;
+		}
+		maxval = 0;
+		for (int i=0; i<n; i++)
+			maxval = max(maxval, l2r[i]+r2l[i]);
+		return maxval;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Triangle
+class Solution {
+public:
+	int minimumTotal(vector<vector<int> > &triangle) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int n = triangle.size();
+		if (n == 0) return 0;
+		if (n == 1) return triangle[0][0];
+		vector<int> e[2];
+		e[0].resize(n,0);
+		e[1].resize(n,0);
+		e[0][0]=triangle[0][0];
+		int cur = 0;
+		int pre = 1;
+		for (int i=1; i<n; i++) {
+			cur = 1-cur;
+			pre = 1-pre;
+			e[cur][0] = e[pre][0]+triangle[i][0];
+			for (int j=1; j<i; j++) {
+				e[cur][j] = min(e[pre][j-1],e[pre][j])+triangle[i][j];
+			}
+			e[cur][i] = e[pre][i-1]+triangle[i][i];
+		}
+		int maxval = e[cur][0];
+		for(int i=0; i<n; i++)
+			maxval = min(maxval, e[cur][i]);
+		return maxval;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Pascal's Triangle
+class Solution {
+public:
+	vector<vector<int> > generate(int numRows) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		vector<vector<int>> ret;
+		if (numRows == 0) return ret;
+		vector<int> r[2];
+		r[0].resize(1,1);
+		r[1].resize(1,1);
+		int cur = 0;
+		int pre = 1;
+		ret.push_back(r[cur]);
+		for (int i=1; i<numRows; i++) {
+			cur = 1-cur;
+			pre = 1-pre;
+			for (int j=1; j<i; j++)
+				r[cur][j] = r[pre][j-1] + r[pre][j];
+			r[cur].push_back(1);
+			r[pre].push_back(1);
+			ret.push_back(r[cur]);
+		}
+		return ret;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Pascal's Triangle II
+class Solution {
+public:
+	vector<int> getRow(int rowIndex) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		vector<int> r[2];
+		r[0].resize(1,1);
+		r[1].resize(1,1);
+		int cur = 0;
+		int pre = 1;
+		for (int i=1; i<=rowIndex; i++) {
+			cur = 1-cur;
+			pre = 1-pre;
+			for (int j=1; j<i; j++)
+				r[cur][j] = r[pre][j-1] + r[pre][j];
+			r[cur].push_back(1);
+			r[pre].push_back(1);
+		}
+		return r[cur];
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Populating Next Right Pointers in Each Node
+/**
+ * Definition for binary tree with next pointer.
+ * struct TreeLinkNode {
+ *  int val;
+ *  TreeLinkNode *left, *right, *next;
+ *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void connect(TreeLinkNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if (root == NULL) return;
+        TreeLinkNode *x = root;
+        while(x != NULL) {
+            if (x->left != NULL)
+                x->left->next = x->right;
+            if (x->right != NULL) {
+                x->right->next = NULL;
+                if (x->next != NULL)
+                    x->right->next = x->next->left;
+            }
+            x = x->next;
+        }
+        connect(root->left);
+    }
+};
+//////////////////////////////////////////////////////////////////////////
+// Populating Next Right Pointers in Each Node II
+/**
+ * Definition for binary tree with next pointer.
+ * struct TreeLinkNode {
+ *  int val;
+ *  TreeLinkNode *left, *right, *next;
+ *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void connect(TreeLinkNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if (root == NULL) return;
+        TreeLinkNode *x = root;
+        TreeLinkNode *pre = NULL;
+        TreeLinkNode *nxt = NULL;
+        while(x != NULL) {
+            if (pre != NULL) {
+                if (x->left != NULL) {
+                    pre->next = x->left;
+                    pre = x->left;
+                }
+                if (x->right != NULL) {
+                    pre->next = x->right;
+                    pre = x->right;
+                }
+            } else {
+                if (x->left != NULL) {
+                    nxt = pre = x->left;
+                    if (x->right != NULL) {
+                        pre->next = x->right;
+                        pre = x->right;
+                    }
+                } else {
+                    if (x->right != NULL) {
+                        nxt = pre = x->right;
+                    }
+                }
+            }
+            x = x->next;
+        }
+        connect(nxt);
+    }
 };
