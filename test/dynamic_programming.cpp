@@ -77,3 +77,10 @@ TEST(edit_distance_Test, SpecialCase)
 	});
 	EXPECT_EQ(e1, 20);
 }
+
+TEST(palindrome_partitioning_Test, SpecialCase)
+{
+	char str[] = "ababbbabbababa";
+	EXPECT_EQ(misc::palindrome_partitioningOn3(str, 14), 3);
+	EXPECT_EQ(misc::palindrome_partitioningOn2(str, 14), 3);
+}

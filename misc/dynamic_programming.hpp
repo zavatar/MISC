@@ -81,8 +81,12 @@ namespace misc {
 //  7.1 Matrix-chain Multiplication
 //       M(i,j) = min{M(i,k)+M(k+1,j)+E(i,k,j)}, k（[i,j)
 //  7.2 Palindrome Partitioning
+//      O^3:
 //       M(i,j) = min{M(i,k)+M(k+1,j)+1}, k（[i,j), x(i,j) is Palindrome
 //              = 0, x(i,j) is not Palindrome
+//      O^2: similar with rod cutting problem
+//       M(i++) = min(M(k-1)+1), k（[i,-,0], x(k,i) is Palindrome
+//		 reversed scan: M(i--) = min(M(k+1)+1), k（[i,n), x(i,k) is Palindrome
 //
 //  8.  Optimal BST
 //	     O(i,j) = (Σw(k),k（[i,j]) + (min{O(i,r-1)+O(r+1,j)}, r（[i,j])
@@ -134,6 +138,14 @@ namespace misc {
 	// 4.2 Edit Distance
 	template <typename T, typename Fun>
 	int edit_distance(T *x, int m, T *y, int n, Fun fn);
+
+	// 7.2 Palindrome Partitioning
+	// http://www.geeksforgeeks.org/dynamic-programming-set-17-palindrome-partitioning/
+	// http://leetcode.com/onlinejudge#question_132
+	template <typename T>
+	int palindrome_partitioningOn3(T *x, int n);
+	template <typename T>
+	int palindrome_partitioningOn2(T *x, int n);
 
 } // misc
 

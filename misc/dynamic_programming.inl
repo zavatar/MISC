@@ -178,4 +178,46 @@ namespace misc{
 		return E[m][n];
 	}
 
+	template <typename T>
+	int palindrome_partitioningOn3( T *x, int n )
+	{
+		std::vector<std::vector<int>> M(n,std::vector<int>(n, 0));
+		for (int l=1; l<n; l++) {
+			for (int i=0; i<n-l; i++) {
+				int j=i+l;
+				if (x[i] == x[j] && M[i+1][j-1] == 0)
+					M[i][j] = 0;
+				else {
+					M[i][j] = n;
+					for (int k=i; k<j; k++) {
+						M[i][j] = std::min(M[i][k]+M[k+1][j]+1, M[i][j]);
+					}
+				}
+			}
+		}
+		return M[0][n-1];
+	}
+
+	template <typename T>
+	int palindrome_partitioningOn2( T *x, int n )
+	{
+		if (n<2) return 0;
+		std::vector<int> M(n,0);
+		std::vector<std::vector<bool>> P(n,std::vector<bool>(n,false));
+		for(int i=1; i<n; i++) {
+			if (x[0] == x[i] && (i<3 || P[1][i-1]))
+				M[i] = 0;
+			else {
+				M[i] = std::min(i, M[i-1]+1);
+				for (int k=i-1; k>0; k--) {
+					if (x[k] == x[i] && (i-k<3 || P[k+1][i-1])) {
+						P[k][i] = true;
+						M[i] = std::min(M[i], M[k-1]+1);
+					}
+				}  
+			}
+		}
+		return M[n-1];
+	}
+
 } // namespace misc
