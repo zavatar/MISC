@@ -12,8 +12,6 @@ function(CreateSample NAME)
 	elseif(NAME STREQUAL "google_test")
 		set_target_properties(${SAMPLE_NAME} PROPERTIES COMPILE_FLAGS ${COMPILER_DEFS})
 		add_dependencies(${SAMPLE_NAME} googletest)
-		set_target_properties(${SAMPLE_NAME} PROPERTIES INCLUDE_DIRECTORIES 
-		${GTEST_INCLUDE_DIRS})
 		if(CMAKE_COMPILER_IS_GNUCXX)
 			target_link_libraries(${SAMPLE_NAME}
 				${GTEST_LIBS_DIR}/libgtest.a
@@ -22,6 +20,18 @@ function(CreateSample NAME)
 			target_link_libraries(${SAMPLE_NAME}
 				debug ${GTEST_LIBS_DIR}/DebugLibs/gtest.lib
 				optimized ${GTEST_LIBS_DIR}/ReleaseLibs/gtest.lib)
+		endif()
+  elseif(NAME STREQUAL "loki_modern_cplusplus")
+    add_dependencies(${SAMPLE_NAME} loki)
+    set_target_properties(${SAMPLE_NAME} PROPERTIES INCLUDE_DIRECTORIES 
+		${LOKI_INCLUDE_DIRS})
+    if(CMAKE_COMPILER_IS_GNUCXX)
+			target_link_libraries(${SAMPLE_NAME}
+				${LOKI_LIBS_DIR}/libloki.a)
+		else()
+			target_link_libraries(${SAMPLE_NAME}
+				debug ${LOKI_LIBS_DIR}/loki.lib
+				optimized ${LOKI_LIBS_DIR}/loki.lib)
 		endif()
 	endif()
 	if(CMAKE_COMPILER_IS_GNUCXX)
@@ -56,3 +66,4 @@ endforeach()
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})

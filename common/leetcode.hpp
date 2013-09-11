@@ -179,24 +179,28 @@ public:
 		dict.erase(end);
 		queue<string> Q;
 		Q.push(start);
-		while(!Q.empty()) {
+		for(int ql = Q.size(); ql > 0; ql--) {
 			string w = Q.front();
 			int n = w.size();
 			for(int i=0; i<n; i++) {
 				for(char c = 'a'; c <= 'z'; c++) {
 					if (c == w[i]) continue;
-					string tw = w;
-					tw[i] = c;
-					if(tw == end)
+					char wi = w[i];
+					w[i] = c;
+					if(w == end)
 						return dis+1;
-					if(dict.find(tw)!=dict.end()) {
-						Q.push(tw);
-						dict.erase(tw);
+					if(dict.find(w)!=dict.end()) {
+						Q.push(w);
+						dict.erase(w);
 					}
+					w[i] = wi;
 				}
 			}
+			if (ql == 1) {
+				dis++;
+				ql = Q.size();
+			}
 			Q.pop();
-			dis++;
 		}
 		return 0;
 	}
