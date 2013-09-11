@@ -174,34 +174,99 @@ public:
 	int ladderLength(string start, string end, unordered_set<string> &dict) {
 		// Start typing your C/C++ solution below
 		// DO NOT write int main() function
-		int dis = 1;
 		dict.erase(start);
-		dict.erase(end);
-		queue<string> Q;
-		Q.push(start);
-		for(int ql = Q.size(); ql > 0; ql--) {
-			string w = Q.front();
-			int n = w.size();
-			for(int i=0; i<n; i++) {
-				for(char c = 'a'; c <= 'z'; c++) {
-					if (c == w[i]) continue;
-					char wi = w[i];
+		dict.insert(end);
+		
+		queue<pair<string, int> > q;
+		for (q.emplace(start, 1); !q.empty(); q.pop()) {
+			string w = q.front().first;
+			int l = q.front().second;
+			if (w == end)
+				return l;
+			for (int i=0; i<w.size(); i++) {
+				char tc = w[i];
+				for (char c='a'; c<='z'; c++) {
 					w[i] = c;
-					if(w == end)
-						return dis+1;
-					if(dict.find(w)!=dict.end()) {
-						Q.push(w);
+					if (dict.find(w) != dict.end()) {
+						q.emplace(w, l+1);
 						dict.erase(w);
 					}
-					w[i] = wi;
 				}
+				w[i] = tc;
 			}
-			if (ql == 1) {
-				dis++;
-				ql = Q.size();
-			}
-			Q.pop();
 		}
 		return 0;
 	}
+};
+//////////////////////////////////////////////////////////////////////////
+// Word Ladder II
+// http://blog.csdn.net/niaokedaoren/article/details/8884938
+class Solution {
+public:
+	void DFS_path(unordered_map<string, vector<string> > &trs, 
+		vector<string> &path, const string &w) {
+			if (trs[w].size() == 0) {
+				path.push_back(w);
+				vector<string> curPath = path;
+				reverse(curPath.begin(), curPath.end());
+				pathes.push_back(curPath);
+				path.pop_back();
+				return;
+			}
+
+			path.push_back(w);
+			for_each(trs[w].begin(), trs[w].end(), [&](const string&w){
+				DFS_path(trs, path, w);
+			});
+			path.pop_back();
+	}
+
+	vector<vector<string> > findLadders(string start, string end, unordered_set<string> &dict) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		pathes.clear();
+		dict.insert(start);
+		dict.insert(end);
+		vector<string> prev;
+		unordered_map<string, vector<string> > trs;
+		for_each(dict.begin(), dict.end(), [&](const string&w){
+			trs[w] = vector<string>();
+		});
+
+		vector<unordered_set<string> > lay(2);
+		int cur = 0;
+		int pre = 1;
+		lay[cur].insert(start);
+		while (true) {
+			cur = !cur;
+			pre = !pre;
+			for_each(lay[pre].begin(), lay[pre].end(), [&](const string&w){
+				dict.erase(w);
+			});
+			lay[cur].clear();
+			for_each(lay[pre].begin(), lay[pre].end(), [&](const string&w){
+				for (int i=0; i<w.size(); i++) {
+					string wt(w);
+					for (char c='a'; c<='z'; c++) {
+						wt[i] = c;
+						if (dict.find(wt) != dict.end()) { 
+							trs[wt].push_back(w);
+							lay[cur].insert(wt);
+						}
+					}
+				}
+			});
+			if (lay[cur].size() == 0)
+				return pathes;
+			if (lay[cur].count(end))
+				break;
+		}
+		vector<string> path;
+		DFS_path(trs, path, end);
+		return pathes;
+	}
+
+	vector<vector<string> > pathes;
+};
+
 };

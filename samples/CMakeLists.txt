@@ -23,8 +23,6 @@ function(CreateSample NAME)
 		endif()
   elseif(NAME STREQUAL "loki_modern_cplusplus")
     add_dependencies(${SAMPLE_NAME} loki)
-    set_target_properties(${SAMPLE_NAME} PROPERTIES INCLUDE_DIRECTORIES 
-		${LOKI_INCLUDE_DIRS})
     if(CMAKE_COMPILER_IS_GNUCXX)
 			target_link_libraries(${SAMPLE_NAME}
 				${LOKI_LIBS_DIR}/libloki.a)
@@ -67,3 +65,4 @@ endforeach()
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${LOKI_INCLUDE_DIRS})
