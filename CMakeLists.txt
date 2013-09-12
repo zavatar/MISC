@@ -49,6 +49,7 @@ endif()
 # Add subdirectory
 
 add_subdirectory(common/loki)
+include_directories(${LOKI_INCLUDE_DIRS})
 add_subdirectory(misc)
 add_subdirectory(test)
 add_subdirectory(samples)

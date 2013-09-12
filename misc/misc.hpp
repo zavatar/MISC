@@ -17,6 +17,8 @@
 #include <stack>
 #include <tuple>
 
+#include <loki/Singleton.h>
+
 #define NOMINMAX
 
 #include "setup.hpp"

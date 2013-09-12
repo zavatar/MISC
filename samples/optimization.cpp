@@ -188,7 +188,7 @@ int main()
 	opt1->combine2(&dest); // warm up
 	std::cout<<std::fixed;
 	dest=1;
-	misc::timer t;
+	misc::timer& t = misc::singleton_timer::Instance();
 	opt1->combine1(&dest);
 	std::cout<<"combine1:\t"<<std::hex<<dest<<" \t Time: "<<t.query()<<std::endl;
 
