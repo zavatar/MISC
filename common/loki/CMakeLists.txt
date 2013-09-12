@@ -13,7 +13,7 @@ elseif(MSVC)
   set (Loki_BUILD_COMMAND make.msvc.bat)
   set (Loki_BINARY_DIR ${LOKI_SRC_DIR}/src)
   set (Loki_PATCH svn revert -R ${LOKI_SRC_DIR}
-  COMMAND patch ${Loki_BINARY_DIR}/SmallObj.cpp -i ${CMAKE_CURRENT_SOURCE_DIR}/SmallObj.cpp.patch)
+  COMMAND patch ${Loki_BINARY_DIR}/SmallObj.cpp < ${CMAKE_CURRENT_SOURCE_DIR}/SmallObj.cpp.patch)
 endif()
 
 ExternalProject_Add(loki
