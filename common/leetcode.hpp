@@ -585,19 +585,145 @@ public:
 //////////////////////////////////////////////////////////////////////////
 // 115.Distinct Subsequences
 //*like LCS, DP
-
+// C(i,j) = C(i-1,j)+C(i-1,j-1), Si==Tj
+//        = C(i-1,j), Si!=Tj
+// Note: 1.ns+1,nt+1, 2.C(i-1,0)=1 startup point, 3.reduce to one-dimension:
+// C(j) += C(j-1), Si==Tj, reverse scan j--.
+class Solution { // 80ms
+public:
+	int numDistinct(string S, string T) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int ns = S.size();
+		int nt = T.size();
+		if (ns<nt) return 0;
+		vector<vector<int>> C(ns+1, vector<int>(nt+1,0));
+		for(int i=1; i<=ns; i++) {
+			C[i-1][0] = 1;
+			for(int j=1; j<=nt; j++) {
+				if (S[i-1] == T[j-1])
+					C[i][j] = C[i-1][j] + C[i-1][j-1];
+				else
+					C[i][j] = C[i-1][j];
+			}
+		}
+		return C[ns][nt];
+	}
+};
+class Solution { // 28ms
+public:
+	int numDistinct(string S, string T) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int ns = S.size();
+		int nt = T.size();
+		if (ns<nt) return 0;
+		vector<int> C(nt+1,0);
+		C[0] = 1;
+		for(int i=1; i<=ns; i++)
+			for(int j=nt; j>=1; j--)
+				if (S[i-1] == T[j-1])
+					C[j] += C[j-1];
+		return C[nt];
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 114.Flatten Binary Tree to Linked List
 // postorder traversal
+// http://discuss.leetcode.com/questions/280/flatten-binary-tree-to-linked-list
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
 
+    void travel(TreeNode *root, TreeNode *&t) {
+        if(root == NULL) return;
+		// Note, right first
+        travel(root->right,t);
+        travel(root->left,t);
+        root->right = t;
+        t = root;
+        root->left = NULL;
+    }
+
+    void flatten(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if(root == NULL) return;
+        TreeNode* t = NULL;
+        travel(root,t);
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 113.Path Sum II
 // inorder traversal, backtrack
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void travel(TreeNode *r, int s, int sum, vector<int>&path, vector<vector<int>>&ret) {
+        if(r==NULL) return;
+        s+=r->val;
+        path.push_back(r->val);
+        if(r->left == NULL && r->right == NULL && s == sum)
+            ret.push_back(path);
+        travel(r->left,s,sum,path,ret);
+        travel(r->right,s,sum,path,ret);
+        path.pop_back();
+        
+    }
+    vector<vector<int> > pathSum(TreeNode *root, int sum) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<vector<int>> ret;
+        vector<int> path;
+        travel(root, 0, sum, path, ret);
+        return ret;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 112.Path Sum
 // inorder traversal
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool travel(TreeNode *r, int s, int sum) {
+        if(r==NULL) return false;
+        s+=r->val;
+        if(r->left == NULL && r->right == NULL)
+            if (s == sum) return true;
+            else return false;
+        return travel(r->left,s,sum) || travel(r->right,s,sum);
+        
+    }
+    bool hasPathSum(TreeNode *root, int sum) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        return travel(root, 0, sum);
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 111.Minimum Depth of Binary Tree
 // BFS
