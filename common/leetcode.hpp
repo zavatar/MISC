@@ -1190,15 +1190,104 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 // 99.Recover Binary Search Tree
-// ?
-
+//*http://fisherlei.blogspot.com/2012/12/leetcode-recover-binary-search-tree.html
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void travel(TreeNode*r) {
+        if(r==NULL) return;
+        travel(r->left);
+        if(mistake[cur]!=NULL && mistake[cur]->val > r->val) {
+            if(cur==0) cur++;
+            mistake[2] = r;
+        }
+        mistake[cur] = r;
+        travel(r->right);
+    }
+    void recoverTree(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        cur = 0;
+        mistake.clear();
+        mistake.push_back(NULL);
+        mistake.push_back(NULL);
+        mistake.push_back(NULL);
+        travel(root);
+        swap(mistake[0]->val, mistake[2]->val);
+    }
+    vector<TreeNode*> mistake;
+    int cur;
+};
 //////////////////////////////////////////////////////////////////////////
 // 98.Validate Binary Search Tree
 // inorder traversal
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool travel(TreeNode*r) {
+        if(r==NULL) return true;
+        if (!travel(r->left)) return false;
+        if(pre!=NULL && pre->val >= r->val) return false; // Equal???
+        pre = r;
+        if(!travel(r->right)) return false;
+        return true;
+    }
+    bool isValidBST(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        pre = NULL;
+        return travel(root);
+    }
+    TreeNode*pre;
+};
 //////////////////////////////////////////////////////////////////////////
 // 97.Interleaving String
-//*DP
+//*DP. B(i,j) = S1(i)==S3(i+j+1) && B(i-1,j) || S2(j)==S3(i+j+1) && B(i,j-1)
+// Note: i,j start from 0
+// http://fisherlei.blogspot.com/2012/12/leetcode-interleaving-string.html
+class Solution {
+public:
+	bool isInterleave(string s1, string s2, string s3) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function    
+		int n1 = s1.size();
+		int n2 = s2.size();
+		int n3 = s3.size();
+		if(n1+n2 != n3) return false;
+		vector<bool> B[2];
+		int cur = 0;
+		int pre = 1;
+		B[cur].resize(n2+1, false);
+		B[pre].resize(n2+1, false);
+		B[pre][0] = true;
+		for(int j=1; j<=n2; j++)
+			B[pre][j] = B[pre][j-1] && s2[j-1]==s3[j-1];
+		for(int i=1; i<=n1; i++) {
+			B[cur][0] = B[pre][0] && s1[i-1]==s3[i-1];
+			for(int j=1; j<=n2; j++)
+				B[cur][j] = (s1[i-1]==s3[i+j-1] && B[pre][j]) || (s2[j-1]==s3[i+j-1] && B[cur][j-1]);
+			cur = 1-cur;
+			pre = 1-pre;
+		}
+		return B[pre][n2];
+	}
+};
 
 //////////////////////////////////////////////////////////////////////////
 // 96.Unique Binary Search Trees
@@ -1246,5 +1335,40 @@ public:
 // 
 
 //////////////////////////////////////////////////////////////////////////
-// 88.
+// 88.Merge Sorted Array
+// Trivial merge sort
+
+//////////////////////////////////////////////////////////////////////////
+// 87.Scramble String
 // 
+
+//////////////////////////////////////////////////////////////////////////
+// 86.Partition List
+// Straight forward
+
+//////////////////////////////////////////////////////////////////////////
+// 85.Maximal Rectangle
+// DP, Like 4.4 in dynamic_programming
+
+//////////////////////////////////////////////////////////////////////////
+// 84.Largest Rectangle in Histogram
+// H(i,j) = min{hi, hj, H(i-1,j-1)}
+// return max{H(i,j)*(j-i+1)}
+
+//////////////////////////////////////////////////////////////////////////
+// 83.Remove Duplicates from Sorted List
+// Sorted List is trival
+
+//////////////////////////////////////////////////////////////////////////
+// 82.Remove Duplicates from Sorted List II
+// Sorted List is trival
+
+//////////////////////////////////////////////////////////////////////////
+// 81.Search in Rotated Sorted Array II
+// refer to 33.
+
+//////////////////////////////////////////////////////////////////////////
+// 80.Remove Duplicates from Sorted Array II
+// refer to 26.
+
+

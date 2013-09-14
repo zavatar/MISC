@@ -58,6 +58,9 @@ namespace misc {
 //  4.6 Minimum insertions to form a palindrome
 //       I(i,j) = I(i+1,j-1),  X[i]==X[j]
 //              = min(I(i+1,j), I(i,j-1))+1, X[i]!=X[j]
+//  4.7 Find if a string is interleaved of two other strings
+//       Like http://leetcode.com/onlinejudge#question_97
+//       B(i,j) = S1(i)==S3(i+j+1) && B(i-1,j) || S2(j)==S3(i+j+1) && B(i,j-1)
 //
 //  5 select from set
 //  5.1 Coin Change (# ways / min# coins), Coin Set S{a,b,...} |S|=m
