@@ -663,7 +663,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 // 113.Path Sum II
-// inorder traversal, backtrack
+// preorder traversal, backtrack
 /**
  * Definition for binary tree
  * struct TreeNode {
@@ -697,7 +697,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 // 112.Path Sum
-// inorder traversal
+// preorder traversal
 /**
  * Definition for binary tree
  * struct TreeNode {
@@ -727,51 +727,467 @@ public:
 //////////////////////////////////////////////////////////////////////////
 // 111.Minimum Depth of Binary Tree
 // BFS
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int minDepth(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if(root==NULL) return 0;
+        queue<pair<TreeNode*,int>> q;
+        q.emplace(root,1);
+        while(!q.empty()) {
+            TreeNode* x = q.front().first;
+            int depth = q.front().second;
+            if(x->left == NULL && x->right == NULL)
+                return depth;
+            if(x->left!=NULL)
+                q.emplace(x->left,depth+1);
+            if(x->right!=NULL)
+                q.emplace(x->right,depth+1);
+            q.pop();
+        }
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 110.Balanced Binary Tree
 // postorder traversal
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool travel(TreeNode*r, int&h) {
+        if(r==NULL) {
+            h=0;
+            return true;
+        }
+        int lh, rh;
+        if (!travel(r->left,lh))
+            return false;
+        if (!travel(r->right,rh))
+            return false;
+        if(abs(lh-rh) > 1)
+            return false;
+        else {
+            h = max(lh,rh)+1;
+            return true;
+        }
+    }
+    bool isBalanced(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        int h;
+        return travel(root,h);
+    }
+};
 
 //////////////////////////////////////////////////////////////////////////
 // 109.Convert Sorted List to Binary Search Tree
-//*using bottom-up approach
-
+//*using bottom-up approach, O(n)
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *travel(ListNode*&head,int i,int j) {
+        if(i>j) return NULL;
+        int m = (j+i)/2;
+        TreeNode *r = new TreeNode(-1);
+        r->left = travel(head,i,m-1);
+        r->val = head->val;
+        head = head->next;
+        r->right = travel(head,m+1,j);
+        return r;
+    }
+    TreeNode *sortedListToBST(ListNode *head) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        int n = 0;
+        ListNode*p = head;
+        for(; p!=NULL; n++) p = p->next;
+        return travel(head,0,n-1);
+    }
+};
+// O(nlgn)
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *travel(ListNode *head,int n) {
+        if(n<=0) return NULL;
+        int m = n/2;
+        ListNode*p = head;
+        for(int i=0; i<m; i++) p = p->next;
+        TreeNode *r = new TreeNode(p->val);
+        r->left = travel(head,m);
+        r->right = travel(p->next,n-m-1);
+        return r;
+    }
+    TreeNode *sortedListToBST(ListNode *head) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        int n = 0;
+        ListNode*p = head;
+        for(; p!=NULL; n++) p = p->next;
+        return travel(head,n);
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 108.Convert Sorted Array to Binary Search Tree
 // direct index
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *travel(vector<int>&num,int i, int j) {
+        if(i>j) return NULL;
+        int m = (j+i)/2;
+        TreeNode *r = new TreeNode(num[m]);
+        r->left = travel(num,i,m-1);
+        r->right = travel(num,m+1,j);
+        return r;
+    }
+    TreeNode *sortedArrayToBST(vector<int> &num) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        int n = num.size();
+        return travel(num,0,n-1);
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 107.Binary Tree Level Order Traversal II
 // preorder traversal, push node to correct level vector.
-
+// or postorder, just make sure push left before right.
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void travel(TreeNode*r, int d, vector<vector<int>>&ret) {
+        if(r == NULL) return;
+        if(d >= ret.size()) ret.push_back(vector<int>(1,r->val));
+        else ret[d].push_back(r->val);
+        travel(r->left,d+1,ret);
+        travel(r->right,d+1,ret);
+    }
+    vector<vector<int> > levelOrderBottom(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<vector<int>> ret;
+        travel(root, 0, ret);
+        reverse(ret.begin(), ret.end());
+        return ret;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 106.Construct Binary Tree from Inorder and Postorder Traversal
 //*find the root, then recursively build the tree
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *travel(vector<int> &inorder, int i, int j, vector<int> &postorder) {
+        if(i>j) return NULL;
+        TreeNode *r = new TreeNode(postorder.back());
+        postorder.pop_back();
+        int m = i;
+        for(int k=i; k<=j; k++)
+            if(inorder[k] == r->val)
+            { m = k; break; }
+        r->right = travel(inorder, m+1, j, postorder);
+        r->left = travel(inorder, i, m-1, postorder);
+        return r;
+    }
+    TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        return travel(inorder, 0, inorder.size()-1, postorder);
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 105.Construct Binary Tree from Preorder and Inorder Traversal
 //*find the root, then recursively build the tree
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *travel(vector<int> &inorder, int i, int j, vector<int> &preorder, int&ii) {
+        if(i>j) return NULL;
+        TreeNode *r = new TreeNode(preorder[ii]);
+        ii++;
+        int m = i;
+        for(int k=i; k<=j; k++)
+            if(inorder[k] == r->val)
+            { m = k; break; }
+        r->left = travel(inorder, i, m-1, preorder, ii);
+        r->right = travel(inorder, m+1, j, preorder, ii);
+        return r;
+    }
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        int k=0;
+        return travel(inorder, 0, inorder.size()-1, preorder, k);
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 104.Maximum Depth of Binary Tree
-// DFS
-
+// DFS, preorder traversal
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void travel(TreeNode *r, int d) {
+        if(r==NULL) return;
+        if(r->left == NULL && r->right == NULL)
+            maximum = max(maximum, d+1);
+        travel(r->left, d+1);
+        travel(r->right, d+1);
+    }
+    int maxDepth(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        maximum = 0;
+        travel(root, 0);
+        return maximum;
+    }
+    int maximum;
+};
 //////////////////////////////////////////////////////////////////////////
 // 103.Binary Tree Zigzag Level Order Traversal
-// Like 107.
-
+// Like 107. Could use Stack.
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<vector<int>> ret;
+        stack<TreeNode*> q[2];
+        int cur = 0;
+        int pre = 1;
+        q[cur].push(root);
+        while(!q[cur].empty()) {
+            cur = 1-cur;
+            pre = 1-pre;
+            vector<int> v;
+            while(!q[pre].empty()) {
+                TreeNode* x = q[pre].top();
+                q[pre].pop();
+                if (x==NULL) continue;
+                v.push_back(x->val);
+                if(cur==1) {
+                    q[cur].push(x->left);
+                    q[cur].push(x->right);
+                }else{
+                    q[cur].push(x->right);
+                    q[cur].push(x->left);
+                }
+            }
+            if (!v.empty())
+                ret.push_back(v);
+        }
+        return ret;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 102.Binary Tree Level Order Traversal
 // Like 107.
-
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void travel(TreeNode*r, int d, vector<vector<int>>&ret) {
+        if(r == NULL) return;
+        if(d >= ret.size()) ret.push_back(vector<int>(1,r->val));
+        else ret[d].push_back(r->val);
+        travel(r->left,d+1,ret);
+        travel(r->right,d+1,ret);
+    }
+    vector<vector<int> > levelOrder(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<vector<int>> ret;
+        travel(root, 0, ret);
+        return ret;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 101.Symmetric Tree
-// inorder traversal
-
+// order and rorder traversal
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void preorderTravel(TreeNode*r, vector<int>&v) {
+        if(r==NULL) return;
+        v.push_back(r->val);
+        preorderTravel(r->left, v);
+        preorderTravel(r->right, v);
+    }
+    void rpreorderTravel(TreeNode*r, vector<int>&v) {
+        if(r==NULL) return;
+        v.push_back(r->val);
+        rpreorderTravel(r->right, v);
+        rpreorderTravel(r->left, v);
+    }
+    void inorderTravel(TreeNode*r, vector<int>&v) {
+        if(r==NULL) return;
+        inorderTravel(r->left, v);
+        v.push_back(r->val);
+        inorderTravel(r->right, v);
+    }
+    void rinorderTravel(TreeNode*r, vector<int>&v) {
+        if(r==NULL) return;
+        rinorderTravel(r->right, v);
+        v.push_back(r->val);
+        rinorderTravel(r->left, v);
+    }
+    bool isSymmetric(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<int> order;
+        vector<int> rorder;
+        preorderTravel(root,order);
+        rpreorderTravel(root,rorder);
+        if (order != rorder)
+            return false;
+        else {
+            order.clear();
+            rorder.clear();
+            inorderTravel(root,order);
+            rinorderTravel(root,rorder);
+            return order == rorder;
+        }
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 100.Same Tree
-// preorder same and postorder same?
-
+// preorder same and postorder same? no!!!, since there are same value
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool travel2(TreeNode *p, TreeNode *q) {
+        if(p==NULL && q==NULL) return true;
+        if(p==NULL && q!=NULL) return false;
+        if(p!=NULL && q==NULL) return false;
+        if(p->val != q->val) return false;
+        return travel2(p->left, q->left) && travel2(p->right, q->right);
+    }
+    bool isSameTree(TreeNode *p, TreeNode *q) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        return travel2(p, q);
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 99.Recover Binary Search Tree
 // ?
