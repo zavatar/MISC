@@ -41,6 +41,10 @@ namespace misc {
 //  1. Linked lists, O(n) Find or Union
 //  2. Forests, (union by rank and path compression), O(amortized const) Find and Union
 //
+// Pancake sorting: 1.3 of Beauty of Programming (BoP)
+// Finished at most 2n-3 flips, but the minimum number of flips required is NP-hard problem
+// http://en.wikipedia.org/wiki/Pancake_sorting
+//
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T>

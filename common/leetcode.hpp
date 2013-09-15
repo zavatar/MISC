@@ -27,9 +27,10 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 // 131.Palindrome Partitioning
+// P(i,j) = S(i)==S(j) && P(i+1,j-1)
+// scan table P with i=n-1:0, j=i:n-1
 class Solution {
 public:
-
 	void DFS(string&s, int i, vector<vector<bool>>&P,
 		vector<vector<string>>&R, vector<string>&S){
 			int n = s.size();
@@ -45,7 +46,6 @@ public:
 				}
 			}
 	}
-
 	vector<vector<string>> partition(string s) {
 		// Start typing your C/C++ solution below
 		// DO NOT write int main() function
@@ -53,9 +53,9 @@ public:
 		vector<vector<bool>> P(n,vector<bool>(n,false));
 		for(int i=n-1; i>=0; i--) {
 			P[i][i] = true;
-			for(int k=i-1; k<n; k++) {
-				if (s[i]==s[k] && (k-i<3 || P[i+1][k-1]))
-					P[i][k] = true;
+			for(int j=i+1; j<n; j++) {
+				if (s[i]==s[j] && (j-i<3 || P[i+1][j-1]))
+					P[i][j] = true;
 			}
 		}
 		vector<vector<string>> results;
