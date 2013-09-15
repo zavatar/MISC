@@ -33,5 +33,27 @@ namespace misc{
 		}
 	}
 
+	MISC_FUNC_QUALIFIER bool ismatch( const char* s, const char* p, int n )
+	{
+		for(int i=0; i<n; i++)
+			if(s[i] != p[i])
+				return false;
+		return true;
+	}
+
+	template <typename Fun>
+	void RKSearch( const char* s, int n, const char* p, int m, Fun fn )
+	{
+		rabin_karp pat(p, m);
+		rabin_karp txt(s, m);
+		for (int i=0; i<n-m; i++) {
+			if(pat.hash() == txt.hash() && ismatch(s+i, p, m))
+				fn(i);
+			txt.rehash(s[i+m]);
+		}
+		if(pat.hash() == txt.hash() && ismatch(s+n-m, p, m))
+			fn(n-m);
+	}
+
 
 } // namespace misc

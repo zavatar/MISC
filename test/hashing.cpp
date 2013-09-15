@@ -25,4 +25,9 @@ TEST(FNV_1a_Test, Standard)
 	// Paul_Larson_hash
 	EXPECT_EQ(misc::Paul_Larson_hash(str.c_str()),
 		misc::Paul_Larson_hash(str.c_str()));
+
+	// Rabin_Karp
+	misc::rabin_karp rk(str.c_str(), str.size());
+	val = rk.hash();
+	EXPECT_NE(val, rk.rehash('A'));
 }

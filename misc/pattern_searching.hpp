@@ -20,6 +20,11 @@ namespace misc {
 	template <typename T, typename Fun>
 	void KMPSearch(T* s, int n, T* p, int m, Fun fn);
 
+	bool ismatch(const char* s, const char* p, int n);
+
+	template <typename Fun>
+	void RKSearch(const char* s, int n, const char* p, int m, Fun fn);
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE

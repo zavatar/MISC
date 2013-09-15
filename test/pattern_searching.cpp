@@ -14,4 +14,12 @@ TEST(KMPSearch_Test, Standard)
 		EXPECT_EQ(idx, r.back());
 		r.pop_back();
 	});
+
+	r.push_back(13);
+	r.push_back(9);
+	r.push_back(0);
+	misc::RKSearch(txt, 18, pat, 4, [&](int idx){
+		EXPECT_EQ(idx, r.back());
+		r.pop_back();
+	});
 }
