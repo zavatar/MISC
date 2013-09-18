@@ -240,8 +240,10 @@ namespace misc{
 	template <typename Key,template<class T,class U> class AdjE> 
 	template <typename Fun>
 	typename Graph<Key,AdjE>::weight_type Graph<Key,AdjE>::Prim_MST(Fun fn)
-	{ // Need priority-queue (min-heap) supported decreasing.
-	  // TODO: modify max_heapify in sorting.inl to support Structure
+	{ // Need priority-queue (min-heap) supported decreasing
+	  // TODO: modify max_heapify in sorting.inl to support it
+	  // Or using set
+
 		return 0;
 	}
 

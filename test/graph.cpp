@@ -42,8 +42,8 @@ TEST(Graph_Test, Standard)
 		// 0--1  2
 		// |  |_/|
 		// 3--4  5
-		enum Vertex_type{ v0, v1, v2, v3, v4, v5, vN };
-		typedef std::pair<Vertex_type, Vertex_type> Edge_type;
+		enum { v0, v1, v2, v3, v4, v5, vN };
+		typedef std::pair<int, int> Edge_type;
 		std::vector<Edge_type> eVec;
 		eVec.emplace_back(v0, v1);
 		eVec.emplace_back(v2, v4);
@@ -52,11 +52,11 @@ TEST(Graph_Test, Standard)
 		eVec.emplace_back(v1, v4);
 		eVec.emplace_back(v4, v3);
 
-		Vertex_type _bfs[6] = {v0,v1,v3,v4,v2,v5};
+		int _bfs[6] = {v0,v1,v3,v4,v2,v5};
 		std::vector<int> bfsexp(_bfs, _bfs+6);
-		Vertex_type _dfs[6] = {v0,v1,v4,v3,v2,v5};
+		int _dfs[6] = {v0,v1,v4,v3,v2,v5};
 		std::vector<int> dfsexp(_dfs, _dfs+6);
-		Vertex_type _top[6] = {v2,v5,v0,v1,v4,v3};
+		int _top[6] = {v2,v5,v0,v1,v4,v3};
 		std::vector<int> topexp(_top, _top+6);
 		std::vector<int> buff;
 
@@ -71,7 +71,7 @@ TEST(Graph_Test, Standard)
 		EXPECT_TRUE(bfsexp == buff);
 		buff.clear();
 
-		misc::Graph<Vertex_type, std::list> g(6);
+		misc::Graph<int, std::list> g(6);
 		g.addEdge(v0,v1);
 		g.addEdge(v2,v4);
 		g.addEdge(v2,v5);
