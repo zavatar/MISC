@@ -2,27 +2,84 @@
 
 #include "gtest/gtest.h"
 
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/depth_first_search.hpp>
+
+template <typename Fun>
+class bfs_visitor: public boost::default_bfs_visitor {
+public:
+	bfs_visitor(Fun functor): fn(functor) {}
+	template < typename Vertex, typename Graph >
+	void discover_vertex(Vertex u, const Graph & g) const
+	{
+		fn(u);
+	}
+private:
+	Fun fn;
+};
+
+template <typename Fun>
+class dfs_visitor: public boost::default_dfs_visitor {
+public:
+	dfs_visitor(Fun f1, Fun f2): fn(f1), ff(f2) {}
+	template < typename Vertex, typename Graph >
+	void discover_vertex(Vertex u, const Graph & g) const
+	{
+		fn(u);
+	}
+	template < typename Vertex, typename Graph >
+	void finish_vertex(Vertex u, const Graph & g) const
+	{
+		fn(u);
+	}
+private:
+	Fun fn, ff;
+};
+
 TEST(Graph_Test, Standard)
 {
 	// 0--1  2
 	// |  |_/|
 	// 3--4  5
-	misc::Graph g(6);
-	g.addEdge(0,1);
-	g.addEdge(2,4);
-	g.addEdge(2,5);
-	g.addEdge(0,3);
-	g.addEdge(1,4);
-	g.addEdge(4,3);
+	enum Vertex_type{ v0, v1, v2, v3, v4, v5, vN };
+	typedef std::pair<Vertex_type, Vertex_type> Edge_type;
+	std::vector<Edge_type> eVec;
+	eVec.emplace_back(v0, v1);
+	eVec.emplace_back(v2, v4);
+	eVec.emplace_back(v2, v5);
+	eVec.emplace_back(v0, v3);
+	eVec.emplace_back(v1, v4);
+	eVec.emplace_back(v4, v3);
 
 	auto dummyfun = [](int){};
 	auto printfun = [](int v){printf("%d\t", v);};
 
-	g.DFS(dummyfun, dummyfun);
+	misc::VVG bg(eVec.begin(), eVec.end(), vN);
+	boost::graph_traits<misc::VVG>::vertex_iterator beginit, endit;
+	beginit = boost::vertices(bg).first;
+	endit = boost::vertices(bg).second;
+	boost::breadth_first_search(bg, *beginit, boost::visitor(bfs_visitor<std::function<void(int)>>(printfun)));
+	printf("\n");
 
-	g.BFS(dummyfun);
+	misc::Graph g(6);
+	g.addEdge(v0,v1);
+	g.addEdge(v2,v4);
+	g.addEdge(v2,v5);
+	g.addEdge(v0,v3);
+	g.addEdge(v1,v4);
+	g.addEdge(v4,v3);
+
+	g.BFS(printfun);
+	printf("\n");
+
+	boost::depth_first_search(bg, boost::visitor(dfs_visitor<std::function<void(int)>>(printfun,printfun)));
+	printf("\n");
+
+	g.DFS(printfun, printfun);
+	printf("\n");
 
 	g.topological_sort(dummyfun);
+	printf("\n");
 
 	g.clear();
 //////////////////////////////////////////////////////////////////////////

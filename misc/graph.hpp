@@ -1,7 +1,9 @@
 #ifndef misc_graph
 #define misc_graph
 
-#include "boost/pending/disjoint_sets.hpp"
+#include <boost/config.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/pending/disjoint_sets.hpp>
 
 namespace misc {
 
@@ -23,6 +25,9 @@ namespace misc {
 // http://en.wikipedia.org/wiki/Bipartite_graph
 //
 //////////////////////////////////////////////////////////////////////////
+
+// vector, list, set, hash; direct, undirect, bidirect; 
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 	class Graph {
 		public:

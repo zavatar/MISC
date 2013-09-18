@@ -1352,9 +1352,28 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // 84.Largest Rectangle in Histogram
-// H(i,j) = min{hi, hj, H(i-1,j-1)}
-// return max{H(i,j)*(j-i+1)}
-
+// http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
+// O(n)
+class Solution {
+public:
+	int largestRectangleArea(vector<int> &h) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		stack<int> p;
+		int i = 0, m = 0;
+		h.push_back(0);
+		while(i < h.size()) {
+			if(p.empty() || h[p.top()] <= h[i])
+				p.push(i++);
+			else {
+				int t = p.top();
+				p.pop();
+				m = max(m, h[t] * (p.empty() ? i : i - p.top() - 1 ));
+			}
+		}
+		return m;
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 83.Remove Duplicates from Sorted List
 // Sorted List is trival

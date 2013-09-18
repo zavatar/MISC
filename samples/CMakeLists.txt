@@ -4,6 +4,7 @@ function(CreateSample NAME)
 	add_test( 
 	    NAME ${SAMPLE_NAME}
 	    COMMAND $<TARGET_FILE:${SAMPLE_NAME}>)
+  add_dependencies(${SAMPLE_NAME} loki)
 	if(NAME STREQUAL "virtual_inheritance" AND MSVC)
 		set_target_properties(${SAMPLE_NAME} PROPERTIES COMPILE_FLAGS /d1reportSingleClassLayoutDiamondSub)
 	elseif(NAME STREQUAL "allocator" AND STLPort)
@@ -22,7 +23,6 @@ function(CreateSample NAME)
 				optimized ${GTEST_LIBS_DIR}/ReleaseLibs/gtest.lib)
 		endif()
   elseif(NAME STREQUAL "loki_modern_cplusplus")
-    add_dependencies(${SAMPLE_NAME} loki)
     if(CMAKE_COMPILER_IS_GNUCXX)
 			target_link_libraries(${SAMPLE_NAME}
 				${LOKI_LIBS_DIR}/libloki.a)
