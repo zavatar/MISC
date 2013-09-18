@@ -29,53 +29,13 @@ namespace misc {
 // vector, list, set, hash; direct, undirect, bidirect; 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
+	template <typename Key,
+		template<class T,class U> class AdjE>
 	class Graph {
 		public:
 
 			typedef int id_type;
 			typedef float weight_type;
-
-			Graph(){}
-			Graph(int V);
-
-			void clear();
-
-			void resize(int V);
-
-			bool visited(id_type v);
-
-			void addEdge(id_type u, id_type v, weight_type w = 1);
-
-			template <typename Fun>
-			void foreachAdj(id_type v, Fun fn);
-
-			template <typename Fun>
-			void foreachEdge(Fun fn);
-
-			template <typename Fun>
-			void BFS(Fun fn);
-
-			template <typename startFun, typename finishFun>
-			void DFS(startFun sf, finishFun ff);
-
-			template <typename Fun>
-			void BFS_visit(id_type s, Fun fn);
-
-			template <typename startFun, typename finishFun>
-			void DFS_visit(id_type v, startFun sf, finishFun ff);
-
-			template <typename Fun>
-			void topological_sort(Fun fn);
-
-			void SCC();
-
-			template <typename Fun>
-			weight_type Kruskal_MST(Fun fn);
-
-			template <typename Fun>
-			weight_type Prim_MST(Fun fn);
-
-		private:
 
 			enum color_type {white, gray, green, red, black};
 
@@ -87,12 +47,55 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 			};
 
 			struct Vertex {
+				Key key;
 				color_type color;
-				std::list<Edge> adj;
+				AdjE<Edge,std::allocator<Edge>> adj;
 				Vertex():color(white){}
+				Vertex(Key&k):key(k),color(white){}
 			};
 
-			std::vector<Vertex> root;
+			
+			typedef std::vector<Vertex> Vlist_type;
+			typedef std::unordered_map<Key, id_type> keymap_type;
+
+			Graph(){}
+			Graph(int V);
+
+			void clear();
+
+			bool Visited(Key v);
+			
+			void addEdge(Key ku, Key kv, weight_type w = 1);
+
+			template <typename Fun>
+			void BFS(Fun fn);
+
+			template <typename startFun, typename finishFun>
+			void DFS(startFun sf, finishFun ff);
+
+			template <typename Fun>
+			void BFS_visit(Key ks, Fun fn);
+
+			template <typename startFun, typename finishFun>
+			void DFS_visit(Key kv, startFun sf, finishFun ff);
+
+			template <typename Fun>
+			void topological_sort(Fun fn);
+
+			// strongly connected components
+			void SCC();
+
+			template <typename Fun>
+			weight_type Kruskal_MST(Fun fn);
+
+			template <typename Fun>
+			weight_type Prim_MST(Fun fn);
+
+		private:
+
+			Vlist_type root;
+
+			keymap_type keymap;
 
 			color_type getColor(id_type v);
 
@@ -102,6 +105,23 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			void transpose(Graph& gt);
 
+			bool visited(id_type v);
+
+			void resize(int V);
+
+			id_type insert(Key& k);
+
+			template <typename Fun>
+			void foreachAdj(id_type v, Fun fn);
+
+			template <typename Fun>
+			void foreachEdge(Fun fn);
+
+			template <typename Fun>
+			void _BFS_visit(id_type s, Fun fn);
+
+			template <typename startFun, typename finishFun>
+			void _DFS_visit(id_type v, startFun sf, finishFun ff);
 	};
 
 } // misc
