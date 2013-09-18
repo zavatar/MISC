@@ -41,6 +41,32 @@ namespace misc {
 //
 // Van Emde Boas tree: O(lglgn) every operation, for unique int keys range in 0~n-1
 //
+// Lowest common ancestor (LCA)
+// http://en.wikipedia.org/wiki/Lowest_common_ancestor
+// http://www.slideshare.net/ekmett/skewbinary-online-lowest-common-ancestor-search
+// See also: Range Min-Max Queries (RMQ)
+// http://en.wikipedia.org/wiki/Range_Queries
+// http://community.topcoder.com/tc?module=Static&d1=tutorials&d2=lowestCommonAncestor
+// LCA and RMQ are strongly related problems that can be reduced one to another
+// overall complexity notation <f(n),g(n),s(n)>
+// f(n)->preprocessing time
+// g(n)->query time, s(n)->required memory
+// 1. naive dp algorithms: < O(n^2), O(1), O(n^2) >
+// 2. sqrt splitting: < O(n), O(sqrt(n)), O(n) >
+// 3. sparse table (ST): < O(nlgn), O(1), O(nlgn) > ---> like uniform interval Skip List (uiSL) strategy
+// 4. segment tree: < O(n), O(lgn), O(n) > ---> more like uiSL
+// 5. LCA==>RMQ==>restricted RMQ: < O(n), O(1), O(n) >
+//
+// See also: Level ancestor problem
+// http://en.wikipedia.org/wiki/Level_ancestor_problem
+// jump pointer algorithm
+//
+// See also: Cartesian tree
+// http://en.wikipedia.org/wiki/Cartesian_tree
+// 1. symmetric (in-order) traversal is the original sequence of Array
+// 2. heap property, the parent of any non-root node has a smaller value than the node itself
+// construct with inorder traversal, like construct BST from sorted array approach?
+//
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T>

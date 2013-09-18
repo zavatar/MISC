@@ -19,6 +19,9 @@ namespace misc {
 //                  max-flow min-cut theorem (graphcut),
 //                  Maximum bipartite matching
 //
+// Bipartite: DFS or BFS
+// http://en.wikipedia.org/wiki/Bipartite_graph
+//
 //////////////////////////////////////////////////////////////////////////
 
 	class Graph {

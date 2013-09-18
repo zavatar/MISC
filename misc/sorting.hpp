@@ -28,7 +28,7 @@ namespace misc {
 // Binary Search:
 // STL(algorithm): binary_search, equal_range, lower_bound/upper_bound.
 //
-// Fibonacci Heap: 
+// Fibonacci Heap: (lazy adjust strategy, optimal amortized time)
 // OP   | List |Sorted| BBST      | heap |FiHeap
 // push | O(1) | O(n) |O(lgn)	  |O(lgn)| O(1)
 // max  | O(n) | O(1) |O(lgn)	  | O(1) | O(1)
