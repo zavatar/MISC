@@ -11,8 +11,8 @@ namespace misc {
 
 	class timer
 	{
+		friend struct Loki::CreateUsingNew<timer>;
 	public:
-		MISC_FUNC_DECL timer();
 		MISC_FUNC_DECL void start();
 		MISC_FUNC_DECL void stop();
 		MISC_FUNC_DECL double elapsed(); // in millisecond
@@ -25,7 +25,13 @@ namespace misc {
 		timespec t1, t2;
 		//timeval t1, t2;
 #	endif
+
+		MISC_FUNC_DECL timer();
+		MISC_FUNC_DECL timer(const timer&);
+		MISC_FUNC_DECL timer& operator=(const timer&);
 	};
+
+	typedef Loki::SingletonHolder<timer> singleton_timer;
 
 } // misc
 

@@ -52,8 +52,8 @@ public:
 class Derive2: public Derive1 {
 public:
 	virtual void f() { printf("\tDerive2::f\n"); } // cover Base1
-	virtual void g() { printf("\tDerive2::g\n"); } // cover Derive1
-	virtual void h() { printf("\tDerive2::h2\n"); }
+	virtual void g1() { printf("\tDerive2::g1\n"); } // cover Derive1
+	virtual void h2() { printf("\tDerive2::h2\n"); }
 };
 
 class MultiDerive1: public Base1/*primary bases*/, public Base2, public Base3 {

@@ -28,6 +28,23 @@ namespace misc {
 // Binary Search:
 // STL(algorithm): binary_search, equal_range, lower_bound/upper_bound.
 //
+// Fibonacci Heap: (lazy adjust strategy, optimal amortized time)
+// OP   | List |Sorted| BBST      | heap |FiHeap
+// push | O(1) | O(n) |O(lgn)	  |O(lgn)| O(1)
+// max  | O(n) | O(1) |O(lgn)	  | O(1) | O(1)
+// pop  | O(n) | O(1) |O(lgn)	  |O(lgn)|O(lgn)
+// inc  | O(1) | O(n) |O(lgn)	  |O(lgn)| O(1)
+// merge| O(1) |O(m+n)|O(mlg(n+m))|O(n+m)| O(1)
+//
+// http://www.boost.org/doc/libs/1_54_0/libs/disjoint_sets/disjoint_sets.html
+// Disjoint Sets: Find, Union, Make_Set
+//  1. Linked lists, O(n) Find or Union
+//  2. Forests, (union by rank and path compression), O(amortized const) Find and Union
+//
+// Pancake sorting: 1.3 of Beauty of Programming (BoP)
+// Finished at most 2n-3 flips, but the minimum number of flips required is NP-hard problem
+// http://en.wikipedia.org/wiki/Pancake_sorting
+//
 //////////////////////////////////////////////////////////////////////////
 
 	template <typename T>

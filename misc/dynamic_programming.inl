@@ -12,9 +12,11 @@ namespace misc{
 		return f[1-b];
 	}
 
-	template <typename T>
-	void rod_cutting_bottomup( T *r, int *s, T *p, int n )
-	{ // r[i] = max(p[j]+r[i-j]), j = [1,i]
+	template <typename T, typename Fun>
+	T rod_cutting( T *p, int n, Fun fn )
+	{
+		std::vector<T> r(n+1);
+		std::vector<int> s(n+1);
 		for (int i=0; i<=n; i++) {
 			r[i] = p[i];
 			s[i] = i;
@@ -25,65 +27,15 @@ namespace misc{
 				}
 			}
 		}
-	}
-
-	template <typename T, typename Fun>
-	T rod_cutting( T *p, int n, Fun fn )
-	{
-		std::unique_ptr<T[]> r(new T[n+1]);
-		std::unique_ptr<int[]> s(new int[n+1]);
-		rod_cutting_bottomup(r.get(), s.get(), p, n);
 		// Reconstruct
 		for (int i=n; i>0; i-=s[i])
 			fn(s[i]);
 		return r[n];
 	}
 
-	template <typename T>
-	T rod_cutting( T *p, int n )
-	{
-		std::unique_ptr<T[]> r(new T[n+1]);
-		std::unique_ptr<int[]> s(new int[n+1]);
-		rod_cutting_bottomup(r.get(), s.get(), p, n);
-		return r[n];
-	}
-
-	template <typename T, typename Fun>
-	int LCS( T *x, int m, T *y, int n, Fun fn )
-	{
-		std::vector<std::vector<T>> L(m+1, std::vector<T>(n+1));
-		// 1:right, 2:right_down, 3:down
-		std::vector<std::vector<T>> F(m+1, std::vector<T>(n+1));
-		for (int i=0; i<=m; i++) {
-			for (int j=0; j<=n; j++) {
-				if (i==0 || j==0)
-					L[i][j] = F[i][j] = 0;
-				else if (x[i-1] == y[j-1]) {
-					L[i][j] = L[i-1][j-1] + 1;
-					F[i][j] = 2;
-				} else if (L[i-1][j] > L[i][j-1]) {
-					L[i][j] = L[i-1][j];
-					F[i][j] = 1;
-				} else {
-					L[i][j] = L[i][j-1];
-					F[i][j] = 3;
-				}
-			}
-		}
-		for (int i=m,j=n; i>0 && j>0; ) {
-			T f = F[i][j];
-			if (f == 1) i--;
-			else if (f == 2) {
-				fn(i-1, j-1); i--; j--;
-			} else if (f == 3) j--;
-			else break;
-		}
-		return L[m][n];
-	}
-
 	template <typename T, typename Fun>
 	int LIS( T *x, int n, Fun fn )
-	{ // lis[i] = 1+max(lis[j]), x[j]<x[i]
+	{
 		std::vector<int> lis(n, 1);
 		std::vector<int> s(n, -1);
 		int idx = 0;
@@ -103,32 +55,11 @@ namespace misc{
 		return lis[idx];
 	}
 
-	template <typename T>
-	int fastLIS( T *x, int n )
-	{
-		if (n<1) return n;
-		std::vector<int> m;
-		std::vector<int> p;
-		return fastLIS(m, p, x, n);
-	}
-
 	template <typename T, typename Fun>
 	int fastLIS( T *x, int n, Fun fn )
 	{
-		std::vector<int> m;
-		std::vector<int> p;
-		int L = fastLIS(m, p, x, n);
-		// Reconstruct
-		for (int k=m[L]; k>=0; k=p[k])
-			fn(x[k]);
-		return L;
-	}
-
-	template <typename T>
-	int fastLIS( std::vector<int> &m, std::vector<int> &p, T *x, int n )
-	{
-		m.resize(2, 0);
-		p.resize(n, -1);
+		std::vector<int> m(2, 0);
+		std::vector<int> p(n, -1);
 		int L = 1;
 		for (int i=1; i<n; i++) {
 			if (x[i] < x[m[1]]) // smallest
@@ -156,7 +87,137 @@ namespace misc{
 				p[i] = m[j];
 			}
 		}
+		// Reconstruct
+		for (int k=m[L]; k>=0; k=p[k])
+			fn(x[k]);
 		return L;
+	}
+
+	template <typename T, typename Fun>
+	int LCS( T *x, int m, T *y, int n, Fun fn )
+	{
+		std::vector<std::vector<int>> L(m+1, std::vector<int>(n+1));
+		// 1:left/right, 2:left_up/right_down, 3:up/down
+		std::vector<std::vector<char>> F(m+1, std::vector<char>(n+1));
+		for (int i=0; i<=m; i++) {
+			for (int j=0; j<=n; j++) {
+				if (i==0 || j==0)
+					L[i][j] = F[i][j] = 0;
+				else if (x[i-1] == y[j-1]) {
+					L[i][j] = L[i-1][j-1] + 1;
+					F[i][j] = 2;
+				} else if (L[i-1][j] > L[i][j-1]) {
+					L[i][j] = L[i-1][j];
+					F[i][j] = 3;
+				} else {
+					L[i][j] = L[i][j-1];
+					F[i][j] = 1;
+				}
+			}
+		}
+		for (int i=m,j=n; i>0 && j>0; ) {
+			char f = F[i][j];
+			if (f == 1) j--;
+			else if (f == 2) {
+				fn(i-1, j-1); i--; j--;
+			} else if (f == 3) i--;
+			else break;
+		}
+		return L[m][n];
+	}
+
+	template <typename T, typename Fun>
+	int edit_distance( T *x, int m, T *y, int n, Fun fn )
+	{
+		std::vector<std::vector<int>> E(m+1, std::vector<int>(n+1));
+		// 1:left/right, 2:left_up/right_down, 3:up/down
+		std::vector<std::vector<char>> F(m+1, std::vector<char>(n+1));
+		const int D = 1;
+		const int R = 1;
+		const int I = 1;
+		for (int i=0; i<=m; i++) {
+			for (int j=0; j<=n; j++) {
+				if (i==0) {
+					E[0][j] = j;
+					F[0][j] = 0;
+				} else if (j==0) {
+					E[i][0] = i;
+					F[i][0] = 0;
+				} else {
+					int u = E[i-1][j] + D;
+					int l = E[i][j-1] + I;
+					int lu= E[i-1][j-1] + (x[i-1]==y[j-1]?0:R);
+					if (u < lu) {
+						if (u < l) { // u
+							E[i][j] = u;
+							F[i][j] = 3;
+						} else { // l
+							E[i][j] = l;
+							F[i][j] = 1;
+						}
+					} else { // lu <= u
+						if (l < lu) { // l
+							E[i][j] = l;
+							F[i][j] = 1;
+						} else { // lu
+							E[i][j] = lu;
+							F[i][j] = 2;
+						}
+					}
+				}
+			}
+		}
+		for (int i=m,j=n; i>0 && j>0; ) {
+			char f = F[i][j];
+			if (f == 1) j--;
+			else if (f == 2) {
+				fn(i-1, j-1); i--; j--;
+			} else if (f == 3) i--;
+			else break;
+		}
+		return E[m][n];
+	}
+
+	template <typename T>
+	int palindrome_partitioningOn3( T *x, int n )
+	{
+		std::vector<std::vector<int>> M(n,std::vector<int>(n, 0));
+		for (int l=1; l<n; l++) {
+			for (int i=0; i<n-l; i++) {
+				int j=i+l;
+				if (x[i] == x[j] && M[i+1][j-1] == 0)
+					M[i][j] = 0;
+				else {
+					M[i][j] = n;
+					for (int k=i; k<j; k++) {
+						M[i][j] = std::min(M[i][k]+M[k+1][j]+1, M[i][j]);
+					}
+				}
+			}
+		}
+		return M[0][n-1];
+	}
+
+	template <typename T>
+	int palindrome_partitioningOn2( T *x, int n )
+	{
+		if (n<2) return 0;
+		std::vector<int> M(n,0);
+		std::vector<std::vector<bool>> P(n,std::vector<bool>(n,false));
+		for(int i=1; i<n; i++) {
+			if (x[0] == x[i] && (i<3 || P[1][i-1]))
+				M[i] = 0;
+			else {
+				M[i] = std::min(i, M[i-1]+1);
+				for (int k=i-1; k>0; k--) {
+					if (x[k] == x[i] && (i-k<3 || P[k+1][i-1])) {
+						P[k][i] = true;
+						M[i] = std::min(M[i], M[k-1]+1);
+					}
+				}  
+			}
+		}
+		return M[n-1];
 	}
 
 } // namespace misc

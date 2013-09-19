@@ -12,9 +12,11 @@ namespace misc {
 //
 // Hash Table: STL unordered_set (open address)
 //
+// Rabin-Karp algorithm (Rolling hash)
+//
 //////////////////////////////////////////////////////////////////////////
 
-	inline size_t FNV_1a_fun(const unsigned char* buf, size_t count);
+	size_t FNV_1a_fun(const unsigned char* buf, size_t count);
 
 	template<class T>
 	struct FNV_1a_base {
@@ -61,14 +63,27 @@ namespace misc {
 	};
 
 	// http://stackoverflow.com/questions/98153/whats-the-best-hashing-algorithm-to-use-on-a-stl-string-when-using-hash-map
-	inline size_t Paul_Larson_hash(const char* s)
-	{
-		const size_t SALT = 0;
-		size_t h = SALT;
-		while (*s)
-			h = h * 101 + (unsigned char) *s++;
-		return h;
-	}
+	size_t Paul_Larson_hash(const char* s);
+
+	class rabin_karp {
+		public:
+			rabin_karp(const char* s, int m);
+
+			int hash();
+
+			int rehash(const char& c);
+
+			int size();
+
+			void push(const char& c);
+
+		private:
+			int val;
+			int h;
+			std::queue<char> sq;
+			static const int D = 256;
+			static const int Q = 101;
+	};
 
 } // misc
 

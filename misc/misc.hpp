@@ -8,8 +8,17 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
+#include <string>
 #include <set>
 #include <unordered_set>
+#include <unordered_map>
+#include <forward_list>
+#include <list>
+#include <queue>
+#include <stack>
+#include <tuple>
+
+#include <loki/Singleton.h>
 
 #define NOMINMAX
 
@@ -22,5 +31,7 @@
 #include "tree.hpp"
 #include "hashing.hpp"
 #include "dynamic_programming.hpp"
+#include "graph.hpp"
+#include "pattern_searching.hpp"
 
 #endif//misc_misc
