@@ -234,7 +234,7 @@ namespace misc{
 			edges.emplace_back(v, e);
 		});
 		std::sort(edges.begin(), edges.end(),
-			[](edge_type&l, edge_type&r){
+			[](const edge_type&l, const edge_type&r){
 				return l.second.w < r.second.w;
 		});
 
