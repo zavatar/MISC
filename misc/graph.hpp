@@ -29,21 +29,33 @@ namespace misc {
 // vector, list, set, hash; direct, undirect, bidirect; 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
+	struct undirected {
+		static const bool value = true;
+	};
+
+	struct directed {
+		static const bool value = false;
+	};
+
 	template <typename Key,
-		template<class T,class U> class AdjE>
+		template<class T,class U> class AdjE,
+		typename Dir>
 	class Graph {
 		public:
 
 			typedef int id_type;
 			typedef float weight_type;
+			typedef float distance_type;
 
 			enum color_type {white, gray, green, red, black};
 
 			struct Edge {
 				id_type u;
 				weight_type w;
-				Edge():w(1){}
-				Edge(id_type _u,weight_type _w):u(_u),w(_w){}
+				distance_type d;
+				//Edge():w(1),d(1){}
+				Edge(id_type _u,weight_type _w,distance_type _d)
+					:u(_u),w(_w),d(_d){}
 			};
 
 			struct Vertex {
@@ -65,7 +77,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			bool Visited(Key v);
 			
-			void addEdge(Key ku, Key kv, weight_type w = 1);
+			void addEdge(Key ku, Key kv, weight_type w = 1, distance_type d = 1);
 
 			template <typename Fun>
 			void BFS(Fun fn);
@@ -79,17 +91,31 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 			template <typename startFun, typename finishFun>
 			void DFS_visit(Key kv, startFun sf, finishFun ff);
 
+			// O(V+E) time
 			template <typename Fun>
 			void topological_sort(Fun fn);
 
 			// strongly connected components
 			void SCC();
 
+			// O(ElgE) == O(ElgV) time
 			template <typename Fun>
 			weight_type Kruskal_MST(Fun fn);
 
+			// O(VlgV + ElgV) = O(ElgV) time
+			// if using Fibonacci Heap, O(E+VlgV) time
 			template <typename Fun>
 			weight_type Prim_MST(Fun fn);
+
+			// O(V+E) time
+			distance_type DAGShortestPath(Key ks, Key kt);
+
+			// O((V+E)lgV) time
+			// if using Fibonacci Heap, O(E+VlgV) time
+			distance_type Dijkstra(Key ks, Key kt);
+
+			// O(VE) time
+			distance_type Bellman_Ford(Key ks, Key kt);
 
 		private:
 
@@ -113,6 +139,9 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			template <typename Fun>
 			void foreachAdj(id_type v, Fun fn);
+
+			template <typename Fun>
+			void foreachAdjE(id_type v, Fun fn);
 
 			template <typename Fun>
 			void foreachEdge(Fun fn);
