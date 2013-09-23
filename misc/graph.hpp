@@ -39,13 +39,13 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 	template <typename Key,
 		template<class T,class U> class AdjE,
-		typename Dir>
+		typename Dir = undirected,
+		typename weight_type = float,
+		typename distance_type = float>
 	class Graph {
 		public:
 
 			typedef int id_type;
-			typedef float weight_type;
-			typedef float distance_type;
 
 			enum color_type {white, gray, green, red, black};
 
@@ -58,10 +58,12 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 					:u(_u),w(_w),d(_d){}
 			};
 
+			typedef AdjE<Edge,std::allocator<Edge>> Elist_type;
+
 			struct Vertex {
 				Key key;
 				color_type color;
-				AdjE<Edge,std::allocator<Edge>> adj;
+				Elist_type adj;
 				Vertex():color(white){}
 				Vertex(Key&k):key(k),color(white){}
 			};
@@ -77,7 +79,14 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			bool Visited(Key v);
 			
+			void addVertex(Key kv);
+
+			template <bool isUpdate>
+			void connect(Key ku, Key kv, weight_type w = 1, distance_type d = 1);
+
 			void addEdge(Key ku, Key kv, weight_type w = 1, distance_type d = 1);
+
+			void updateEdge(Key ku, Key kv, weight_type w = 1, distance_type d = 1);
 
 			template <typename Fun>
 			void BFS(Fun fn);
@@ -90,6 +99,9 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			template <typename startFun, typename finishFun>
 			void DFS_visit(Key kv, startFun sf, finishFun ff);
+
+			template <typename Fun>
+			void foreachAdj(Key kv, Fun fn);
 
 			// O(V+E) time
 			template <typename Fun>
@@ -113,6 +125,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 			// O((V+E)lgV) time
 			// if using Fibonacci Heap, O(E+VlgV) time
 			distance_type Dijkstra(Key ks, Key kt);
+			void DijkstraAll(Key ks, std::vector<distance_type> &D);
 
 			// O(VE) time
 			distance_type Bellman_Ford(Key ks, Key kt);
@@ -135,16 +148,16 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			void resize(int V);
 
-			id_type insert(Key& k);
+			void _updateEdge(id_type u, id_type v, weight_type w, distance_type d);
 
 			template <typename Fun>
-			void foreachAdj(id_type v, Fun fn);
+			void _foreachAdj(id_type v, Fun fn);
 
 			template <typename Fun>
-			void foreachAdjE(id_type v, Fun fn);
+			void _foreachAdjE(id_type v, Fun fn);
 
 			template <typename Fun>
-			void foreachEdge(Fun fn);
+			void _foreachEdge(Fun fn);
 
 			template <typename Fun>
 			void _BFS_visit(id_type s, Fun fn);
@@ -152,6 +165,16 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 			template <typename startFun, typename finishFun>
 			void _DFS_visit(id_type v, startFun sf, finishFun ff);
 	};
+
+#define GraphTemplate \
+	template <typename Key,\
+	template<class T,class U> class AdjE,\
+		typename Dir /*= undirected*/,\
+		typename weight_type /*= float*/,\
+		typename distance_type /*= float*/>
+
+#define GraphHead Graph<Key, AdjE, Dir, weight_type, distance_type>::
+
 
 } // misc
 

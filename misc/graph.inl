@@ -1,104 +1,141 @@
 namespace misc{
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	Graph<Key,AdjE,Dir>::Graph( int V )
+	GraphTemplate
+	GraphHead Graph( int V )
 	{
 		root.resize(V);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	void Graph<Key,AdjE,Dir>::clear()
+	GraphTemplate
+	void GraphHead clear()
 	{
 		root.clear();
 		keymap.clear();
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	void Graph<Key,AdjE,Dir>::resize( int V )
+	GraphTemplate
+	void GraphHead resize( int V )
 	{
 		root.resize(V);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	typename Graph<Key,AdjE,Dir>::color_type Graph<Key,AdjE,Dir>::getColor( id_type v )
+	GraphTemplate
+	typename GraphHead color_type GraphHead getColor( id_type v )
 	{
 		return root[v].color;
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	void Graph<Key,AdjE,Dir>::setColor( id_type v, color_type c )
+	GraphTemplate
+	void GraphHead setColor( id_type v, color_type c )
 	{
 		root[v].color = c;
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	bool Graph<Key,AdjE,Dir>::Visited( Key v )
+	GraphTemplate
+	bool GraphHead Visited( Key v )
 	{
 		return getColor(keymap[v]) != white;
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	bool Graph<Key,AdjE,Dir>::visited( id_type v )
+	GraphTemplate
+	bool GraphHead visited( id_type v )
 	{
 		return getColor(v) != white;
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	void Graph<Key,AdjE,Dir>::clearColor()
+	GraphTemplate
+	void GraphHead clearColor()
 	{
 		std::for_each(root.begin(), root.end(), [](Vertex&v){
 			v.color = white;
 		});
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	typename Graph<Key,AdjE,Dir>::id_type Graph<Key,AdjE,Dir>::insert( Key& k )
+	GraphTemplate
+	void GraphHead addVertex( Key kv )
 	{
-		id_type v;
-		if (keymap.find(k) == keymap.end()) {
-			v = keymap.size();
+		if (keymap.find(kv) == keymap.end()) {
+			id_type v = keymap.size();
 			if (v == root.size())
-				root.emplace_back(k);
+				root.emplace_back(kv);
 			else
-				root[v].key = k;
-			keymap[k] = v;
-		} else
-			v = keymap[k];
-		return v;
+				root[v].key = kv;
+			keymap[kv] = v;
+		}
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	void Graph<Key,AdjE,Dir>::addEdge( Key ku, Key kv, weight_type w, distance_type d )
+	GraphTemplate
+	template <bool isUpdate>
+	void GraphHead connect( Key ku, Key kv, weight_type w, distance_type d )
 	{
-		id_type u,v;
-		u = insert(ku);
-		v = insert(kv);
-		root[u].adj.emplace_back(v,w,d);
+		id_type u = keymap[ku];
+		id_type v = keymap[kv];
+
+		if (isUpdate) _updateEdge(u,v,w,d);
+		else root[u].adj.emplace_back(v,w,d);
 		if (Dir::value)
-			root[v].adj.emplace_back(u,w,d);
+			if (isUpdate) _updateEdge(v,u,w,d);
+			else root[v].adj.emplace_back(u,w,d);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
+	void GraphHead addEdge( Key ku, Key kv, weight_type w, distance_type d )
+	{
+		addVertex(ku);
+		addVertex(kv);
+		connect<false>(ku, kv, w, d);
+	}
+
+	GraphTemplate
+	void GraphHead updateEdge( Key ku, Key kv, weight_type w, distance_type d )
+	{
+		addVertex(ku);
+		addVertex(kv);
+		connect<true>(ku, kv, w, d);
+	}
+
+	GraphTemplate
+	void GraphHead _updateEdge( id_type u, id_type v, weight_type w, distance_type d )
+	{
+		Elist_type::iterator it = root[u].adj.begin();
+		Elist_type::iterator end = root[u].adj.end();
+		for (; it!=end; it++) {
+			if (it->u == v) {
+				it->w = w; it->d = d; break;
+			}
+		}
+		if (it==end)
+			root[u].adj.emplace_back(v,w,d);
+	}
+
+	GraphTemplate
 	template <typename Fun>
-	void Graph<Key,AdjE,Dir>::foreachAdj( id_type v, Fun fn )
+	void GraphHead foreachAdj( Key kv, Fun fn )
+	{
+		_foreachAdj(keymap[kv], fn);
+	}
+
+	GraphTemplate
+	template <typename Fun>
+	void GraphHead _foreachAdj( id_type v, Fun fn )
 	{
 		std::for_each(root[v].adj.begin(), root[v].adj.end(), [&](Edge&e){
 			fn(e.u);
 		});
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename Fun>
-	void Graph<Key,AdjE,Dir>::foreachAdjE( id_type v, Fun fn )
+	void GraphHead _foreachAdjE( id_type v, Fun fn )
 	{
 		std::for_each(root[v].adj.begin(), root[v].adj.end(), [&](Edge&e){
 			fn(e);
 		});
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename Fun>	
-	void Graph<Key,AdjE,Dir>::foreachEdge( Fun fn )
+	void GraphHead _foreachEdge( Fun fn )
 	{
 		for (id_type v=0; v<id_type(root.size()); v++)
 			std::for_each(root[v].adj.begin(), root[v].adj.end(), [&](Edge&e){
@@ -106,9 +143,9 @@ namespace misc{
 			});
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename Fun>
-	void Graph<Key,AdjE,Dir>::BFS( Fun fn )
+	void GraphHead BFS( Fun fn )
 	{
 		clearColor();
 		for (id_type v=0; v<id_type(root.size()); v++)
@@ -116,17 +153,17 @@ namespace misc{
 				_BFS_visit(v, fn);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename Fun>
-	void Graph<Key,AdjE,Dir>::BFS_visit( Key ks, Fun fn )
+	void GraphHead BFS_visit( Key ks, Fun fn )
 	{
 		id_type s = keymap[ks];
 		_BFS_visit(s, fn);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename Fun>
-	void Graph<Key,AdjE,Dir>::_BFS_visit( id_type s, Fun fn )
+	void GraphHead _BFS_visit( id_type s, Fun fn )
 	{
 		setColor(s, gray);
 		fn(root[s].key);
@@ -134,7 +171,7 @@ namespace misc{
 		Q.push(s);
 		while (Q.size() != 0) {
 			id_type v = Q.front();
-			foreachAdj(v, [&](id_type u){
+			_foreachAdj(v, [&](id_type u){
 				if (getColor(u) == white) {
 					setColor(u, gray);
 					fn(root[u].key);
@@ -146,9 +183,9 @@ namespace misc{
 		}
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename startFun, typename finishFun>
-	void Graph<Key,AdjE,Dir>::DFS( startFun sf, finishFun ff )
+	void GraphHead DFS( startFun sf, finishFun ff )
 	{
 		clearColor();
 		for (id_type v=0; v<id_type(root.size()); v++)
@@ -156,21 +193,21 @@ namespace misc{
 				_DFS_visit(v, sf, ff);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename startFun, typename finishFun>
-	void Graph<Key,AdjE,Dir>::DFS_visit( Key kv, startFun sf, finishFun ff )
+	void GraphHead DFS_visit( Key kv, startFun sf, finishFun ff )
 	{
 		id_type v = keymap[kv];
 		_DFS_visit(v, sf, ff);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename startFun, typename finishFun>
-	void Graph<Key,AdjE,Dir>::_DFS_visit( id_type v, startFun sf, finishFun ff )
+	void GraphHead _DFS_visit( id_type v, startFun sf, finishFun ff )
 	{
 		setColor(v, gray);
 		sf(root[v].key);
-		foreachAdj(v, [&](id_type u){
+		_foreachAdj(v, [&](id_type u){
 			if (getColor(u) == white)
 				_DFS_visit(u, sf, ff);
 		});
@@ -178,9 +215,9 @@ namespace misc{
 		ff(root[v].key);
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename Fun>
-	void Graph<Key,AdjE,Dir>::topological_sort( Fun fn )
+	void GraphHead topological_sort( Fun fn )
 	{
 		std::stack<Key> S;
 		DFS([](Key){}, [&](Key& v){S.push(v);});
@@ -188,19 +225,19 @@ namespace misc{
 			fn(S.top());
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	void Graph<Key,AdjE,Dir>::transpose( Graph& gt )
+	GraphTemplate
+	void GraphHead transpose( Graph& gt )
 	{
 		gt.clear();
 		gt.resize(root.size());
 		for (id_type v=0; v<id_type(root.size()); v++)
-			foreachAdj(v, [&](id_type u){
+			_foreachAdj(v, [&](id_type u){
 				gt.addEdge(root[u].key, root[v].key);
 			});
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
-	void Graph<Key,AdjE,Dir>::SCC()
+	GraphTemplate
+	void GraphHead SCC()
 	{
 		auto dummyfun = [](Key){};
 		auto printfun = [](Key v){std::cout<<v<<'\t';};
@@ -216,9 +253,9 @@ namespace misc{
 		});
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir>
+	GraphTemplate
 	template <typename Fun>
-	typename Graph<Key,AdjE,Dir>::weight_type Graph<Key,AdjE,Dir>::Kruskal_MST(Fun fn)
+	weight_type GraphHead Kruskal_MST(Fun fn)
 	{
 		int V = root.size();
 		std::vector<int> rank(V);
@@ -230,7 +267,7 @@ namespace misc{
 
 		typedef std::pair<id_type, Edge> edge_type;
 		std::vector<edge_type> edges;
-		foreachEdge([&](id_type v, Edge &e){
+		_foreachEdge([&](id_type v, Edge &e){
 			edges.emplace_back(v, e);
 		});
 		std::sort(edges.begin(), edges.end(),
@@ -254,9 +291,9 @@ namespace misc{
 		return ret;
 	}
 
-	template <typename Key,template<class T,class U> class AdjE,typename Dir> 
+	GraphTemplate 
 	template <typename Fun>
-	typename Graph<Key,AdjE,Dir>::weight_type Graph<Key,AdjE,Dir>::Prim_MST(Fun fn)
+	weight_type GraphHead Prim_MST(Fun fn)
 	{ // Need priority-queue (min-heap) supported decreasing
 	  // TODO: modify max_heapify in sorting.inl to support it
 	  // Or using set
@@ -264,10 +301,8 @@ namespace misc{
 		return 0;
 	}
 
-	template <typename Key,
-		template<class T,class U> class AdjE,
-		typename Dir>
-		typename Graph<Key,AdjE,Dir>::distance_type Graph<Key,AdjE,Dir>::DAGShortestPath(Key ks, Key kt)
+	GraphTemplate
+	distance_type GraphHead DAGShortestPath(Key ks, Key kt)
 	{
 		std::vector<distance_type> D(root.size(),std::numeric_limits<distance_type>::max());
 		id_type s = keymap[ks];
@@ -275,7 +310,7 @@ namespace misc{
 		D[s] = 0;
 		topological_sort([&](Key&k){
 			id_type v = keymap[k];
-			foreachAdjE(v, [&](Edge&e){
+			_foreachAdjE(v, [&](Edge&e){
 				if (D[e.u] > D[v]+e.d) {
 					D[e.u] = D[v]+e.d;
 				}
@@ -284,12 +319,11 @@ namespace misc{
 		return D[t];
 	}
 
-	template <typename Key,
-		template<class T,class U> class AdjE,
-		typename Dir>
-		typename Graph<Key,AdjE,Dir>::distance_type Graph<Key,AdjE,Dir>::Dijkstra(Key ks, Key kt)
-	{// replace priority-queue with map
-		std::vector<distance_type> D(root.size(),std::numeric_limits<distance_type>::max());
+	GraphTemplate
+	void GraphHead DijkstraAll( Key ks, std::vector<distance_type> &D )
+	{
+		D.clear();
+		D.resize(root.size(),std::numeric_limits<distance_type>::max());
 		std::set<std::pair<distance_type, id_type>> Q;
 		id_type s = keymap[ks];
 		D[s] = 0;
@@ -299,7 +333,7 @@ namespace misc{
 			distance_type d = md->first;
 			id_type v = md->second;
 			Q.erase(md);
-			foreachAdjE(v, [&](Edge&e){
+			_foreachAdjE(v, [&](Edge&e){
 				if (D[e.u] > D[v]+e.d) {
 					if (D[e.u] < std::numeric_limits<distance_type>::max())
 						Q.erase(Q.find(std::make_pair(D[e.u],e.u)));
@@ -308,25 +342,33 @@ namespace misc{
 				}
 			});
 		}
-		return D[keymap[kt]];
 	}
 
-	template <typename Key,
-		template<class T,class U> class AdjE,
-		typename Dir>
-		typename Graph<Key,AdjE,Dir>::distance_type Graph<Key,AdjE,Dir>::Bellman_Ford(Key ks, Key kt)
+	GraphTemplate
+	distance_type GraphHead Dijkstra(Key ks, Key kt)
+	{// replace priority-queue with map
+		std::vector<distance_type> D;
+		DijkstraAll(ks, D);
+		if (D[keymap[kt]] < std::numeric_limits<distance_type>::max())
+			return D[keymap[kt]];
+		else
+			return -1;
+	}
+
+	GraphTemplate
+	distance_type GraphHead Bellman_Ford(Key ks, Key kt)
 	{// replace priority-queue with map
 		std::vector<distance_type> D(root.size(),std::numeric_limits<distance_type>::max());
 		std::set<std::pair<distance_type, id_type>> Q;
 		id_type s = keymap[ks];
 		D[s] = 0;
 		for (id_type i=0; i<id_type(root.size()); i++)
-			foreachEdge([&](id_type v, Edge &e){
+			_foreachEdge([&](id_type v, Edge &e){
 				if (D[e.u] > D[v]+e.d) {
 					D[e.u] = D[v]+e.d;
 				}
 			});
-		foreachEdge([&](id_type v, Edge &e){
+		_foreachEdge([&](id_type v, Edge &e){
 			if (D[e.u] > D[v]+e.d) {
 				throw "has a negative-weight cycle";
 			}
