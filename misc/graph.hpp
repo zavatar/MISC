@@ -37,11 +37,13 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 		static const bool value = false;
 	};
 
+	// using default template template parameters
 	template <typename Key,
-		template<class T,class U> class AdjE,
 		typename Dir = undirected,
 		typename weight_type = float,
-		typename distance_type = float>
+		typename distance_type = float,
+		template<typename T> class Alloc = std::allocator,
+		template<typename T,typename U> class AdjE = std::vector>
 	class Graph {
 		public:
 
@@ -53,7 +55,6 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 				id_type u;
 				weight_type w;
 				distance_type d;
-				//Edge():w(1),d(1){}
 				Edge(id_type _u,weight_type _w,distance_type _d)
 					:u(_u),w(_w),d(_d){}
 			};
@@ -168,12 +169,14 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 #define GraphTemplate \
 	template <typename Key,\
-	template<class T,class U> class AdjE,\
 		typename Dir /*= undirected*/,\
 		typename weight_type /*= float*/,\
-		typename distance_type /*= float*/>
+		typename distance_type /*= float*/,\
+		template<typename T> class Alloc /*= std::allocator*/,\
+		template<typename T,typename U> class AdjE /*= std::vector*/>\
 
-#define GraphHead Graph<Key, AdjE, Dir, weight_type, distance_type>::
+
+#define GraphHead Graph<Key, Dir, weight_type, distance_type, Alloc, AdjE>::
 
 
 } // misc

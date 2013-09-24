@@ -69,7 +69,7 @@ TEST(Graph_Test, Standard)
 		EXPECT_TRUE(bfsexp == buff);
 		buff.clear();
 
-		misc::Graph<int, std::list, misc::undirected> g(6);
+		misc::Graph<int> g(6);
 		g.addEdge(v0,v1);
 		g.addEdge(v2,v4);
 		g.addEdge(v2,v5);
@@ -96,7 +96,7 @@ TEST(Graph_Test, Standard)
 		// a--b  c
 		// |  |_/|
 		// d--e  f
-		misc::Graph<std::string, std::list, misc::undirected> g;
+		misc::Graph<std::string> g;
 		g.addEdge("a","b");
 		g.addEdge("c","e");
 		g.addEdge("c","f");
@@ -127,7 +127,7 @@ TEST(Graph_Test, Standard)
 //////////////////////////////////////////////////////////////////////////
 	{
 		// case from CLRS Figure 22.9
-		misc::Graph<char, std::list, misc::directed> g;
+		misc::Graph<char, misc::directed> g;
 		char de[28] = {'0','1','1','2','2','3','3','2','4','0','1','4','1','5',
 			'2','6','3','7','4','5','5','6','6','5','6','7','7','7'};
 		for (int i=0; i<28; i+=2)
@@ -140,7 +140,7 @@ TEST(Graph_Test, Standard)
 //////////////////////////////////////////////////////////////////////////
 	{
 		// case from CLRS Figure 23.4
-		misc::Graph<char, std::list, misc::undirected> g;
+		misc::Graph<char, misc::undirected> g;
 		char e[14*2] = {'1','2','1','8','2','8','2','3','3','9','3','6','3','4',
 			'4','5','4','6','5','6','6','7','7','9','7','8','8','9'};
 		float w[14] = {4,8,11,8,2,4,7,9,14,10,2,6,1,7};
@@ -163,7 +163,7 @@ TEST(Graph_Test, Standard)
 		// |-----3-----|-----4------|
 		//             |---------2---------|
 		// has negative distance
-		misc::Graph<char, std::vector, misc::directed> g;
+		misc::Graph<char, misc::directed> g;
 		char de[2*10] = {'t','x','t','y','t','z', 'x','y','x','z', 'y','z', 
 			'r','s','r','t','s','t','s','x',};
 		float d[10] = {7,4,2, -1,1, -2, 5,3, 2,6};
