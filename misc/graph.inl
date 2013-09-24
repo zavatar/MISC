@@ -97,8 +97,8 @@ namespace misc{
 	GraphTemplate
 	void GraphHead _updateEdge( id_type u, id_type v, weight_type w, distance_type d )
 	{
-		Elist_type::iterator it = root[u].adj.begin();
-		Elist_type::iterator end = root[u].adj.end();
+		typename Elist_type::iterator it = root[u].adj.begin();
+		typename Elist_type::iterator end = root[u].adj.end();
 		for (; it!=end; it++) {
 			if (it->u == v) {
 				it->w = w; it->d = d; break;
