@@ -42,7 +42,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 		typename Dir = undirected,
 		typename weight_type = float,
 		typename distance_type = float,
-		template<typename T> class Alloc = std::allocator,
+		template<typename T> class Alloc = pool_alloc,
 		template<typename T,typename U> class AdjE = std::vector>
 	class Graph {
 		public:
@@ -59,7 +59,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 					:u(_u),w(_w),d(_d){}
 			};
 
-			typedef AdjE<Edge,std::allocator<Edge>> Elist_type;
+			typedef AdjE<Edge,Alloc<Edge>> Elist_type;
 
 			struct Vertex {
 				Key key;

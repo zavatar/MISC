@@ -321,10 +321,11 @@ namespace misc{
 
 	GraphTemplate
 	void GraphHead DijkstraAll( Key ks, std::vector<distance_type> &D )
-	{
+	{// replace priority-queue with map
+		typedef std::pair<distance_type, id_type> set_key_type;
 		D.clear();
 		D.resize(root.size(),std::numeric_limits<distance_type>::max());
-		std::set<std::pair<distance_type, id_type>> Q;
+		std::set<set_key_type, std::less<set_key_type>, Alloc<set_key_type>> Q;
 		id_type s = keymap[ks];
 		D[s] = 0;
 		Q.emplace(D[s], s);
@@ -346,7 +347,7 @@ namespace misc{
 
 	GraphTemplate
 	distance_type GraphHead Dijkstra(Key ks, Key kt)
-	{// replace priority-queue with map
+	{
 		std::vector<distance_type> D;
 		DijkstraAll(ks, D);
 		if (D[keymap[kt]] < std::numeric_limits<distance_type>::max())
@@ -358,8 +359,9 @@ namespace misc{
 	GraphTemplate
 	distance_type GraphHead Bellman_Ford(Key ks, Key kt)
 	{// replace priority-queue with map
+		typedef std::pair<distance_type, id_type> set_key_type;
 		std::vector<distance_type> D(root.size(),std::numeric_limits<distance_type>::max());
-		std::set<std::pair<distance_type, id_type>> Q;
+		std::set<set_key_type, std::less<set_key_type>, Alloc<set_key_type>> Q;
 		id_type s = keymap[ks];
 		D[s] = 0;
 		for (id_type i=0; i<id_type(root.size()); i++)
