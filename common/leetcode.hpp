@@ -1031,6 +1031,34 @@ public:
     }
     int maximum;
 };
+// iteratively
+class Solution {
+public:
+	int maxDepth(TreeNode *root) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int maximum = 0;
+		stack<TreeNode*> s;
+		TreeNode* r = root;
+		int d = 0;
+		while(true) {
+			if (r != NULL) {
+				s.push(r);
+				if(r->left == NULL && r->right == NULL)
+					maximum = max(maximum, int(s.size()));
+				r = r->left;
+			} else {
+				while(!s.empty() && s.top()==NULL) s.pop();
+				if(s.empty()) break;
+				r = s.top();
+				r = r->right;
+				s.pop();
+				s.push(NULL); // push dummy
+			}
+		}
+		return maximum;
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 103.Binary Tree Zigzag Level Order Traversal
 // Like 107. Could use Stack.
@@ -1288,7 +1316,6 @@ public:
 		return B[pre][n2];
 	}
 };
-
 //////////////////////////////////////////////////////////////////////////
 // 96.Unique Binary Search Trees
 class Solution {
@@ -1305,39 +1332,209 @@ public:
 		return N[n];
 	}
 };
-
 //////////////////////////////////////////////////////////////////////////
 // 95.Unique Binary Search Trees II
-// recursively build left and right tree
-
+//*recursively build left and right tree
+// http://fisherlei.blogspot.com/2013/03/leetcode-unique-binary-search-trees-ii.html
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	vector<TreeNode*> generate(int l, int r) {
+		vector<TreeNode*> subTree;
+		if(l>r) {
+			subTree.push_back(NULL);
+			return subTree;
+		}
+		for(int i=l; i<=r; i++) {
+			vector<TreeNode*> left = generate(l, i-1);
+			vector<TreeNode*> right = generate(i+1, r);
+			for(int j=0; j<left.size(); j++)
+			{
+				for(int k=0; k<right.size(); k++)
+				{
+					TreeNode*node = new TreeNode(i);
+					node->left = left[j];
+					node->right = right[k];
+					subTree.push_back(node);
+				}
+			}
+		}
+		return subTree;
+	}
+	vector<TreeNode *> generateTrees(int n) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		if(n==0) return generate(1,0);
+		return generate(1, n);
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 94.Binary Tree Inorder Traversal
-// iteratively?
+//*iteratively
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<int> ret;
+        stack<TreeNode*> s;
+        TreeNode* r = root;
+        while(true) {
+            if (r != NULL) {
+                s.push(r);
+                r = r->left;
+            } else {
+                if(s.empty()) break;
+                r = s.top();
+                s.pop();
+                ret.push_back(r->val);
+                r = r->right;
+            }
+        }
+        return ret;
+    }
+};
 
 //////////////////////////////////////////////////////////////////////////
 // 93.Restore IP Addresses
-// IP rule?
-
+// DFS
+class Solution {
+public:
+	void DFS(string&s, int k, string path, vector<string>&ret, int d) {
+		if (s.size()-k > (4-d)*3) return;
+		if (s.size()-k < (4-d)) return;
+		if (k==s.size() && d==4) {
+			path.pop_back();
+			ret.push_back(path);
+			return;
+		}
+		int ch = 0;
+		for(int i=k; i<k+3; i++) {
+			ch = ch*10 + s[i] - '0';
+			if (ch<=255) {
+				path.push_back(s[i]);
+				DFS(s, i+1, path+'.', ret, d+1);
+			}
+			if (ch == 0) break;
+		}
+	}
+	vector<string> restoreIpAddresses(string s) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		vector<string> ret;
+		string path;
+		DFS(s, 0, path, ret, 0);
+		return ret;
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 92.Reverse Linked List II
-// double pointers
-
+// how to be bug free only once?
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *reverseBetween(ListNode *head, int m, int n) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        ListNode h(0);
+        h.next = head;
+        ListNode* p1 = &h;
+        ListNode* p2 = head;
+        for(int i=0; i<m-1; i++)
+            p1 = p1->next;
+        for(int i=0; i<n; i++)
+            p2 = p2->next;
+        ListNode* tp = p1;
+        p1 = p1->next;
+        for(int i=0; i<=n-m; i++) {
+            ListNode* t = p1->next;
+            p1->next = p2;
+            p2 = p1;
+            p1 = t;
+        }
+        tp->next = p2;
+        return h.next;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 90.Subsets II
 // ?
 
 //////////////////////////////////////////////////////////////////////////
 // 91.Decode Ways
-// DP
+// DP, a lot of cases
+class Solution {
+public:
+	int numDecodings(string s) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int n = s.size();
+		if (n==0 || s[0]=='0') return 0;
+		vector<int> D(n+1,0);
+		D[0] = D[1] = 1;
+		for(int i=1; i<n; i++) {
+			if (s[i]!='0')
+				D[i+1] = D[i];
+			else if(s[i-1] > '2' || s[i-1] < '1')
+				return 0;
+			int ch = (s[i-1]-'0')*10+s[i]-'0';
+			if (ch <= 26 && ch >= 10)
+				D[i+1] += D[i-1];
 
+		}
+		return D[n];
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 89.Gray Code
 // 
 
 //////////////////////////////////////////////////////////////////////////
 // 88.Merge Sorted Array
-// Trivial merge sort
-
+// Trivial merge, in-place
+class Solution {
+public:
+	void merge(int A[], int m, int B[], int n) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		int k = m+n-1;
+		m--; n--;
+		while(k>=0 && m>=0 && n>=0) {
+			if(A[m] > B[n])
+				A[k--] = A[m--];
+			else
+				A[k--] = B[n--];
+		}
+		while(k>=0 && m>=0)
+			A[k--] = A[m--];
+		while(k>=0 && n>=0)
+			A[k--] = B[n--];
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 87.Scramble String
 // 
