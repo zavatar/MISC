@@ -1542,10 +1542,38 @@ public:
 //////////////////////////////////////////////////////////////////////////
 // 86.Partition List
 // Straight forward
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *partition(ListNode *head, int x) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        ListNode h(0);
+        h.next = head;
+        ListNode*lp = &h;
+        ListNode*pp = &h;
+        for(ListNode*p = head; p!=NULL; p=p->next) {
+            if(p->val < x) {
+                pp->next = p->next;
+                p->next = lp->next;
+                lp->next = p;
+				lp = p;
+            }
+            pp = p;
+        }
+        return h.next;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 85.Maximal Rectangle
-// DP, Like 4.4 in dynamic_programming
+// DP, Like 4.4 in dynamic_programming? No! here is Rectangle, not square
 
 //////////////////////////////////////////////////////////////////////////
 // 84.Largest Rectangle in Histogram

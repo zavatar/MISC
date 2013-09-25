@@ -49,7 +49,7 @@ namespace misc {
 //  4.3 Min Cost Path
 //       E(i,j) = min(E(i-1,j), E(i,j-1), E(i-1,j-1)) + C(i,j)
 //  4.4 Maximum size square sub-matrix with all 1s
-//       S(i,j) = min(S(i-1,j), S(i,j-1), S(i-1,j-1)), M[i][j]==1
+//       S(i,j) = min(S(i-1,j), S(i,j-1), S(i-1,j-1)) + 1, M[i][j]==1
 //              = 0, M[i][j]==0
 // *4.5 Longest Palindromic Subsequence
 //       L(i,j) = L(i+1,j-1)+2, X[i]==X[j]
