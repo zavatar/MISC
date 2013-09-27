@@ -1602,11 +1602,69 @@ public:
 //////////////////////////////////////////////////////////////////////////
 // 83.Remove Duplicates from Sorted List
 // Sorted List is trival
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if(head==NULL) return head;
+        ListNode* cur = head->next;
+        ListNode* pre = head;
+        while(cur!=NULL) {
+            if(pre->val == cur->val) {
+                pre->next = cur->next;
+                delete cur;
+            } else 
+                pre = cur;
+            cur = pre->next;
+        }
+        return head;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 82.Remove Duplicates from Sorted List II
 // Sorted List is trival
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        ListNode h(0);
+        h.next = head;
+        ListNode* cur = head;
+        ListNode* pre = &h;
+        while(cur!=NULL && cur->next!=NULL) {
+            if(cur->val == cur->next->val) {
+                int val = cur->val;
+                while(cur!=NULL && cur->val == val) {
+                    pre->next = cur->next;
+                    delete cur;
+                    cur = pre->next;
+                }
+            } else {
+                pre = cur;
+                cur = pre->next;
+            }
+        }
+        return h.next;
+    }
+};
 //////////////////////////////////////////////////////////////////////////
 // 81.Search in Rotated Sorted Array II
 // refer to 33.
@@ -1615,4 +1673,55 @@ public:
 // 80.Remove Duplicates from Sorted Array II
 // refer to 26.
 
+//////////////////////////////////////////////////////////////////////////
+// Combinations
+//
+class Solution {
+public:
+	void combine(int i, int n, int k, vector<int>&p) {
+		for(; i<=n; i++) {
+			p.push_back(i);
+			if(k==1) {
+				ret.push_back(p);
+			} else {
+				combine(i+1, n, k-1, p);
+			}
+			p.pop_back();
+		}
+	}
+	vector<vector<int> > combine(int n, int k) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		ret.clear();
+		vector<int> path;
+		combine(1, n, k, path);
+		return ret;
+	}
+	vector<vector<int>> ret;
+};
+//////////////////////////////////////////////////////////////////////////
+// Permutations 
+//
+class Solution {
+public:
+	void permute(int k,vector<int> &num) {
+		if (k<num.size()) {
+			for(int i=k; i<num.size(); i++) {
+				swap(num[i], num[k]);
+				permute(k+1, num);
+				swap(num[i], num[k]);
+			}
+		} else {
+			ret.push_back(num);
+		}
 
+	}
+	vector<vector<int> > permute(vector<int> &num) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function
+		ret.clear();
+		permute(0, num);
+		return ret;
+	}
+	vector<vector<int> > ret;
+};
