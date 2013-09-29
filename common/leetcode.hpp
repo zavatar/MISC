@@ -1714,7 +1714,6 @@ public:
 		} else {
 			ret.push_back(num);
 		}
-
 	}
 	vector<vector<int> > permute(vector<int> &num) {
 		// Start typing your C/C++ solution below

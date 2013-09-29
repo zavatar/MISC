@@ -2,6 +2,79 @@
 
 #include "gtest/gtest.h"
 
+struct TreeNode {
+	int val;
+	TreeNode *l;
+	TreeNode *r;
+	TreeNode() : val(0), l(NULL), r(NULL) {}
+	TreeNode(int x) : val(x), l(NULL), r(NULL) {}
+};
+
+TEST(BinaryTree, Travel)
+{
+	std::vector<TreeNode*> nodes;
+	for (int i=0; i<7; i++)
+		nodes.push_back(new TreeNode(i));
+	nodes[0]->l = nodes[1];
+	nodes[0]->r = nodes[2];
+
+	nodes[1]->l = nodes[3];
+	nodes[1]->r = nodes[4];
+
+	nodes[2]->l = nodes[5];
+	nodes[2]->r = nodes[6];
+
+	int  pre[] = {0,1,3,4,2,5,6};
+	int   in[] = {3,1,4,0,5,2,6};
+	int post[] = {3,4,1,5,6,2,0};
+
+	// recursively
+	int i=0;
+	misc::PreOrderRecursively(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, pre[i++]);
+	});
+	EXPECT_TRUE(i==7); i=0;
+	misc::InOrderRecursively(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, in[i++]);
+	});
+	EXPECT_TRUE(i==7); i=0;
+	misc::PostOrderRecursively(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, post[i++]);
+	});
+	EXPECT_TRUE(i==7);
+
+	i=0;
+	misc::PreOrderIteratively(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, pre[i++]);
+	});
+	EXPECT_TRUE(i==7);i=0;
+	misc::InOrderIteratively(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, in[i++]);
+	});
+	EXPECT_TRUE(i==7);i=0;
+	misc::PostOrderIteratively(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, post[i++]);
+	});
+	EXPECT_TRUE(i==7);
+
+	i=0;
+	misc::PreOrderMorris(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, pre[i++]);
+	});
+	EXPECT_TRUE(i==7);i=0;
+	misc::InOrderMorris(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, in[i++]);
+	});
+	EXPECT_TRUE(i==7);i=0;
+	misc::PostOrderMorris(nodes[0], [&](TreeNode* r){
+		EXPECT_EQ(r->val, post[i++]);
+	});
+	EXPECT_TRUE(i==7);
+
+	for (int i=0; i<7; i++)
+		delete nodes[i];
+}
+
 // T : (BST, AVL, ...)
 template <typename T>
 class DynamicSetTest : public testing::Test {

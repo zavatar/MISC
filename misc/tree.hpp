@@ -86,6 +86,33 @@ namespace misc {
 		int h;
 	};
 
+	template <typename node_type, typename Fun>
+	void PreOrderRecursively(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void InOrderRecursively(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void PostOrderRecursively(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void PreOrderIteratively(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void InOrderIteratively(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void PostOrderIteratively(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void PreOrderMorris(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void InOrderMorris(node_type* root, Fun fn);
+
+	template <typename node_type, typename Fun>
+	void PostOrderMorris(node_type* root, Fun fn);
+
 	// Could extract an abstract interface class BT.
 	// BT(key,l,r) ---> interfaces(insert,delete) && pre/in/post order walk
 	//     |
@@ -158,19 +185,16 @@ namespace misc {
 			bool find(T val){ return search(val)!=NULL; }
 
 			template <typename Fun>
-			void traversal(Fun fn){ inorder(fn); }
+			void traversal(Fun fn){inorder(fn);}
 
-			// Preorder Tree Walk
 			template <typename Fun>
-			void preorder(Fun fn);
+			void preorder(Fun fn){PreOrderRecursively(root, fn);}
 
-			// Inorder Tree Walk
 			template <typename Fun>
-			void inorder(Fun fn);
+			void inorder(Fun fn){InOrderRecursively(root, fn);}
 
-			// Postorder Tree Walk
 			template <typename Fun>
-			void postorder(Fun fn);
+			void postorder(Fun fn){PostOrderRecursively(root, fn);}
 
 			void clear(){ destroy(root); root = NULL;}
 
