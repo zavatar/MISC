@@ -23,7 +23,7 @@ bool isBigEndian()
 		int _b4;
 	} num;
 	num._b4 = 0x1234;
-	if (num._b1 == 0x12)
+	if (num._b1 == 0x00)
 		return true;
 	else
 		return false;

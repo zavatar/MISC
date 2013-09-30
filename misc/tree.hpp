@@ -104,6 +104,7 @@ namespace misc {
 	template <typename node_type, typename Fun>
 	void PostOrderIteratively(node_type* root, Fun fn);
 
+	// http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html
 	template <typename node_type, typename Fun>
 	void PreOrderMorris(node_type* root, Fun fn);
 
