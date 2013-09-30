@@ -2,7 +2,6 @@
 #define misc_graph
 
 #include <boost/config.hpp>
-#include <boost/graph/adjacency_list.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 
 namespace misc {
@@ -26,9 +25,6 @@ namespace misc {
 //
 //////////////////////////////////////////////////////////////////////////
 
-// vector, list, set, hash; direct, undirect, bidirect; 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
-
 	struct undirected {
 		static const bool value = true;
 	};
@@ -37,19 +33,51 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 		static const bool value = false;
 	};
 
+	template <typename Key, typename id_type>
+	class keyInt0 {};
+
+	template <>
+	class keyInt0<int, int> {
+		public:
+			int keymap(int&k) { return k; }
+			int addkey(int&k) { return k; }
+			void clearkey(){}
+	};
+
+	template <typename Key, typename id_type>
+	class keyMap {
+		public:
+			typedef std::unordered_map<Key, id_type> map_type;
+
+			id_type keymap(Key&k) { return map[k]; }
+
+			id_type addkey(Key&k) { 
+				if (map.find(k) == map.end())
+					map[k]= map.size();
+				return map[k];
+			}
+
+			void clearkey() { map.clear(); }
+
+		private:
+
+			map_type map;
+	};
+
 	// using default template template parameters
 	template <typename Key,
 		typename Dir = undirected,
+		template<typename T,typename U> class KeyPolicy = keyMap,
 		typename weight_type = float,
 		typename distance_type = float,
 		template<typename T> class Alloc = pool_alloc,
 		template<typename T,typename U> class AdjE = std::vector>
-	class Graph {
+	class Graph : public KeyPolicy<Key, int> {
 		public:
 
 			typedef int id_type;
 
-			enum color_type {white, gray, green, red, black};
+			enum color_type {white, gray, green, red, black, invisible};
 
 			struct Edge {
 				id_type u;
@@ -65,13 +93,11 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 				Key key;
 				color_type color;
 				Elist_type adj;
-				Vertex():color(white){}
-				Vertex(Key&k):key(k),color(white){}
+				Vertex():color(invisible){}
+				Vertex(Key&k):key(k),color(invisible){}
 			};
 
-			
 			typedef std::vector<Vertex> Vlist_type;
-			typedef std::unordered_map<Key, id_type> keymap_type;
 
 			Graph(){}
 			Graph(int V);
@@ -135,11 +161,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			Vlist_type root;
 
-			keymap_type keymap;
-
-			color_type getColor(id_type v);
-
-			void setColor(id_type v, color_type c);
+			color_type& Color(id_type& v);
 
 			void clearColor();
 
@@ -147,9 +169,14 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 
 			bool visited(id_type v);
 
+			bool visible(id_type v);
+
 			void resize(int V);
 
 			void _updateEdge(id_type u, id_type v, weight_type w, distance_type d);
+
+			template <typename Fun>
+			void _foreachVertex(Fun fn);
 
 			template <typename Fun>
 			void _foreachAdj(id_type v, Fun fn);
@@ -170,13 +197,14 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> VVG;
 #define GraphTemplate \
 	template <typename Key,\
 		typename Dir /*= undirected*/,\
+		template<typename T,typename U> class KeyPolicy /*= keyMap*/,\
 		typename weight_type /*= float*/,\
 		typename distance_type /*= float*/,\
 		template<typename T> class Alloc /*= std::allocator*/,\
 		template<typename T,typename U> class AdjE /*= std::vector*/>\
 
 
-#define GraphHead Graph<Key, Dir, weight_type, distance_type, Alloc, AdjE>::
+#define GraphHead Graph<Key, Dir, KeyPolicy, weight_type, distance_type, Alloc, AdjE>::
 
 
 } // misc
