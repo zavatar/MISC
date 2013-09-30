@@ -75,6 +75,11 @@ namespace misc {
 	class Graph : public KeyPolicy<Key, int> {
 		public:
 
+			// http://stackoverflow.com/questions/5286922/g-template-parameter-error
+			using KeyPolicy<Key, int>::keymap;
+			using KeyPolicy<Key, int>::addkey;
+			using KeyPolicy<Key, int>::clearkey;
+
 			typedef int id_type;
 
 			enum color_type {white, gray, green, red, black, invisible};
