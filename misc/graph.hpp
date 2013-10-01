@@ -33,25 +33,25 @@ namespace misc {
 		static const bool value = false;
 	};
 
-	template <typename Key, typename id_type>
+	template <typename _Key, typename id_type>
 	class keyInt0 {};
 
 	template <>
 	class keyInt0<int, int> {
 		public:
-			int keymap(int&k) { return k; }
+			int Id(int&k) { return k; }
 			int addkey(int&k) { return k; }
 			void clearkey(){}
 	};
 
-	template <typename Key, typename id_type>
+	template <typename _Key, typename id_type>
 	class keyMap {
 		public:
-			typedef std::unordered_map<Key, id_type> map_type;
+			typedef std::unordered_map<_Key, id_type> map_type;
 
-			id_type keymap(Key&k) { return map[k]; }
+			id_type Id(_Key&k) { return map[k]; }
 
-			id_type addkey(Key&k) { 
+			id_type addkey(_Key&k) { 
 				if (map.find(k) == map.end())
 					map[k]= map.size();
 				return map[k];
@@ -65,20 +65,20 @@ namespace misc {
 	};
 
 	// using default template template parameters
-	template <typename Key,
-		typename Dir = undirected,
-		template<typename T,typename U> class KeyPolicy = keyMap,
-		typename weight_type = float,
-		typename distance_type = float,
-		template<typename T> class Alloc = pool_alloc,
-		template<typename T,typename U> class AdjE = std::vector>
-	class Graph : public KeyPolicy<Key, int> {
+	template <typename _Key,
+		typename _Dir = undirected,
+		template<typename T,typename U> class _KeyPolicy = keyMap,
+		typename _Weight = float,
+		typename _Dist = float,
+		template<typename T> class _Alloc = pool_alloc,
+		template<typename T,typename U> class _AdjE = std::vector>
+	class Graph : public _KeyPolicy<_Key, int> {
 		public:
 
 			// http://stackoverflow.com/questions/5286922/g-template-parameter-error
-			using KeyPolicy<Key, int>::keymap;
-			using KeyPolicy<Key, int>::addkey;
-			using KeyPolicy<Key, int>::clearkey;
+			using _KeyPolicy<_Key, int>::Id;
+			using _KeyPolicy<_Key, int>::addkey;
+			using _KeyPolicy<_Key, int>::clearkey;
 
 			typedef int id_type;
 
@@ -86,20 +86,20 @@ namespace misc {
 
 			struct Edge {
 				id_type u;
-				weight_type w;
-				distance_type d;
-				Edge(id_type _u,weight_type _w,distance_type _d)
+				_Weight w;
+				_Dist d;
+				Edge(id_type _u,_Weight _w,_Dist _d)
 					:u(_u),w(_w),d(_d){}
 			};
 
-			typedef AdjE<Edge,Alloc<Edge>> Elist_type;
+			typedef _AdjE<Edge,_Alloc<Edge>> Elist_type;
 
 			struct Vertex {
-				Key key;
+				_Key key;
 				color_type color;
 				Elist_type adj;
 				Vertex():color(invisible){}
-				Vertex(Key&k):key(k),color(invisible){}
+				Vertex(_Key&k):key(k),color(invisible){}
 			};
 
 			typedef std::vector<Vertex> Vlist_type;
@@ -109,16 +109,16 @@ namespace misc {
 
 			void clear();
 
-			bool Visited(Key v);
+			bool Visited(_Key v);
 			
-			void addVertex(Key kv);
+			void addVertex(_Key kv);
 
 			template <bool isUpdate>
-			void connect(Key ku, Key kv, weight_type w = 1, distance_type d = 1);
+			void connect(_Key ku, _Key kv, _Weight w = 1, _Dist d = 1);
 
-			void addEdge(Key ku, Key kv, weight_type w = 1, distance_type d = 1);
+			void addEdge(_Key ku, _Key kv, _Weight w = 1, _Dist d = 1);
 
-			void updateEdge(Key ku, Key kv, weight_type w = 1, distance_type d = 1);
+			void updateEdge(_Key ku, _Key kv, _Weight w = 1, _Dist d = 1);
 
 			template <typename Fun>
 			void BFS(Fun fn);
@@ -127,13 +127,13 @@ namespace misc {
 			void DFS(startFun sf, finishFun ff);
 
 			template <typename Fun>
-			void BFS_visit(Key ks, Fun fn);
+			void BFS_visit(_Key ks, Fun fn);
 
 			template <typename startFun, typename finishFun>
-			void DFS_visit(Key kv, startFun sf, finishFun ff);
+			void DFS_visit(_Key kv, startFun sf, finishFun ff);
 
 			template <typename Fun>
-			void foreachAdj(Key kv, Fun fn);
+			void foreachAdj(_Key kv, Fun fn);
 
 			// O(V+E) time
 			template <typename Fun>
@@ -144,29 +144,31 @@ namespace misc {
 
 			// O(ElgE) == O(ElgV) time
 			template <typename Fun>
-			weight_type Kruskal_MST(Fun fn);
+			_Weight Kruskal_MST(Fun fn);
 
 			// O(VlgV + ElgV) = O(ElgV) time
 			// if using Fibonacci Heap, O(E+VlgV) time
 			template <typename Fun>
-			weight_type Prim_MST(Fun fn);
+			_Weight Prim_MST(Fun fn);
 
 			// O(V+E) time
-			distance_type DAGShortestPath(Key ks, Key kt);
+			_Dist DAGShortestPath(_Key ks, _Key kt);
 
 			// O((V+E)lgV) time
 			// if using Fibonacci Heap, O(E+VlgV) time
-			distance_type Dijkstra(Key ks, Key kt);
-			void DijkstraAll(Key ks, std::vector<distance_type> &D);
+			_Dist Dijkstra(_Key ks, _Key kt);
+			void DijkstraAll(_Key ks, std::vector<_Dist> &D);
 
 			// O(VE) time
-			distance_type Bellman_Ford(Key ks, Key kt);
+			_Dist Bellman_Ford(_Key ks, _Key kt);
 
 		private:
 
 			Vlist_type root;
 
 			color_type& Color(id_type& v);
+
+			_Key& Key(id_type& v);
 
 			void clearColor();
 
@@ -178,7 +180,7 @@ namespace misc {
 
 			void resize(int V);
 
-			void _updateEdge(id_type u, id_type v, weight_type w, distance_type d);
+			void _updateEdge(id_type u, id_type v, _Weight w, _Dist d);
 
 			template <typename Fun>
 			void _foreachVertex(Fun fn);
@@ -200,16 +202,16 @@ namespace misc {
 	};
 
 #define GraphTemplate \
-	template <typename Key,\
-		typename Dir /*= undirected*/,\
-		template<typename T,typename U> class KeyPolicy /*= keyMap*/,\
-		typename weight_type /*= float*/,\
-		typename distance_type /*= float*/,\
-		template<typename T> class Alloc /*= std::allocator*/,\
-		template<typename T,typename U> class AdjE /*= std::vector*/>\
+	template <typename _Key,\
+		typename _Dir /*= undirected*/,\
+		template<typename T,typename U> class _KeyPolicy /*= keyMap*/,\
+		typename _Weight /*= float*/,\
+		typename _Dist /*= float*/,\
+		template<typename T> class _Alloc /*= std::allocator*/,\
+		template<typename T,typename U> class _AdjE /*= std::vector*/>\
 
 
-#define GraphHead Graph<Key, Dir, KeyPolicy, weight_type, distance_type, Alloc, AdjE>::
+#define GraphHead Graph<_Key, _Dir, _KeyPolicy, _Weight, _Dist, _Alloc, _AdjE>::
 
 
 } // misc

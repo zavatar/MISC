@@ -26,9 +26,15 @@ namespace misc{
 	}
 
 	GraphTemplate
-	bool GraphHead Visited( Key v )
+	_Key& GraphHead Key( id_type& v )
 	{
-		return visited(keymap(v));
+		return root[v].key;
+	}
+
+	GraphTemplate
+	bool GraphHead Visited( _Key v )
+	{
+		return visited(Id(v));
 	}
 
 	GraphTemplate
@@ -52,30 +58,30 @@ namespace misc{
 	}
 
 	GraphTemplate
-	void GraphHead addVertex( Key kv )
+	void GraphHead addVertex( _Key kv )
 	{
 		id_type v = addkey(kv);
 		root.resize(std::max(v+1, id_type(root.size())));
-		root[v].key = kv;
+		Key(v) = kv;
 		Color(v) = white;
 	}
 
 	GraphTemplate
 	template <bool isUpdate>
-	void GraphHead connect( Key ku, Key kv, weight_type w, distance_type d )
+	void GraphHead connect( _Key ku, _Key kv, _Weight w, _Dist d )
 	{
-		id_type u = keymap(ku);
-		id_type v = keymap(kv);
+		id_type u = Id(ku);
+		id_type v = Id(kv);
 
 		if (isUpdate) _updateEdge(u,v,w,d);
 		else root[u].adj.emplace_back(v,w,d);
-		if (Dir::value)
+		if (_Dir::value)
 			if (isUpdate) _updateEdge(v,u,w,d);
 			else root[v].adj.emplace_back(u,w,d);
 	}
 
 	GraphTemplate
-	void GraphHead addEdge( Key ku, Key kv, weight_type w, distance_type d )
+	void GraphHead addEdge( _Key ku, _Key kv, _Weight w, _Dist d )
 	{
 		addVertex(ku);
 		addVertex(kv);
@@ -83,7 +89,7 @@ namespace misc{
 	}
 
 	GraphTemplate
-	void GraphHead updateEdge( Key ku, Key kv, weight_type w, distance_type d )
+	void GraphHead updateEdge( _Key ku, _Key kv, _Weight w, _Dist d )
 	{
 		addVertex(ku);
 		addVertex(kv);
@@ -91,7 +97,7 @@ namespace misc{
 	}
 
 	GraphTemplate
-	void GraphHead _updateEdge( id_type u, id_type v, weight_type w, distance_type d )
+	void GraphHead _updateEdge( id_type u, id_type v, _Weight w, _Dist d )
 	{
 		typename Elist_type::iterator it = root[u].adj.begin();
 		typename Elist_type::iterator end = root[u].adj.end();
@@ -115,9 +121,9 @@ namespace misc{
 
 	GraphTemplate
 	template <typename Fun>
-	void GraphHead foreachAdj( Key kv, Fun fn )
+	void GraphHead foreachAdj( _Key kv, Fun fn )
 	{
-		_foreachAdj(keymap(kv), fn);
+		_foreachAdj(Id(kv), fn);
 	}
 
 	GraphTemplate
@@ -162,9 +168,9 @@ namespace misc{
 
 	GraphTemplate
 	template <typename Fun>
-	void GraphHead BFS_visit( Key ks, Fun fn )
+	void GraphHead BFS_visit( _Key ks, Fun fn )
 	{
-		id_type s = keymap(ks);
+		id_type s = Id(ks);
 		_BFS_visit(s, fn);
 	}
 
@@ -173,7 +179,7 @@ namespace misc{
 	void GraphHead _BFS_visit( id_type s, Fun fn )
 	{
 		Color(s) = gray;
-		fn(root[s].key);
+		fn(Key(s));
 		std::queue<id_type> Q;
 		Q.push(s);
 		while (Q.size() != 0) {
@@ -181,7 +187,7 @@ namespace misc{
 			_foreachAdj(v, [&](id_type u){
 				if (!visited(u)) {
 					Color(u) = gray;
-					fn(root[u].key);
+					fn(Key(u));
 					Q.push(u);
 				}
 			});
@@ -203,9 +209,9 @@ namespace misc{
 
 	GraphTemplate
 	template <typename startFun, typename finishFun>
-	void GraphHead DFS_visit( Key kv, startFun sf, finishFun ff )
+	void GraphHead DFS_visit( _Key kv, startFun sf, finishFun ff )
 	{
-		id_type v = keymap(kv);
+		id_type v = Id(kv);
 		_DFS_visit(v, sf, ff);
 	}
 
@@ -214,21 +220,21 @@ namespace misc{
 	void GraphHead _DFS_visit( id_type v, startFun sf, finishFun ff )
 	{
 		Color(v) = gray;
-		sf(root[v].key);
+		sf(Key(v));
 		_foreachAdj(v, [&](id_type u){
 			if (!visited(u))
 				_DFS_visit(u, sf, ff);
 		});
 		Color(v) = black;
-		ff(root[v].key);
+		ff(Key(v));
 	}
 
 	GraphTemplate
 	template <typename Fun>
 	void GraphHead topological_sort( Fun fn )
 	{
-		std::stack<Key> S;
-		DFS([](Key){}, [&](Key& v){S.push(v);});
+		std::stack<_Key> S;
+		DFS([](_Key){}, [&](_Key& v){S.push(v);});
 		for (; S.size() != 0; S.pop())
 			fn(S.top());
 	}
@@ -239,20 +245,20 @@ namespace misc{
 		gt.clear();
 		gt.resize(root.size());
 		_foreachEdge([&](id_type v, Edge &e){
-			gt.addEdge(root[e.u].key, root[v].key);
+			gt.addEdge(Key(e.u), Key(v));
 		});
 	}
 
 	GraphTemplate
 	void GraphHead SCC()
 	{
-		auto dummyfun = [](Key){};
-		auto printfun = [](Key v){std::cout<<v<<'\t';};
+		auto dummyfun = [](_Key){};
+		auto printfun = [](_Key v){std::cout<<v<<'\t';};
 
 		Graph gt;
 		transpose(gt);
 
-		topological_sort([&](Key&k){
+		topological_sort([&](_Key&k){
 			if (!gt.Visited(k)) {
 				gt.DFS_visit(k, printfun, dummyfun);
 				printf("\n");
@@ -262,7 +268,7 @@ namespace misc{
 
 	GraphTemplate
 	template <typename Fun>
-	weight_type GraphHead Kruskal_MST(Fun fn)
+	_Weight GraphHead Kruskal_MST(Fun fn)
 	{
 		int V = root.size();
 		std::vector<int> rank(V);
@@ -283,14 +289,14 @@ namespace misc{
 				return l.second.w < r.second.w;
 		});
 
-		weight_type ret = 0;
+		_Weight ret = 0;
 		std::for_each(edges.begin(), edges.end(), [&](edge_type&t){
 			id_type v = t.first;
 			id_type u = t.second.u;
 			id_type vp = dsets.find_set(v);
 			id_type up = dsets.find_set(u);
 			if (vp != up) {
-				fn(root[v].key, root[u].key);
+				fn(Key(v), Key(u));
 				ret += t.second.w;
 				dsets.link(vp, up);
 			}
@@ -301,7 +307,7 @@ namespace misc{
 
 	GraphTemplate 
 	template <typename Fun>
-	weight_type GraphHead Prim_MST(Fun fn)
+	_Weight GraphHead Prim_MST(Fun fn)
 	{ // Need priority-queue (min-heap) supported decreasing
 	  // TODO: modify max_heapify in sorting.inl to support it
 	  // Or using set
@@ -310,14 +316,14 @@ namespace misc{
 	}
 
 	GraphTemplate
-	distance_type GraphHead DAGShortestPath(Key ks, Key kt)
+	_Dist GraphHead DAGShortestPath(_Key ks, _Key kt)
 	{
-		std::vector<distance_type> D(root.size(),std::numeric_limits<distance_type>::max());
-		id_type s = keymap(ks);
-		id_type t = keymap(kt);
+		std::vector<_Dist> D(root.size(),std::numeric_limits<_Dist>::max());
+		id_type s = Id(ks);
+		id_type t = Id(kt);
 		D[s] = 0;
-		topological_sort([&](Key&k){
-			id_type v = keymap(k);
+		topological_sort([&](_Key&k){
+			id_type v = Id(k);
 			_foreachAdjE(v, [&](Edge&e){
 				if (D[e.u] > D[v]+e.d) {
 					D[e.u] = D[v]+e.d;
@@ -328,23 +334,23 @@ namespace misc{
 	}
 
 	GraphTemplate
-	void GraphHead DijkstraAll( Key ks, std::vector<distance_type> &D )
+	void GraphHead DijkstraAll( _Key ks, std::vector<_Dist> &D )
 	{// replace priority-queue with map
-		typedef std::pair<distance_type, id_type> set_key_type;
+		typedef std::pair<_Dist, id_type> set_key_type;
 		D.clear();
-		D.resize(root.size(),std::numeric_limits<distance_type>::max());
-		std::set<set_key_type, std::less<set_key_type>, Alloc<set_key_type>> Q;
-		id_type s = keymap(ks);
+		D.resize(root.size(),std::numeric_limits<_Dist>::max());
+		std::set<set_key_type, std::less<set_key_type>, _Alloc<set_key_type>> Q;
+		id_type s = Id(ks);
 		D[s] = 0;
 		Q.emplace(D[s], s);
 		while(!Q.empty()) {
 			auto md = Q.begin();
-			distance_type d = md->first;
+			_Dist d = md->first;
 			id_type v = md->second;
 			Q.erase(md);
 			_foreachAdjE(v, [&](Edge&e){
 				if (D[e.u] > D[v]+e.d) {
-					if (D[e.u] < std::numeric_limits<distance_type>::max())
+					if (D[e.u] < std::numeric_limits<_Dist>::max())
 						Q.erase(Q.find(std::make_pair(D[e.u],e.u)));
 					D[e.u] = D[v]+e.d;
 					Q.emplace(D[e.u], e.u);
@@ -354,23 +360,23 @@ namespace misc{
 	}
 
 	GraphTemplate
-	distance_type GraphHead Dijkstra(Key ks, Key kt)
+	_Dist GraphHead Dijkstra(_Key ks, _Key kt)
 	{
-		std::vector<distance_type> D;
+		std::vector<_Dist> D;
 		DijkstraAll(ks, D);
-		if (D[keymap(kt)] < std::numeric_limits<distance_type>::max())
-			return D[keymap(kt)];
+		if (D[Id(kt)] < std::numeric_limits<_Dist>::max())
+			return D[Id(kt)];
 		else
 			return -1;
 	}
 
 	GraphTemplate
-	distance_type GraphHead Bellman_Ford(Key ks, Key kt)
+	_Dist GraphHead Bellman_Ford(_Key ks, _Key kt)
 	{// replace priority-queue with map
-		typedef std::pair<distance_type, id_type> set_key_type;
-		std::vector<distance_type> D(root.size(),std::numeric_limits<distance_type>::max());
-		std::set<set_key_type, std::less<set_key_type>, Alloc<set_key_type>> Q;
-		id_type s = keymap(ks);
+		typedef std::pair<_Dist, id_type> set_key_type;
+		std::vector<_Dist> D(root.size(),std::numeric_limits<_Dist>::max());
+		std::set<set_key_type, std::less<set_key_type>, _Alloc<set_key_type>> Q;
+		id_type s = Id(ks);
 		D[s] = 0;
 		_foreachVertex([&](id_type v){
 			_foreachEdge([&](id_type v, Edge &e){
@@ -384,7 +390,7 @@ namespace misc{
 				throw "has a negative-weight cycle";
 			}
 		});
-		return D[keymap(kt)];
+		return D[Id(kt)];
 	}
 
 } // namespace misc
