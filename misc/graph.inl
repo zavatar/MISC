@@ -67,17 +67,14 @@ namespace misc{
 	}
 
 	GraphTemplate
-	template <bool isUpdate>
 	void GraphHead connect( _Key ku, _Key kv, _Weight w, _Dist d )
 	{
 		id_type u = Id(ku);
 		id_type v = Id(kv);
 
-		if (isUpdate) _updateEdge(u,v,w,d);
-		else root[u].adj.emplace_back(v,w,d);
+		root[u].adj[v] = Edge(w,d);
 		if (_Dir::value)
-			if (isUpdate) _updateEdge(v,u,w,d);
-			else root[v].adj.emplace_back(u,w,d);
+			root[v].adj[u] = Edge(w,d);
 	}
 
 	GraphTemplate
@@ -85,7 +82,7 @@ namespace misc{
 	{
 		addVertex(ku);
 		addVertex(kv);
-		connect<false>(ku, kv, w, d);
+		connect(ku, kv, w, d);
 	}
 
 	GraphTemplate
@@ -93,21 +90,7 @@ namespace misc{
 	{
 		addVertex(ku);
 		addVertex(kv);
-		connect<true>(ku, kv, w, d);
-	}
-
-	GraphTemplate
-	void GraphHead _updateEdge( id_type u, id_type v, _Weight w, _Dist d )
-	{
-		typename Elist_type::iterator it = root[u].adj.begin();
-		typename Elist_type::iterator end = root[u].adj.end();
-		for (; it!=end; it++) {
-			if (it->u == v) {
-				it->w = w; it->d = d; break;
-			}
-		}
-		if (it==end)
-			root[u].adj.emplace_back(v,w,d);
+		connect(ku, kv, w, d);
 	}
 
 	GraphTemplate
@@ -130,18 +113,16 @@ namespace misc{
 	template <typename Fun>
 	void GraphHead _foreachAdj( id_type v, Fun fn )
 	{
-		std::for_each(root[v].adj.begin(), root[v].adj.end(), [&](Edge&e){
-			fn(e.u);
-		});
+		for (const auto &e : root[v].adj)
+			fn(e.first);
 	}
 
 	GraphTemplate
 	template <typename Fun>
 	void GraphHead _foreachAdjE( id_type v, Fun fn )
 	{
-		std::for_each(root[v].adj.begin(), root[v].adj.end(), [&](Edge&e){
-			fn(e);
-		});
+		for (const auto &e : root[v].adj)
+			fn(e.first, e.second);
 	}
 
 	GraphTemplate
@@ -149,8 +130,8 @@ namespace misc{
 	void GraphHead _foreachEdge( Fun fn )
 	{
 		_foreachVertex([&](id_type v){
-			_foreachAdjE(v, [&](Edge&e){
-				fn(v, e);
+			_foreachAdjE(v, [&](id_type u, const Edge&e){
+				fn(v, u, e);
 			});
 		});
 	}
@@ -244,8 +225,8 @@ namespace misc{
 	{
 		gt.clear();
 		gt.resize(root.size());
-		_foreachEdge([&](id_type v, Edge &e){
-			gt.addEdge(Key(e.u), Key(v));
+		_foreachEdge([&](id_type v, id_type u, const Edge &e){
+			gt.addEdge(Key(u), Key(v));
 		});
 	}
 
@@ -279,28 +260,28 @@ namespace misc{
 			dsets.make_set(v);
 		});
 
-		typedef std::pair<id_type, Edge> edge_type;
+		typedef std::tuple<id_type, id_type, Edge> edge_type;
 		std::vector<edge_type> edges;
-		_foreachEdge([&](id_type v, Edge &e){
-			edges.emplace_back(v, e);
+		_foreachEdge([&](id_type v, id_type u, const Edge &e){
+			edges.emplace_back(v, u, e);
 		});
 		std::sort(edges.begin(), edges.end(),
 			[](const edge_type&l, const edge_type&r){
-				return l.second.w < r.second.w;
+				return std::get<2>(l).w < std::get<2>(r).w;
 		});
 
 		_Weight ret = 0;
-		std::for_each(edges.begin(), edges.end(), [&](edge_type&t){
-			id_type v = t.first;
-			id_type u = t.second.u;
+		for (const auto &t : edges) {
+			id_type v = std::get<0>(t);
+			id_type u = std::get<1>(t);
 			id_type vp = dsets.find_set(v);
 			id_type up = dsets.find_set(u);
 			if (vp != up) {
 				fn(Key(v), Key(u));
-				ret += t.second.w;
+				ret += std::get<2>(t).w;
 				dsets.link(vp, up);
 			}
-		});
+		}
 
 		return ret;
 	}
@@ -324,9 +305,9 @@ namespace misc{
 		D[s] = 0;
 		topological_sort([&](_Key&k){
 			id_type v = Id(k);
-			_foreachAdjE(v, [&](Edge&e){
-				if (D[e.u] > D[v]+e.d) {
-					D[e.u] = D[v]+e.d;
+			_foreachAdjE(v, [&](id_type u, const Edge&e){
+				if (D[u] > D[v]+e.d) {
+					D[u] = D[v]+e.d;
 				}
 			});
 		});
@@ -348,12 +329,12 @@ namespace misc{
 			_Dist d = md->first;
 			id_type v = md->second;
 			Q.erase(md);
-			_foreachAdjE(v, [&](Edge&e){
-				if (D[e.u] > D[v]+e.d) {
-					if (D[e.u] < std::numeric_limits<_Dist>::max())
-						Q.erase(Q.find(std::make_pair(D[e.u],e.u)));
-					D[e.u] = D[v]+e.d;
-					Q.emplace(D[e.u], e.u);
+			_foreachAdjE(v, [&](id_type u, const Edge&e){
+				if (D[u] > D[v]+e.d) {
+					if (D[u] < std::numeric_limits<_Dist>::max())
+						Q.erase(Q.find(std::make_pair(D[u],u)));
+					D[u] = D[v]+e.d;
+					Q.emplace(D[u], u);
 				}
 			});
 		}
@@ -379,14 +360,14 @@ namespace misc{
 		id_type s = Id(ks);
 		D[s] = 0;
 		_foreachVertex([&](id_type v){
-			_foreachEdge([&](id_type v, Edge &e){
-				if (D[e.u] > D[v]+e.d) {
-					D[e.u] = D[v]+e.d;
+			_foreachEdge([&](id_type v, id_type u, const Edge &e){
+				if (D[u] > D[v]+e.d) {
+					D[u] = D[v]+e.d;
 				}
 			});
 		});
-		_foreachEdge([&](id_type v, Edge &e){
-			if (D[e.u] > D[v]+e.d) {
+		_foreachEdge([&](id_type v, id_type u, const Edge &e){
+			if (D[u] > D[v]+e.d) {
 				throw "has a negative-weight cycle";
 			}
 		});

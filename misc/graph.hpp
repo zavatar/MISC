@@ -47,31 +47,24 @@ namespace misc {
 	template <typename _Key, typename id_type>
 	class keyMap {
 		public:
-			typedef std::unordered_map<_Key, id_type> map_type;
-
 			id_type Id(_Key&k) { return map[k]; }
-
 			id_type addkey(_Key&k) { 
 				if (map.find(k) == map.end())
 					map[k]= map.size();
 				return map[k];
 			}
-
 			void clearkey() { map.clear(); }
-
 		private:
-
-			map_type map;
+			std::unordered_map<_Key, id_type> map;
 	};
 
 	// using default template template parameters
 	template <typename _Key,
 		typename _Dir = undirected,
-		template<typename T,typename U> class _KeyPolicy = keyMap,
+		template<typename,typename> class _KeyPolicy = keyMap,
 		typename _Weight = float,
 		typename _Dist = float,
-		template<typename T> class _Alloc = pool_alloc,
-		template<typename T,typename U> class _AdjE = std::vector>
+		template<typename> class _Alloc = pool_alloc>
 	class Graph : public _KeyPolicy<_Key, int> {
 		public:
 
@@ -85,14 +78,13 @@ namespace misc {
 			enum color_type {white, gray, green, red, black, invisible};
 
 			struct Edge {
-				id_type u;
 				_Weight w;
 				_Dist d;
-				Edge(id_type _u,_Weight _w,_Dist _d)
-					:u(_u),w(_w),d(_d){}
+				Edge(){}
+				Edge(_Weight _w,_Dist _d):w(_w),d(_d){}
 			};
 
-			typedef _AdjE<Edge,_Alloc<Edge>> Elist_type;
+			typedef std::unordered_map<id_type,Edge> Elist_type;
 
 			struct Vertex {
 				_Key key;
@@ -113,7 +105,6 @@ namespace misc {
 			
 			void addVertex(_Key kv);
 
-			template <bool isUpdate>
 			void connect(_Key ku, _Key kv, _Weight w = 1, _Dist d = 1);
 
 			void addEdge(_Key ku, _Key kv, _Weight w = 1, _Dist d = 1);
@@ -180,8 +171,6 @@ namespace misc {
 
 			void resize(int V);
 
-			void _updateEdge(id_type u, id_type v, _Weight w, _Dist d);
-
 			template <typename Fun>
 			void _foreachVertex(Fun fn);
 
@@ -204,14 +193,13 @@ namespace misc {
 #define GraphTemplate \
 	template <typename _Key,\
 		typename _Dir /*= undirected*/,\
-		template<typename T,typename U> class _KeyPolicy /*= keyMap*/,\
+		template<typename,typename> class _KeyPolicy /*= keyMap*/,\
 		typename _Weight /*= float*/,\
 		typename _Dist /*= float*/,\
-		template<typename T> class _Alloc /*= std::allocator*/,\
-		template<typename T,typename U> class _AdjE /*= std::vector*/>\
+		template<typename> class _Alloc /*= std::allocator*/>
 
 
-#define GraphHead Graph<_Key, _Dir, _KeyPolicy, _Weight, _Dist, _Alloc, _AdjE>::
+#define GraphHead Graph<_Key, _Dir, _KeyPolicy, _Weight, _Dist, _Alloc>::
 
 
 } // misc
