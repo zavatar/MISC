@@ -131,7 +131,7 @@ namespace misc {
 			void topological_sort(Fun fn);
 
 			// strongly connected components
-			void SCC();
+			int SCC();
 
 			// O(ElgE) == O(ElgV) time
 			template <typename Fun>

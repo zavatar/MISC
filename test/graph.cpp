@@ -18,10 +18,18 @@ TEST(Graph_Test, Standard)
 		eVec.emplace_back(v1, v4);
 		eVec.emplace_back(v4, v3);
 
-		int _bfs[6] = {v0,v1,v3,v4,v2,v5};
-		std::vector<int> bfsexp(_bfs, _bfs+6);
-		int _dfs[6] = {v0,v1,v4,v2,v5,v3};
-		std::vector<int> dfsexp(_dfs, _dfs+6);
+		int _bfs1[6] = {v0,v1,v3,v4,v2,v5};
+		int _bfs2[6] = {v0,v3,v1,v4,v2,v5};
+		std::vector<int> bfsexp1(_bfs1, _bfs1+6);
+		std::vector<int> bfsexp2(_bfs2, _bfs2+6);
+		int _dfs1[6] = {v0,v1,v4,v2,v5,v3};
+		int _dfs2[6] = {v0,v1,v4,v3,v2,v5};
+		int _dfs3[6] = {v0,v3,v4,v2,v5,v1};
+		int _dfs4[6] = {v0,v3,v4,v1,v2,v5};
+		std::vector<int> dfsexp1(_dfs1, _dfs1+6);
+		std::vector<int> dfsexp2(_dfs2, _dfs2+6);
+		std::vector<int> dfsexp3(_dfs3, _dfs3+6);
+		std::vector<int> dfsexp4(_dfs4, _dfs4+6);
 		std::vector<int> buff;
 
 		auto dummyfun = [](int){};
@@ -36,44 +44,12 @@ TEST(Graph_Test, Standard)
 		g.addEdge(v4,v3);
 
 		g.BFS(printfun);
-		EXPECT_TRUE(bfsexp == buff);
+		EXPECT_TRUE(bfsexp1 == buff || bfsexp2 == buff);
 		buff.clear();
 
 		g.DFS(printfun, dummyfun);
-		EXPECT_TRUE(dfsexp == buff);
-		buff.clear();
-
-		g.clear();
-	}
-//////////////////////////////////////////////////////////////////////////
-	{
-		// a--b  c
-		// |  |_/|
-		// d--e  f
-		misc::Graph<std::string> g;
-		g.addEdge("a","b");
-		g.addEdge("c","e");
-		g.addEdge("c","f");
-		g.addEdge("a","d");
-		g.addEdge("b","e");
-		g.addEdge("e","d");
-
-		std::string _bfs[6] = {"a","b","d","e","c","f"};
-		std::vector<std::string> bfsexp(_bfs, _bfs+6);
-		std::string _dfs[6] = {"a","b","e","c","f","d"};
-		std::vector<std::string> dfsexp(_dfs, _dfs+6);
-
-		std::vector<std::string> buff;
-
-		auto dummyfun = [](std::string){};
-		auto printfun = [&](std::string& v){buff.push_back(v);};
-
-		g.BFS(printfun);
-		EXPECT_TRUE(bfsexp == buff);
-		buff.clear();
-
-		g.DFS(printfun, dummyfun);
-		EXPECT_TRUE(dfsexp == buff);
+		EXPECT_TRUE(dfsexp1 == buff || dfsexp2 == buff ||
+			dfsexp3 == buff || dfsexp4 == buff);
 		buff.clear();
 
 		g.clear();
@@ -87,7 +63,7 @@ TEST(Graph_Test, Standard)
 		for (int i=0; i<28; i+=2)
 			g.addEdge(de[i], de[i+1]);
 
-		g.SCC();
+		EXPECT_EQ(g.SCC(), 4);
 
 		g.clear();
 	}
@@ -95,8 +71,8 @@ TEST(Graph_Test, Standard)
 	{
 		// case from CLRS Figure 23.4
 		misc::Graph<char, misc::undirected> g;
-		char e[14*2] = {'1','2','1','8','2','8','2','3','3','9','3','6','3','4',
-			'4','5','4','6','5','6','6','7','7','9','7','8','8','9'};
+		char e[14*2] = {'a','b','a','h','b','h','b','c','c','i','c','f','c','d',
+			'd','e','d','f','e','f','f','g','g','i','g','h','h','i'};
 		float w[14] = {4,8,11,8,2,4,7,9,14,10,2,6,1,7};
 		for (int i=0; i<14; i++)
 			g.addEdge(e[2*i], e[2*i+1], w[i]);

@@ -231,7 +231,7 @@ namespace misc{
 	}
 
 	GraphTemplate
-	void GraphHead SCC()
+	int GraphHead SCC()
 	{
 		auto dummyfun = [](_Key){};
 		auto printfun = [](_Key v){std::cout<<v<<'\t';};
@@ -239,12 +239,16 @@ namespace misc{
 		Graph gt;
 		transpose(gt);
 
+		int counts = 0;
 		topological_sort([&](_Key&k){
 			if (!gt.Visited(k)) {
+				counts++;
 				gt.DFS_visit(k, printfun, dummyfun);
 				printf("\n");
 			}
 		});
+
+		return counts;
 	}
 
 	GraphTemplate
