@@ -479,12 +479,12 @@ namespace misc{
 
 			// max flow on the augment path
 			_Weight path_flow = std::numeric_limits<_Weight>::max();
-			rg.foreachPath(t, [&](id_type v, id_type u, const rGraph_type::Edge&e){
+			rg.foreachPath(t, [&](id_type v, id_type u, const typename rGraph_type::Edge&e){
 				path_flow = std::min(path_flow, e.w);
 			});
 
 			// update residual capacities
-			rg.foreachPath(t, [&](id_type v, id_type u, const rGraph_type::Edge&e){
+			rg.foreachPath(t, [&](id_type v, id_type u, const typename rGraph_type::Edge&e){
 				if ((e.w-path_flow) <= 0)
 					rg.disconnect(v, u);
 				else
