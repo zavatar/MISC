@@ -16,7 +16,7 @@ before_script:
   - cmake ..
   
 script:
-  - make && make test && ./build/release/tests
+  - make && ../build/release/tests && make test
 
 branches:
   only:
