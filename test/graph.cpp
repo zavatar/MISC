@@ -141,4 +141,26 @@ TEST(Graph_Test, Standard)
 
 		g.clear();
 	}
+//////////////////////////////////////////////////////////////////////////
+	{
+		misc::Graph<char, misc::directed, misc::keyMap, float, int> g;
+		char de[2*9] = {'1','2','1','3','1','5', '2','4','2','5', '3','2',
+		'4','1','4','3', '5','4'};
+		int d[9] = {3,8,-4, 1,7, 4, 2,-5, 6};
+		for (int i=0; i<9; i++)
+			g.addEdge(de[2*i], de[2*i+1], 1, d[i]);
+
+		int expd[5][5] = {
+			{ 0, 1,-3, 2,-4},
+			{ 3, 0,-4, 1,-1},
+			{ 7, 4, 0, 5, 3},
+			{ 2,-1,-5, 0,-2},
+			{ 8, 5, 1, 6, 0}
+		};
+		std::vector<std::vector<int>> D;
+		g.Floyd_Warshall(D);
+		for(char i='1'; i<='5'; i++)
+			for(char j='1'; j<='5'; j++)
+				EXPECT_EQ(D[g.Id(i)][g.Id(j)], expd[i-'1'][j-'1']);
+	}
 }

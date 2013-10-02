@@ -378,4 +378,34 @@ namespace misc{
 		return D[Id(kt)];
 	}
 
+	GraphTemplate
+	void GraphHead Floyd_Warshall( std::vector<std::vector<_Dist>> &D )
+	{
+		D.clear();
+		std::vector<std::vector<_Dist>> Dk[2];
+		int V = root.size();
+		Dk[0].resize(V, std::vector<_Dist>(V, std::numeric_limits<_Dist>::max()));
+		Dk[1].resize(V, std::vector<_Dist>(V, std::numeric_limits<_Dist>::max()));
+		_foreachEdge([&](id_type v, id_type u, const Edge&e){
+			Dk[0][v][u] = e.d;
+		});
+		for(int v=0; v<V; v++)
+			Dk[0][v][v] = 0;
+		int cur = 0;
+		int pre = 1;
+		for(int k=0; k<V; k++) {
+			cur = 1-cur;
+			pre = 1-pre;
+			for(int i=0; i<V; i++)
+				for(int j=0; j<V; j++) {
+					int s = std::numeric_limits<_Dist>::max();
+					if (Dk[pre][i][k] != s && Dk[pre][k][j] != s)
+						s = Dk[pre][i][k]+Dk[pre][k][j];
+					Dk[cur][i][j] = std::min(Dk[pre][i][j], s);
+				}
+		}
+		// move assignment
+		D = static_cast<std::vector<std::vector<_Dist>>&&>(Dk[cur]);
+	}
+
 } // namespace misc

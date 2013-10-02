@@ -40,6 +40,7 @@ namespace misc {
 	class keyInt0<int, int> {
 		public:
 			int Id(int&k) { return k; }
+		protected:
 			int addkey(int&k) { return k; }
 			void clearkey(){}
 	};
@@ -48,6 +49,7 @@ namespace misc {
 	class keyMap {
 		public:
 			id_type Id(_Key&k) { return map[k]; }
+		protected:
 			id_type addkey(_Key&k) { 
 				if (map.find(k) == map.end())
 					map[k]= map.size();
@@ -152,6 +154,10 @@ namespace misc {
 
 			// O(VE) time
 			_Dist Bellman_Ford(_Key ks, _Key kt);
+
+			// O(V^3) time
+			// no negative-weight cycle
+			void Floyd_Warshall(std::vector<std::vector<_Dist>> &D);
 
 		private:
 
