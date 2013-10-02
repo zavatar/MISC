@@ -2,6 +2,7 @@
 #define misc_misc
 
 #include <stdio.h>
+#include <type_traits>
 #include <cassert>
 #include <iostream>
 #include <memory>

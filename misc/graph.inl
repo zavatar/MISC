@@ -26,6 +26,12 @@ namespace misc{
 	}
 
 	GraphTemplate
+	typename GraphHead id_type& GraphHead Parent( id_type& v )
+	{
+		return root[v].parent;
+	}
+
+	GraphTemplate
 	_Key& GraphHead Key( id_type& v )
 	{
 		return root[v].key;
@@ -86,11 +92,28 @@ namespace misc{
 	}
 
 	GraphTemplate
-	void GraphHead updateEdge( _Key ku, _Key kv, _Weight w, _Dist d )
+	void GraphHead disconnect( _Key ku, _Key kv )
 	{
-		addVertex(ku);
-		addVertex(kv);
-		connect(ku, kv, w, d);
+		id_type u = Id(ku);
+		id_type v = Id(kv);
+
+		root[u].adj.erase(v);
+		if (_Dir::value)
+			root[v].adj.erase(u);
+	}
+
+	GraphTemplate
+	bool GraphHead hasEdge( _Key ku, _Key kv )
+	{
+		id_type u = Id(ku);
+		id_type v = Id(kv);
+		return root[u].adj.find(v) != root[u].adj.end();
+	}
+
+	GraphTemplate
+	const typename GraphHead Edge& GraphHead getEdge( _Key ku, _Key kv )
+	{
+		return root[Id(ku)].adj[Id(kv)];
 	}
 
 	GraphTemplate
@@ -100,6 +123,23 @@ namespace misc{
 		for (id_type v=0; v<id_type(root.size()); v++)
 			if (visible(v))
 				fn(v);
+	}
+
+	GraphTemplate
+	template <typename Fun>
+	void GraphHead foreachPath( _Key kv, Fun fn )
+	{
+		_foreachPath(Id(kv), fn);
+	}
+
+	GraphTemplate
+	template <typename Fun>
+	void GraphHead _foreachPath( id_type v, Fun fn )
+	{
+		for(id_type u=v, p=Parent(v); p!=-1; p=Parent(p)) {
+			fn(p, u, root[p].adj[u]);
+			u = p;
+		}
 	}
 
 	GraphTemplate
@@ -160,6 +200,7 @@ namespace misc{
 	void GraphHead _BFS_visit( id_type s, Fun fn )
 	{
 		Color(s) = gray;
+		Parent(s) = -1;
 		fn(Key(s));
 		std::queue<id_type> Q;
 		Q.push(s);
@@ -168,6 +209,7 @@ namespace misc{
 			_foreachAdj(v, [&](id_type u){
 				if (!visited(u)) {
 					Color(u) = gray;
+					Parent(u) = v;
 					fn(Key(u));
 					Q.push(u);
 				}
@@ -183,8 +225,10 @@ namespace misc{
 	{
 		clearColor();
 		_foreachVertex([&](id_type v){
-			if(!visited(v))
+			if(!visited(v)) {
+				Parent(v) = -1;
 				_DFS_visit(v, sf, ff);
+			}
 		});
 	}
 
@@ -193,6 +237,7 @@ namespace misc{
 	void GraphHead DFS_visit( _Key kv, startFun sf, finishFun ff )
 	{
 		id_type v = Id(kv);
+		Parent(v) = -1;
 		_DFS_visit(v, sf, ff);
 	}
 
@@ -203,8 +248,10 @@ namespace misc{
 		Color(v) = gray;
 		sf(Key(v));
 		_foreachAdj(v, [&](id_type u){
-			if (!visited(u))
+			if (!visited(u)) {
+				Parent(u) = v;
 				_DFS_visit(u, sf, ff);
+			}
 		});
 		Color(v) = black;
 		ff(Key(v));
@@ -406,6 +453,50 @@ namespace misc{
 		}
 		// move assignment
 		D = static_cast<std::vector<std::vector<_Dist>>&&>(Dk[cur]);
+	}
+
+	GraphTemplate
+	_Weight GraphHead Edmonds_Karp( _Key ks, _Key kt )
+	{
+		id_type s = Id(ks);
+		id_type t = Id(kt);
+
+		// Construct residual graph
+		static_assert(std::is_same<_Dir, directed>::value, "_Dir != directed");
+		typedef Graph<int, _Dir, keyInt0, _Weight, _Dist> rGraph_type;
+		rGraph_type rg;
+		_foreachEdge([&](id_type v, id_type u, const Edge &e){
+			rg.addEdge(v, u, e.w, e.d);
+			// How to support antiparallel edges?
+		});
+
+		_Weight max_flow = 0;
+		while(true) {
+			// find augment path using BFS
+			rg.clearColor();
+			rg.BFS_visit(s, [](_Key){});
+			if (!rg.Visited(t)) break;
+
+			// max flow on the augment path
+			_Weight path_flow = std::numeric_limits<_Weight>::max();
+			rg.foreachPath(t, [&](id_type v, id_type u, const rGraph_type::Edge&e){
+				path_flow = std::min(path_flow, e.w);
+			});
+
+			// update residual capacities
+			rg.foreachPath(t, [&](id_type v, id_type u, const rGraph_type::Edge&e){
+				if ((e.w-path_flow) <= 0)
+					rg.disconnect(v, u);
+				else
+					rg.connect(v, u, e.w-path_flow, e.d);
+				if (rg.hasEdge(u, v))
+					rg.connect(u, v, getEdge(u,v).w+path_flow, getEdge(u,v).d);
+				else
+					rg.connect(u, v, path_flow);
+			});
+			max_flow += path_flow;
+		}
+		return max_flow;
 	}
 
 } // namespace misc

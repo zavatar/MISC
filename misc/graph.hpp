@@ -86,11 +86,13 @@ namespace misc {
 				Edge(_Weight _w,_Dist _d):w(_w),d(_d){}
 			};
 
-			typedef std::unordered_map<id_type,Edge> Elist_type;
+			typedef std::unordered_map<id_type,Edge,std::hash<id_type>,
+				std::equal_to<id_type>,_Alloc<std::pair<const id_type,Edge>>> Elist_type;
 
 			struct Vertex {
 				_Key key;
 				color_type color;
+				id_type parent;
 				Elist_type adj;
 				Vertex():color(invisible){}
 				Vertex(_Key&k):key(k),color(invisible){}
@@ -103,6 +105,8 @@ namespace misc {
 
 			void clear();
 
+			void clearColor();
+
 			bool Visited(_Key v);
 			
 			void addVertex(_Key kv);
@@ -111,7 +115,11 @@ namespace misc {
 
 			void addEdge(_Key ku, _Key kv, _Weight w = 1, _Dist d = 1);
 
-			void updateEdge(_Key ku, _Key kv, _Weight w = 1, _Dist d = 1);
+			void disconnect(_Key ku, _Key kv);
+
+			bool hasEdge(_Key ku, _Key kv);
+
+			const Edge& getEdge(_Key ku, _Key kv);
 
 			template <typename Fun>
 			void BFS(Fun fn);
@@ -124,6 +132,9 @@ namespace misc {
 
 			template <typename startFun, typename finishFun>
 			void DFS_visit(_Key kv, startFun sf, finishFun ff);
+
+			template <typename Fun>
+			void foreachPath(_Key kv, Fun fn);
 
 			template <typename Fun>
 			void foreachAdj(_Key kv, Fun fn);
@@ -159,15 +170,18 @@ namespace misc {
 			// no negative-weight cycle
 			void Floyd_Warshall(std::vector<std::vector<_Dist>> &D);
 
+			// O(VE^2) = O(VE)*[BFS O(E)]
+			_Weight Edmonds_Karp(_Key ks, _Key kt);
+
 		private:
 
 			Vlist_type root;
 
 			color_type& Color(id_type& v);
 
-			_Key& Key(id_type& v);
+			id_type& Parent(id_type& v);
 
-			void clearColor();
+			_Key& Key(id_type& v);
 
 			void transpose(Graph& gt);
 
@@ -179,6 +193,9 @@ namespace misc {
 
 			template <typename Fun>
 			void _foreachVertex(Fun fn);
+
+			template <typename Fun>
+			void _foreachPath(id_type v, Fun fn);
 
 			template <typename Fun>
 			void _foreachAdj(id_type v, Fun fn);

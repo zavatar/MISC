@@ -143,6 +143,7 @@ TEST(Graph_Test, Standard)
 	}
 //////////////////////////////////////////////////////////////////////////
 	{
+		// case from CLRS Figure 25.4
 		misc::Graph<char, misc::directed, misc::keyMap, float, int> g;
 		char de[2*9] = {'1','2','1','3','1','5', '2','4','2','5', '3','2',
 		'4','1','4','3', '5','4'};
@@ -162,5 +163,17 @@ TEST(Graph_Test, Standard)
 		for(char i='1'; i<='5'; i++)
 			for(char j='1'; j<='5'; j++)
 				EXPECT_EQ(D[g.Id(i)][g.Id(j)], expd[i-'1'][j-'1']);
+	}
+//////////////////////////////////////////////////////////////////////////
+	{
+		// case from CLRS Figure 26.6
+		misc::Graph<char, misc::directed, misc::keyMap, int> g;
+		char de[2*9] = {'s','1','s','2','2','1', '1','3','2','4', '3','2',
+			'4','3','4','t','3','t'};
+		int w[9] = {16,13,4, 12,14, 9, 7,4,20};
+		for (int i=0; i<9; i++)
+			g.addEdge(de[2*i], de[2*i+1], w[i]);
+
+		EXPECT_EQ(g.Edmonds_Karp('s', 't'), 23);
 	}
 }
