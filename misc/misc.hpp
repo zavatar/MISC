@@ -33,6 +33,6 @@
 #include "hashing.hpp"
 #include "dynamic_programming.hpp"
 #include "graph.hpp"
-#include "pattern_searching.hpp"
+#include "string.hpp"
 
 #endif//misc_misc

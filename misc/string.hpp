@@ -1,5 +1,5 @@
-#ifndef misc_pattern_searching
-#define misc_pattern_searching
+#ifndef misc_string
+#define misc_string
 
 namespace misc {
 
@@ -10,6 +10,7 @@ namespace misc {
 // 2. Rabin-Karp
 // 3. Trie, Suffix tree
 // 4. Suffix array, Prefix doubling, Inducing sort, LCP array
+// 5. Huffman coding
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -25,10 +26,14 @@ namespace misc {
 	template <typename Fun>
 	void RKSearch(const char* s, int n, const char* p, int m, Fun fn);
 
+	template <typename T, typename U>
+	void Huffman(std::vector<std::pair<T, U>> &freq,
+		std::vector<std::string> &codes);
+
 } // misc
 
 #ifndef MISC_EXTERNAL_TEMPLATE
-#include "pattern_searching.inl"
+#include "string.inl"
 #endif // !MISC_EXTERNAL_TEMPLATE
 
-#endif // !misc_pattern_searching
+#endif // !misc_string
