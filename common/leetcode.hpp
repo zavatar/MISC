@@ -1,4 +1,146 @@
 //////////////////////////////////////////////////////////////////////////
+//138.Copy List with Random Pointer 
+/**
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        if(head == NULL) return NULL;
+        for(RandomListNode *h=head; h!=NULL; h=h->next->next) {
+            RandomListNode *p = new RandomListNode(h->label);
+            p->next = h->next;
+            h->next = p;
+        }
+        for(RandomListNode *h=head; h!=NULL; h=h->next->next) {
+            if(h->random == NULL)
+                h->next->random = NULL;
+            else
+                h->next->random = h->random->next;
+        }
+        RandomListNode *copyhead = head->next;
+        for(RandomListNode *h1=head, *h2=copyhead; ; h1=h1->next, h2=h2->next) {
+            h1->next = h1->next->next;
+            if(h1->next == NULL) break;
+            h2->next = h2->next->next;
+        }
+        return copyhead;
+    }
+};
+//////////////////////////////////////////////////////////////////////////
+//137.Single Number II
+class Solution {
+public:
+	int singleNumber(int A[], int n) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		vector<int> bits(32,0);
+		for(int i=0; i<n; i++)
+			for(int k=0; k<32; k++)
+				bits[k]+=(A[i]>>k)&1;
+		int ret=0;
+		for(int k=0; k<32; k++)
+			ret|=(bits[k]%3)<<k;
+		return ret;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+//136.Single Number
+class Solution {
+public:
+	int singleNumber(int A[], int n) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		int ret=A[0];
+		for(int i=1; i<n; i++)
+			ret ^= A[i];
+		return ret;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+//135.Candy
+class Solution {
+public:
+	int candy(vector<int> &ratings) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		int n=ratings.size();
+		int sum=n;
+		vector<int> res(n,0);
+		for(int k=1,i=1; i<n; i++)
+			if(ratings[i]>ratings[i-1])
+				res[i]=max(k++, res[i]);
+			else
+				k=1;
+		for(int k=1,i=n-2; i>=0; i--)
+			if(ratings[i]>ratings[i+1])
+				res[i]=max(k++, res[i]);
+			else
+				k=1;
+		for(int i=0; i<n; i++)
+			sum+=res[i];
+		return sum;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+//134.Gas Station
+class Solution {
+public:
+	int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		int n=gas.size();
+		int sum=0;
+		int total=0;
+		int idx=-1;
+		for(int i=0; i<n; i++) {
+			total += gas[i]-cost[i];
+			sum += gas[i]-cost[i];
+			if(sum < 0) {
+				idx = i;
+				sum=0;
+			}
+		}
+		return total<0?-1:idx+1;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+//133.Clone Graph
+/**
+ * Definition for undirected graph.
+ * struct UndirectedGraphNode {
+ *     int label;
+ *     vector<UndirectedGraphNode *> neighbors;
+ *     UndirectedGraphNode(int x) : label(x) {};
+ * };
+ */
+class Solution {
+public:
+    UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        if(node == NULL) return NULL;
+        unordered_map<UndirectedGraphNode*,UndirectedGraphNode*> hash;
+        UndirectedGraphNode *ret = new UndirectedGraphNode(node->label);
+        hash[node] = ret;
+        queue<UndirectedGraphNode*> Q;
+        Q.push(node);
+        while(!Q.empty()) {
+            UndirectedGraphNode*p = Q.front();
+            Q.pop();
+            for(auto &v : p->neighbors) {
+                if(hash.find(v) == hash.end()) {
+                    hash[v] = new UndirectedGraphNode(v->label);
+                    Q.push(v);
+                }
+                hash[p]->neighbors.push_back(hash[v]);
+            }
+        }
+        return ret;
+    }
+};
+//////////////////////////////////////////////////////////////////////////
 //132.Palindrome Partitioning II
 class Solution {
 public:
@@ -1482,8 +1624,36 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 // 90.Subsets II
-// ?
-
+//*DFS
+class Solution {
+public:
+	void DFS(vector<int> &S, int k) {
+		if(k==n) {
+			ret.push_back(subset);
+			return;
+		}
+		int m=1;
+		for(; k+m<n && S[k]==S[k+m]; m++);
+		for(int i=0; i<=m; i++) {
+			DFS(S,k+m);
+			subset.push_back(S[k]);
+		}
+		for(int i=0; i<=m; i++)
+			subset.pop_back();
+	}
+	vector<vector<int> > subsetsWithDup(vector<int> &S) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		n = S.size();
+		ret.clear();
+		subset.clear();
+		sort(S.begin(), S.end());
+		DFS(S, 0);
+		return ret;
+	}
+	int n;
+	vector<vector<int> > ret;
+	vector<int> subset;
+};
 //////////////////////////////////////////////////////////////////////////
 // 91.Decode Ways
 // DP, a lot of cases
@@ -1674,8 +1844,69 @@ public:
 // refer to 26.
 
 //////////////////////////////////////////////////////////////////////////
-// Combinations
-//
+// 79.Word Search
+// DFS
+class Solution {
+public:
+	bool DFS(vector<vector<char> > &board, int i, int j, string word, int k) {
+		if(board[i][j]!=word[k]) return false;
+		if(k==l-1) return true;
+		char tmp = board[i][j];
+		board[i][j] = '$';
+		if(i-1>=0 && DFS(board,i-1,j,word,k+1)) return true;
+		if(j-1>=0 && DFS(board,i,j-1,word,k+1)) return true;
+		if(i+1< m && DFS(board,i+1,j,word,k+1)) return true;
+		if(j+1< n && DFS(board,i,j+1,word,k+1)) return true;
+		board[i][j] = tmp;
+		return false;
+	}
+	bool exist(vector<vector<char> > &board, string word) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		l=word.size();
+		if(l==0) return true;
+		m=board.size();
+		if(m==0) return false;
+		n=board[0].size();
+		if(n==0) return false;
+		for(int i=0; i<m; i++)
+			for(int j=0; j<n; j++)
+				if(DFS(board,i,j,word,0))
+					return true;
+		return false;
+	}
+	int m,n,l;
+};
+//////////////////////////////////////////////////////////////////////////
+// 78.Subsets
+// DFS
+class Solution {
+public:
+	void DFS(vector<int> &S, int k) {
+		if(k==n) {
+			ret.push_back(subset);
+			return;
+		}
+		DFS(S,k+1);
+		subset.push_back(S[k]);
+		DFS(S,k+1);
+		subset.pop_back();
+	}
+	vector<vector<int> > subsets(vector<int> &S) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		n = S.size();
+		ret.clear();
+		subset.clear();
+		sort(S.begin(), S.end());
+		DFS(S, 0);
+		return ret;
+	}
+	int n;
+	vector<vector<int> > ret;
+	vector<int> subset;
+};
+//////////////////////////////////////////////////////////////////////////
+// 77.Combinations
+//*
 class Solution {
 public:
 	void combine(int i, int n, int k, vector<int>&p) {
@@ -1701,7 +1932,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 // Permutations 
-//
+//*
 class Solution {
 public:
 	void permute(int k,vector<int> &num) {
