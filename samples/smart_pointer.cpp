@@ -23,9 +23,11 @@ int A::C = 0;
 int (*fun1)(int,int);
 int*(*fun2)(void(*)(int,int),int);
 int*(*fun2Arr[2])(void(*)(int,int),int);
-//int (*)(int,int) (*fun3)(void(*)(int,int),int);
-//int ((*fun3)(void(*)(int,int),int))(int,int);
+
+//int (*)(int,int) fun3(void(*)(int,int),int);
   int ( *fun3 (void(*)(int,int),int))(int,int);
+//int (*)(int,int) (*fun4)(void(*)(int,int),int);
+  int(*(*fun4)(void(*)(int,int),int))(int,int);
 
 int main()
 {

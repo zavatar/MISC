@@ -104,4 +104,17 @@ namespace misc{
 		fun(root);
 	}
 
+	MISC_FUNC_QUALIFIER void MSD_radix_sort(std::vector<std::string> &strs)
+	{
+
+	}
+
+	MISC_FUNC_QUALIFIER bool binary_search_str(
+		const std::vector<std::string> &strs,
+		const std::string &patstr, int &id )
+	{
+
+	}
+
+
 } // namespace misc
