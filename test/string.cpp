@@ -46,3 +46,18 @@ TEST(Huffman_Test, Standard)
 	misc::Huffman(freq, codes);
 	EXPECT_EQ(codes, expcodes);
 }
+
+TEST(prefix_doubling_Test, Standard)
+{
+	int _saexp[] = {6,5,3,1,0,4,2};
+	std::vector<int> saexp(_saexp,_saexp+7);
+	int _rankexp[] = {4,3,6,2,5,1,0};
+	std::vector<int> rankexp(_rankexp,_rankexp+7);
+
+	std::string str("banana$");
+	std::vector<int> sa;
+	std::vector<int> rank;
+	misc::prefix_doubling(str, sa, rank);
+	EXPECT_EQ(sa, saexp);
+	EXPECT_EQ(rank, rankexp);
+}

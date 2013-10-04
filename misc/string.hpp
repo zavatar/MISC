@@ -57,7 +57,8 @@ namespace misc {
 	bool binary_search_str(const std::vector<std::string> &strs, 
 		const std::string &patstr, int &id);
 
-
+	void prefix_doubling(const std::string &str,
+		std::vector<int> &sa, std::vector<int> &rank);
 
 } // misc
 

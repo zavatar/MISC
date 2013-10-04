@@ -116,5 +116,37 @@ namespace misc{
 
 	}
 
+	MISC_FUNC_QUALIFIER void prefix_doubling( const std::string &str,
+		std::vector<int> &sa, std::vector<int> &rank )
+	{
+		int i,j,p;
+		int m = 256;
+		int n = str.size();
+		sa.resize(n);
+		rank.resize(n);
+		std::vector<int> cn(std::max(m,n),0);
+		std::vector<int> x(str.begin(),str.end());
+		std::vector<int> wv(n);
+		for(i=0; i<n; i++) cn[x[i]]++; // counting
+		for(i=1; i<m; i++) cn[i]+=cn[i-1]; // scan
+		for(i=n-1; i>=0; i--) sa[--cn[x[i]]]=i; // suffix array
+		for(j=1,p=1; p<n; j*=2,m=p) {
+			for(p=0,i=n-j; i<n; i++) rank[p++]=i;
+			for(i=0; i<n; i++) if(sa[i]>=j) rank[p++]=sa[i]-j;
+			for(i=0; i<n; i++) wv[i]=x[rank[i]];
+			for(i=0; i<m; i++) cn[i]=0;
+			for(i=0; i<n; i++) cn[wv[i]]++; // counting
+			for(i=1; i<m; i++) cn[i]+=cn[i-1]; // scan
+			for(i=n-1; i>=0; i--) sa[--cn[wv[i]]]=rank[i]; // suffix array
+			// ranking
+			for(rank[sa[0]]=0,p=1,i=1; i<n; i++)
+				if(x[sa[i-1]]==x[sa[i]] && x[sa[i-1]+j]==x[sa[i]+j])
+					rank[sa[i]] = p-1;
+				else
+					rank[sa[i]] = p++;
+			std::swap(x,rank);
+		}
+		std::swap(x,rank);
+	}
 
 } // namespace misc
