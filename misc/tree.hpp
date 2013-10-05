@@ -209,7 +209,6 @@ namespace misc {
 
 			virtual void deletep(node_pointer &z);
 
-			// should abstract to balanced BST interface
 			virtual void left_rotate(node_pointer x);
 
 			virtual void right_rotate(node_pointer x);

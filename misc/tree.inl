@@ -318,15 +318,7 @@ namespace misc{
 	void BST<T, node_type>::left_rotate( node_pointer x )
 	{
 		node_pointer y = x->r;
-		y->p = x->p;
-		if (y->p == NULL)
-			this->root = y;
-		else {
-			if (y->p->l == x)
-				y->p->l = y;
-			else if (y->p->r == x)
-				y->p->r = y;
-		}
+		transplant(x, y);
 		x->r = y->l;
 		if (x->r != NULL)
 			x->r->p = x;
@@ -338,15 +330,7 @@ namespace misc{
 	void BST<T, node_type>::right_rotate( node_pointer x )
 	{
 		node_pointer y = x->l;
-		y->p = x->p;
-		if (y->p == NULL)
-			this->root = y;
-		else {
-			if (y->p->l == x)
-				y->p->l = y;
-			else if (y->p->r == x)
-				y->p->r = y;
-		}
+		transplant(x, y);
 		x->l = y->r;
 		if (x->l != NULL)
 			x->l->p = x;
@@ -440,16 +424,22 @@ namespace misc{
 	void AVL<T,node_type>::rebalance( node_pointer x )
 	{
 		while (x != NULL) {
-			update_height(x);
 			if (height(x->l) >= 2+height(x->r)) {
 				if (height(x->l->l) < height(x->l->r))
 					left_rotate(x->l);
 				right_rotate(x);
+				break; // rotate only once
 			} else if (height(x->r) >= 2+height(x->l)) {
 				if (height(x->r->r) < height(x->r->l))
 					right_rotate(x->r);
 				left_rotate(x);
+				break; // rotate only once
 			}
+			update_height(x);
+			x = x->p;
+		}
+		while (x != NULL) {
+			update_from_lr(x);
 			x = x->p;
 		}
 	}
@@ -670,7 +660,6 @@ namespace misc{
 	template <typename T, typename node_type>
 	void order_statistic_tree<T, node_type>::insertp( node_pointer z )
 	{
-		z->s = 1;
 		AVL<T,node_type>::insertp(z);
 	}
 
