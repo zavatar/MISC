@@ -1,5 +1,32 @@
 //////////////////////////////////////////////////////////////////////////
-//138.Copy List with Random Pointer 
+// 140.Word Break II
+//*http://www.cnblogs.com/superzrx/p/3354813.html
+//////////////////////////////////////////////////////////////////////////
+// 139.Word Break
+// DP
+class Solution {
+public:
+	bool wordBreak(string s, unordered_set<string> &dict) {
+		int n=s.size();
+		if(n==0) return true;
+		vector<vector<bool>> S(n,vector<bool>(n,false));
+		for(int i=0; i<n; i++)
+			S[i][i] = (dict.find(s.substr(i,1))!=dict.end());
+		for(int l=2; l<=n; l++) {
+			for(int i=0; i+l-1<n; i++) {
+				int j=i+l-1;
+				if(S[i][j] = (dict.find(s.substr(i,l))!=dict.end()))
+					continue;
+				for(int k=i; k<j; k++)
+					if(S[i][j] = (S[i][k]&&S[k+1][j]))
+						break;
+			}
+		}
+		return S[0][n-1];
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 138.Copy List with Random Pointer 
 /**
  * Definition for singly-linked list with a random pointer.
  * struct RandomListNode {
@@ -11,7 +38,6 @@
 class Solution {
 public:
     RandomListNode *copyRandomList(RandomListNode *head) {
-        // Note: The Solution object is instantiated only once and is reused by each test case.
         if(head == NULL) return NULL;
         for(RandomListNode *h=head; h!=NULL; h=h->next->next) {
             RandomListNode *p = new RandomListNode(h->label);
@@ -34,11 +60,10 @@ public:
     }
 };
 //////////////////////////////////////////////////////////////////////////
-//137.Single Number II
+// 137.Single Number II
 class Solution {
 public:
 	int singleNumber(int A[], int n) {
-		// Note: The Solution object is instantiated only once and is reused by each test case.
 		vector<int> bits(32,0);
 		for(int i=0; i<n; i++)
 			for(int k=0; k<32; k++)
@@ -50,11 +75,10 @@ public:
 	}
 };
 //////////////////////////////////////////////////////////////////////////
-//136.Single Number
+// 136.Single Number
 class Solution {
 public:
 	int singleNumber(int A[], int n) {
-		// Note: The Solution object is instantiated only once and is reused by each test case.
 		int ret=A[0];
 		for(int i=1; i<n; i++)
 			ret ^= A[i];
@@ -62,11 +86,10 @@ public:
 	}
 };
 //////////////////////////////////////////////////////////////////////////
-//135.Candy
+// 135.Candy
 class Solution {
 public:
 	int candy(vector<int> &ratings) {
-		// Note: The Solution object is instantiated only once and is reused by each test case.
 		int n=ratings.size();
 		int sum=n;
 		vector<int> res(n,0);
@@ -86,11 +109,10 @@ public:
 	}
 };
 //////////////////////////////////////////////////////////////////////////
-//134.Gas Station
+// 134.Gas Station
 class Solution {
 public:
 	int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
-		// Note: The Solution object is instantiated only once and is reused by each test case.
 		int n=gas.size();
 		int sum=0;
 		int total=0;
@@ -107,7 +129,7 @@ public:
 	}
 };
 //////////////////////////////////////////////////////////////////////////
-//133.Clone Graph
+// 133.Clone Graph
 /**
  * Definition for undirected graph.
  * struct UndirectedGraphNode {
@@ -119,7 +141,6 @@ public:
 class Solution {
 public:
     UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
-        // Note: The Solution object is instantiated only once and is reused by each test case.
         if(node == NULL) return NULL;
         unordered_map<UndirectedGraphNode*,UndirectedGraphNode*> hash;
         UndirectedGraphNode *ret = new UndirectedGraphNode(node->label);
@@ -141,12 +162,10 @@ public:
     }
 };
 //////////////////////////////////////////////////////////////////////////
-//132.Palindrome Partitioning II
+// 132.Palindrome Partitioning II
 class Solution {
 public:
 	int minCut(string s) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int n = s.length();
 		if (n<2) return 0;
 		vector<int> M(n,0);
@@ -189,8 +208,6 @@ public:
 			}
 	}
 	vector<vector<string>> partition(string s) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int n = s.size();
 		vector<vector<bool>> P(n,vector<bool>(n,false));
 		for(int i=n-1; i>=0; i--) {
@@ -224,8 +241,6 @@ public:
 	}
 
 	void solve(vector<vector<char>> &board) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		n = board.size();
 		if (n==0) return;
 		m = board[0].size();
@@ -264,8 +279,6 @@ public:
 class Solution {
 public:
     int sumNumbers(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         sum = 0;
         if (root == NULL) return 0;
         int X = 0;
@@ -289,8 +302,6 @@ public:
 class Solution {
 public:
 	int longestConsecutive(vector<int> &num) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		unordered_map<int,int> m;
 		int n = num.size();
 		vector<bool> visited(n, false);
@@ -316,8 +327,6 @@ public:
 class Solution {
 public:
 	int ladderLength(string start, string end, unordered_set<string> &dict) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		dict.erase(start);
 		dict.insert(end);
 		
@@ -366,8 +375,6 @@ public:
 	}
 
 	vector<vector<string> > findLadders(string start, string end, unordered_set<string> &dict) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		pathes.clear();
 		dict.insert(start);
 		dict.insert(end);
@@ -420,8 +427,6 @@ public:
 		return (c>='a'&&c<='z') || (c>='A'&&c<='Z') || (c>='0'&&c<='9');
 	}
 	bool isPalindrome(string s) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int n = s.size();
 		string st;
 		st.reserve(n);
@@ -460,8 +465,6 @@ public:
     }
 
     int maxPathSum(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         maxval = numeric_limits<int>::min();
         maxsum = 0;
         travel(root);
@@ -475,8 +478,6 @@ public:
 class Solution {
 public:
 	int maxProfit(vector<int> &prices) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int maxval = 0;
 		int n = prices.size();
 		if (n <= 1) return 0;
@@ -494,8 +495,6 @@ public:
 class Solution {
 public:
 	int maxProfit(vector<int> &prices) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int n = prices.size();
 		if (n <= 1) return 0;
 		vector<int> C(n+1,0);
@@ -515,8 +514,6 @@ public:
 class Solution {
 public:
 	int maxProfit(vector<int> &prices) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int n = prices.size();
 		if (n <= 1) return 0;
 		int maxval = 0;
@@ -540,8 +537,6 @@ public:
 class Solution {
 public:
 	int maxProfit(vector<int> &prices) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int maxval = 0;
 		int n = prices.size();
 		if (n <= 1) return 0;
@@ -571,8 +566,6 @@ public:
 class Solution {
 public:
 	int minimumTotal(vector<vector<int> > &triangle) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int n = triangle.size();
 		if (n == 0) return 0;
 		if (n == 1) return triangle[0][0];
@@ -602,8 +595,6 @@ public:
 class Solution {
 public:
 	vector<vector<int> > generate(int numRows) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		vector<vector<int>> ret;
 		if (numRows == 0) return ret;
 		vector<int> r[2];
@@ -629,8 +620,6 @@ public:
 class Solution {
 public:
 	vector<int> getRow(int rowIndex) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		vector<int> r[2];
 		r[0].resize(1,1);
 		r[1].resize(1,1);
@@ -660,8 +649,6 @@ public:
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         if (root == NULL) return;
         TreeLinkNode *x = root;
         while(x != NULL) {
@@ -690,8 +677,6 @@ public:
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         if (root == NULL) return;
         TreeLinkNode *x = root;
         TreeLinkNode *pre = NULL;
@@ -734,8 +719,6 @@ public:
 class Solution { // 80ms
 public:
 	int numDistinct(string S, string T) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int ns = S.size();
 		int nt = T.size();
 		if (ns<nt) return 0;
@@ -755,8 +738,6 @@ public:
 class Solution { // 28ms
 public:
 	int numDistinct(string S, string T) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int ns = S.size();
 		int nt = T.size();
 		if (ns<nt) return 0;
@@ -796,8 +777,6 @@ public:
     }
 
     void flatten(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         if(root == NULL) return;
         TreeNode* t = NULL;
         travel(root,t);
@@ -829,8 +808,6 @@ public:
         
     }
     vector<vector<int> > pathSum(TreeNode *root, int sum) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         vector<vector<int>> ret;
         vector<int> path;
         travel(root, 0, sum, path, ret);
@@ -861,8 +838,6 @@ public:
         
     }
     bool hasPathSum(TreeNode *root, int sum) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         return travel(root, 0, sum);
     }
 };
@@ -881,8 +856,6 @@ public:
 class Solution {
 public:
     int minDepth(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         if(root==NULL) return 0;
         queue<pair<TreeNode*,int>> q;
         q.emplace(root,1);
@@ -931,8 +904,6 @@ public:
         }
     }
     bool isBalanced(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         int h;
         return travel(root,h);
     }
@@ -971,8 +942,6 @@ public:
         return r;
     }
     TreeNode *sortedListToBST(ListNode *head) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         int n = 0;
         ListNode*p = head;
         for(; p!=NULL; n++) p = p->next;
@@ -1010,8 +979,6 @@ public:
         return r;
     }
     TreeNode *sortedListToBST(ListNode *head) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         int n = 0;
         ListNode*p = head;
         for(; p!=NULL; n++) p = p->next;
@@ -1041,8 +1008,6 @@ public:
         return r;
     }
     TreeNode *sortedArrayToBST(vector<int> &num) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         int n = num.size();
         return travel(num,0,n-1);
     }
@@ -1070,8 +1035,6 @@ public:
         travel(r->right,d+1,ret);
     }
     vector<vector<int> > levelOrderBottom(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         vector<vector<int>> ret;
         travel(root, 0, ret);
         reverse(ret.begin(), ret.end());
@@ -1105,8 +1068,6 @@ public:
         return r;
     }
     TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         return travel(inorder, 0, inorder.size()-1, postorder);
     }
 };
@@ -1137,8 +1098,6 @@ public:
         return r;
     }
     TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         int k=0;
         return travel(inorder, 0, inorder.size()-1, preorder, k);
     }
@@ -1165,8 +1124,6 @@ public:
         travel(r->right, d+1);
     }
     int maxDepth(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         maximum = 0;
         travel(root, 0);
         return maximum;
@@ -1177,8 +1134,6 @@ public:
 class Solution {
 public:
 	int maxDepth(TreeNode *root) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int maximum = 0;
 		stack<TreeNode*> s;
 		TreeNode* r = root;
@@ -1216,8 +1171,6 @@ public:
 class Solution {
 public:
     vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         vector<vector<int>> ret;
         stack<TreeNode*> q[2];
         int cur = 0;
@@ -1268,8 +1221,6 @@ public:
         travel(r->right,d+1,ret);
     }
     vector<vector<int> > levelOrder(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         vector<vector<int>> ret;
         travel(root, 0, ret);
         return ret;
@@ -1314,8 +1265,6 @@ public:
         rinorderTravel(r->left, v);
     }
     bool isSymmetric(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         vector<int> order;
         vector<int> rorder;
         preorderTravel(root,order);
@@ -1353,8 +1302,6 @@ public:
         return travel2(p->left, q->left) && travel2(p->right, q->right);
     }
     bool isSameTree(TreeNode *p, TreeNode *q) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         return travel2(p, q);
     }
 };
@@ -1383,8 +1330,6 @@ public:
         travel(r->right);
     }
     void recoverTree(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         cur = 0;
         mistake.clear();
         mistake.push_back(NULL);
@@ -1419,8 +1364,6 @@ public:
         return true;
     }
     bool isValidBST(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         pre = NULL;
         return travel(root);
     }
@@ -1434,8 +1377,6 @@ public:
 class Solution {
 public:
 	bool isInterleave(string s1, string s2, string s3) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function    
 		int n1 = s1.size();
 		int n2 = s2.size();
 		int n3 = s3.size();
@@ -1463,8 +1404,6 @@ public:
 class Solution {
 public:
 	int numTrees(int n) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		if (n<=0) return 0;
 		vector<int> N(n+1, 0);
 		N[0]=1;
@@ -1512,8 +1451,6 @@ public:
 		return subTree;
 	}
 	vector<TreeNode *> generateTrees(int n) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		if(n==0) return generate(1,0);
 		return generate(1, n);
 	}
@@ -1533,8 +1470,6 @@ public:
 class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         vector<int> ret;
         stack<TreeNode*> s;
         TreeNode* r = root;
@@ -1578,8 +1513,6 @@ public:
 		}
 	}
 	vector<string> restoreIpAddresses(string s) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		vector<string> ret;
 		string path;
 		DFS(s, 0, path, ret, 0);
@@ -1600,8 +1533,6 @@ public:
 class Solution {
 public:
     ListNode *reverseBetween(ListNode *head, int m, int n) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         ListNode h(0);
         h.next = head;
         ListNode* p1 = &h;
@@ -1642,7 +1573,6 @@ public:
 			subset.pop_back();
 	}
 	vector<vector<int> > subsetsWithDup(vector<int> &S) {
-		// Note: The Solution object is instantiated only once and is reused by each test case.
 		n = S.size();
 		ret.clear();
 		subset.clear();
@@ -1660,8 +1590,6 @@ public:
 class Solution {
 public:
 	int numDecodings(string s) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int n = s.size();
 		if (n==0 || s[0]=='0') return 0;
 		vector<int> D(n+1,0);
@@ -1689,8 +1617,6 @@ public:
 class Solution {
 public:
 	void merge(int A[], int m, int B[], int n) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		int k = m+n-1;
 		m--; n--;
 		while(k>=0 && m>=0 && n>=0) {
@@ -1723,8 +1649,6 @@ public:
 class Solution {
 public:
     ListNode *partition(ListNode *head, int x) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         ListNode h(0);
         h.next = head;
         ListNode*lp = &h;
@@ -1752,8 +1676,6 @@ public:
 class Solution {
 public:
 	int largestRectangleArea(vector<int> &h) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		stack<int> p;
 		int i = 0, m = 0;
 		h.push_back(0);
@@ -1783,8 +1705,6 @@ public:
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         if(head==NULL) return head;
         ListNode* cur = head->next;
         ListNode* pre = head;
@@ -1813,8 +1733,6 @@ public:
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
-        // Start typing your C/C++ solution below
-        // DO NOT write int main() function
         ListNode h(0);
         h.next = head;
         ListNode* cur = head;
@@ -1861,7 +1779,6 @@ public:
 		return false;
 	}
 	bool exist(vector<vector<char> > &board, string word) {
-		// Note: The Solution object is instantiated only once and is reused by each test case.
 		l=word.size();
 		if(l==0) return true;
 		m=board.size();
@@ -1892,7 +1809,6 @@ public:
 		subset.pop_back();
 	}
 	vector<vector<int> > subsets(vector<int> &S) {
-		// Note: The Solution object is instantiated only once and is reused by each test case.
 		n = S.size();
 		ret.clear();
 		subset.clear();
@@ -1921,8 +1837,6 @@ public:
 		}
 	}
 	vector<vector<int> > combine(int n, int k) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		ret.clear();
 		vector<int> path;
 		combine(1, n, k, path);
@@ -1930,6 +1844,274 @@ public:
 	}
 	vector<vector<int>> ret;
 };
+//////////////////////////////////////////////////////////////////////////
+// 76.Minimum Window Substring
+//*
+class Solution {
+public:
+	string minWindow(string S, string T) {
+		vector<int> cn(256,0);
+		for(auto &c : T) cn[c]++;
+		int n=S.size();
+		int m=T.size();
+		int count=0;
+		int minimum=n;
+		int begin=0;
+		vector<int> wcn(256,0);
+		for(int i=0,k=0; k<n; k++) {
+			if(cn[S[k]] == 0) continue;
+			if(wcn[S[k]] < cn[S[k]]) count++;
+			wcn[S[k]]++;
+			if (count == m) {
+				for(; cn[S[i]]==0 || wcn[S[i]] > cn[S[i]]; i++)
+					if(wcn[S[i]] > cn[S[i]])
+						wcn[S[i]]--;
+				if(minimum > k-i+1) {
+					minimum = k-i+1;
+					begin = i;
+				}
+			}
+		}
+		return count<m? "" : S.substr(begin, minimum);
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 75.Sort Colors
+class Solution {
+public:
+	void sortColors(int A[], int n) {
+		int pl=0, pr=n-1;
+		for(int i=0; i<=pr; ) {
+			if(A[i]==0)
+				swap(A[i++],A[pl++]);
+			else if(A[i]==2)
+				swap(A[i],A[pr--]);
+			else
+				i++;
+		}
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 74.Search a 2D Matrix 
+class Solution {
+public:
+	bool bsearch(vector<vector<int> > &matrix, int l, int r, int t) {
+		if(l>r) return false;
+		int mid=(r+l)/2;
+		int i = mid/n;
+		int j = mid%n;
+		if(matrix[i][j]==t) return true;
+		else if(matrix[i][j] > t)
+			return bsearch(matrix,l,mid-1,t);
+		else
+			return bsearch(matrix,mid+1,r,t);
+	}
+	bool searchMatrix(vector<vector<int> > &matrix, int target) {
+		m=matrix.size();
+		if(m==0) return false;
+		n=matrix[0].size();
+		if(n==0) return false;
+		int k=m*n;
+		return bsearch(matrix,0,k-1,target);
+	}
+	int m,n;
+};
+//////////////////////////////////////////////////////////////////////////
+// 73.Set Matrix Zeroes 
+class Solution {
+public:
+	void setZeroes(vector<vector<int> > &matrix) {
+		int m=matrix.size();
+		if(m==0) return;
+		int n=matrix[0].size();
+		if(n==0) return;
+		bool m0=false, n0=false;
+		for(int i=0; i<m; i++) if(matrix[i][0]==0) m0=true;
+		for(int j=0; j<n; j++) if(matrix[0][j]==0) n0=true;
+		for(int i=1; i<m; i++)
+			for(int j=1; j<n; j++)
+				if(matrix[i][j]==0)
+					matrix[i][0]=matrix[0][j]=0;
+		for(int i=1; i<m; i++)
+			for(int j=1; j<n; j++)
+				if(matrix[i][0]==0 || matrix[0][j]==0)
+					matrix[i][j]=0;
+		if(m0) for(int i=0; i<m; i++) matrix[i][0]=0;
+		if(n0) for(int j=0; j<n; j++) matrix[0][j]=0;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 72.Edit Distance
+// O(m*n) space
+class Solution {
+public:
+	int minDistance(string word1, string word2) {
+		int m=word1.size();
+		int n=word2.size();
+		vector<vector<int> > E(m+1,vector<int>(n+1,0));
+		for(int i=0; i<=m; i++) E[i][0]=i;
+		for(int j=0; j<=n; j++) E[0][j]=j;
+		for(int i=1; i<=m; i++)
+			for(int j=1; j<=n; j++)
+				E[i][j] = min(min(E[i][j-1],E[i-1][j])+1,E[i-1][j-1]+(word1[i-1]==word2[j-1]?0:1));
+		return E[m][n];
+	}
+};
+// O(min(m,n)) space
+class Solution {
+public:
+	int minDistance(string word1, string word2) {
+		int m=word1.size();
+		int n=word2.size();
+		if(n>m) {
+			swap(m,n); swap(word1,word2);
+		}
+		vector<int> E(n+1,0);
+		for(int j=0; j<=n; j++) E[j]=j;
+		for(int i=1; i<=m; i++) {
+			int lt=i-1; E[0]=i;
+			for(int j=1; j<=n; j++) {
+				int tmp = min(min(E[j],E[j-1])+1,lt+(word1[i-1]==word2[j-1]?0:1));
+				lt=E[j]; E[j]=tmp;
+			}
+		}
+		return E[n];
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 71.Simplify Path
+//*
+class Solution {
+public:
+	string simplifyPath(string path) {
+		int n=path.size();
+		vector<string> S;
+		string name;
+		for(int i=0; i<n; ) {
+			int m=0;
+			for(; i<n; i++) {
+				if(path[i]=='.')
+					m++;
+				else if(path[i]=='/') {
+					if(m>=2 && !S.empty()) S.pop_back();
+					m=0;
+				} else
+					break;
+			}
+			if(i==n) {
+				if(m>=2 && !S.empty()) S.pop_back();
+				break;
+			}
+			while(m--) name.push_back('.');
+			for(; i<n && path[i]!='.' && path[i]!='/'; i++) name.push_back(path[i]);
+			S.push_back(name);
+			name.clear();
+		}
+		for(auto &s:S)
+			name.append('/'+s);
+		return S.empty()? "/":name;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 70.Climbing Stairs 
+class Solution {
+public:
+	int climbStairs(int n) {
+		if(n<=2) return n;
+		int w_1 = 2;
+		int w_2 = 1;
+		int ret = 0;
+		for(int i=3; i<=n; i++) {
+			ret = w_1+w_2;
+			w_2 = w_1;
+			w_1 = ret;
+		}
+		return ret;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 69.Sqrt(x)
+class Solution {
+public:
+	int sqrt(int x) {
+		if(x<2) return x;
+		long long l=0;
+		long long r=x;
+		while(l<=r) {
+			long long m = (l+r)/2;
+			if(m*m>x)
+				r=m-1;
+			else if(m*m<x)
+				l=m+1;
+			else
+				return m;
+		}
+		return r;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 68.Text Justification 
+class Solution {
+public:
+	vector<string> fullJustify(vector<string> &words, int L) {
+		int n = words.size();
+		vector<string> ret;
+		if(n==0) return ret;
+		vector<string> S;
+		string line;
+		int k=0;
+		while(1) {
+			int count = words[k].size();
+			S.push_back(words[k]);
+			for(k++; k<n && count+1+words[k].size()<=L; k++) {
+				S.push_back(words[k]);
+				count+=(1+words[k].size());
+			}
+			if(k==n) { // last line
+				for(auto &s:S) line.append(s+' ');
+				line.resize(L,' ');
+				ret.push_back(line);
+				break;
+			}
+			int nitv = S.size()-1;
+			int nspace = L-count+nitv;
+			int u,v;
+			if(nitv == 0) {
+				u = 0; v = 0;
+			} else {
+				u = nspace/nitv; v = nspace%nitv;
+			}
+			int i=0;
+			for(; i<v; i++) line.append(S[i]).append(u+1,' ');
+			for(; i<nitv; i++) line.append(S[i]).append(u,' ');
+			line.append(S[i]);
+			if(nitv == 0) line.resize(L,' ');
+			ret.push_back(line);
+			S.clear();
+			line.clear();
+		}
+		return ret;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 67.Plus One
+class Solution {
+public:
+	vector<int> plusOne(vector<int> &digits) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		int n=digits.size();
+		for(int i=n-1; i>=0; i--) {
+			digits[i]++;
+			if(digits[i]<10) return digits;
+			else digits[i]=0;
+		}
+		digits.insert(digits.begin(),1);
+		return digits;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 66.
+
 //////////////////////////////////////////////////////////////////////////
 // Permutations 
 //*
@@ -1947,8 +2129,6 @@ public:
 		}
 	}
 	vector<vector<int> > permute(vector<int> &num) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
 		ret.clear();
 		permute(0, num);
 		return ret;
