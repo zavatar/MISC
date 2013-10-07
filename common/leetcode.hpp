@@ -1,9 +1,47 @@
 //////////////////////////////////////////////////////////////////////////
 // 140.Word Break II
 //*http://www.cnblogs.com/superzrx/p/3354813.html
+class Solution {
+public:
+	void DFS(string &s, int i, vector<int> &p, vector<vector<int>> &mem, vector<string> &ret) {
+		for(auto&k : mem[i]) {
+			p.push_back(k);
+			if(k == 0) {
+				string w;
+				for(int k=p.size()-1; k>0; k--)
+					w.append(s.substr(p[k],p[k-1]-p[k])+' ');
+				w.append(s.substr(p[0]));
+				ret.push_back(w);
+			} else
+				DFS(s, k, p, mem, ret);
+			p.pop_back();
+		}
+	}
+	vector<string> wordBreak(string s, unordered_set<string> &dict) {
+		vector<string> ret;
+		vector<vector<int>> mem;
+		int n=s.size();
+		int maxw = 0;
+		for(auto&w : dict) maxw = max(maxw,int(w.size()));
+		vector<bool> S(n+1,false);
+		mem.resize(n+1);
+		S[0] = true;
+		for(int i=0; i<n; i++)
+			if(S[i])
+				for(int j=1; j<=min(maxw,n-i); j++)
+					if(dict.find(s.substr(i,j)) != dict.end()) {
+						S[i+j] = true;
+						mem[i+j].push_back(i);
+					}
+		vector<int> path;
+		DFS(s, n, path, mem, ret);
+		return ret;
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // 139.Word Break
-// DP
+//*DP
+// O(n^2)
 class Solution {
 public:
 	bool wordBreak(string s, unordered_set<string> &dict) {
@@ -23,6 +61,24 @@ public:
 			}
 		}
 		return S[0][n-1];
+	}
+};
+// O(n*l)
+class Solution {
+public:
+	bool wordBreak(string s, unordered_set<string> &dict) {
+		int n=s.size();
+		if(n==0) return true;
+		int maxw = 0;
+		for(auto&w : dict) maxw = max(maxw,int(w.size()));
+		vector<bool> S(n+1,false);
+		S[0] = true;
+		for(int i=0; i<n; i++)
+			if(S[i])
+				for(int j=1; j<=min(maxw,n-i); j++)
+					if(dict.find(s.substr(i,j)) != dict.end())
+						S[i+j] = true;
+		return S[n];
 	}
 };
 //////////////////////////////////////////////////////////////////////////
