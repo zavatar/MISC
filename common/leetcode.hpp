@@ -2166,8 +2166,107 @@ public:
 	}
 };
 //////////////////////////////////////////////////////////////////////////
-// 66.
+// 66.Valid Number 
+//*http://discuss.leetcode.com/questions/241/valid-number
+class Solution {
+public:
+	bool isNumber(const char *s) {
+		enum InputType {
+			INVALID,    // 0
+			SPACE,      // 1
+			SIGN,       // 2
+			DIGIT,      // 3
+			DOT,        // 4
+			EXPONENT,   // 5
+			NUM_INPUTS  // 6
+		};
+		int transitionTable[][NUM_INPUTS] = {
+			-1,  0,  3,  1,  2, -1,     // next states for state 0
+			-1,  8, -1,  1,  4,  5,     // next states for state 1
+			-1, -1, -1,  4, -1, -1,     // next states for state 2
+			-1, -1, -1,  1,  2, -1,     // next states for state 3
+			-1,  8, -1,  4, -1,  5,     // next states for state 4
+			-1, -1,  6,  7, -1, -1,     // next states for state 5
+			-1, -1, -1,  7, -1, -1,     // next states for state 6
+			-1,  8, -1,  7, -1, -1,     // next states for state 7
+			-1,  8, -1, -1, -1, -1,     // next states for state 8
+		};
+		int state = 0;
+		while (*s != '\0') {
+			InputType inputType = INVALID;
+			if (isspace(*s))
+				inputType = SPACE;
+			else if (*s == '+' || *s == '-')
+				inputType = SIGN;
+			else if (isdigit(*s))
+				inputType = DIGIT;
+			else if (*s == '.')
+				inputType = DOT;    
+			else if (*s == 'e' || *s == 'E')
+				inputType = EXPONENT;
 
+			// Get next state from current state and input symbol
+			state = transitionTable[state][inputType];
+
+			// Invalid input
+			if (state == -1) return false;
+			else ++s;
+		}
+		// If the current state belongs to one of the accepting (final) states,
+		// then the number is valid
+		return state == 1 || state == 4 || state == 7 || state == 8;
+	}
+};
+//////////////////////////////////////////////////////////////////////////
+// 65.Add Binary 
+class Solution {
+public:
+	string addBinary(string a, string b) {
+		int n = a.size();
+		int m = b.size();
+		if(m>n) {swap(m,n); swap(a,b);}
+		char s=0;
+		for(int i=1; i<=m; i++) {
+			char ai = a[n-i]-'0';
+			char bi = b[m-i]-'0';
+			char t = (ai^bi^s)+'0';
+			s = (s==0?(ai&bi):(ai|bi));
+			a[n-i] = t;
+		}
+		for(int i=m+1; i<=n; i++) {
+			if(s==1 && a[n-i]=='1')
+				a[n-i] = '0';
+			else {
+				a[n-i] += s;
+				s=0;
+				break;
+			}
+		}
+		if(s==1)
+			a.insert(a.begin(),'1');
+		return a;
+	}
+}; 
+//////////////////////////////////////////////////////////////////////////
+// 64.Merge Two Sorted Lists
+
+//////////////////////////////////////////////////////////////////////////
+// 63.Minimum Path Sum
+class Solution {
+public:
+	int minPathSum(vector<vector<int> > &grid) {
+		// Note: The Solution object is instantiated only once and is reused by each test case.
+		int m = grid.size();
+		if(m==0) return 0;
+		int n = grid[0].size();
+		for(int i=1; i<m; i++) grid[i][0]+=grid[i-1][0];
+		for(int j=1; j<n; j++) grid[0][j]+=grid[0][j-1];
+		for(int i=1; i<m; i++)
+			for(int j=1; j<n; j++)
+				grid[i][j] += min(grid[i-1][j],grid[i][j-1]);
+		return grid[m-1][n-1];
+	}
+};
 //////////////////////////////////////////////////////////////////////////
 // Permutations 
 //*
