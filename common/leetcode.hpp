@@ -181,7 +181,26 @@ public:
 				sum=0;
 			}
 		}
-		return total<0?-1:idx+1;
+		return total<0?-1:(idx+1==n?0:idx+1);
+	}
+};
+//http://chuansongme.com/n/195462
+class Solution {
+public:
+	int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
+		int n = gas.size();
+		int idx = 0;
+		int count = 0;
+		for(int i=0,j=n-1; i<=j; i++) {
+			count += gas[i]-cost[i];
+			if(count < 0) {
+				for(; i<=j; j--) {
+					count += gas[j]-cost[j];
+					if(count >= 0) {idx=j--; break;}
+				}
+			}
+		}
+		return count<0 ? -1: idx;
 	}
 };
 //////////////////////////////////////////////////////////////////////////
@@ -265,12 +284,19 @@ public:
 	}
 	vector<vector<string>> partition(string s) {
 		int n = s.size();
-		vector<vector<bool>> P(n,vector<bool>(n,false));
+		/*vector<vector<bool>> P(n,vector<bool>(n,false));
 		for(int i=n-1; i>=0; i--) {
 			P[i][i] = true;
 			for(int j=i+1; j<n; j++) {
 				if (s[i]==s[j] && (j-i<3 || P[i+1][j-1]))
 					P[i][j] = true;
+			}
+		}*/
+		vector<vector<bool>> P(n,vector<bool>(n,true));
+		for(int i=n-1; i>=0; i--) {
+			for(int j=i+1; j<n; j++) {
+				if (!(s[i]==s[j] && P[i+1][j-1]))
+					P[i][j] = false;
 			}
 		}
 		vector<vector<string>> results;
@@ -341,7 +367,6 @@ public:
         travel(root, X);
         return sum;
     }
-    
     void travel(TreeNode* node, int X) {
         if (node == NULL) return;
         X = 10*X + node->val;
@@ -350,7 +375,6 @@ public:
         if (node->left == NULL && node->right == NULL)
             sum += X;
     }
-    
     int sum;
 };
 //////////////////////////////////////////////////////////////////////////
@@ -510,7 +534,6 @@ public:
  */
 class Solution {
 public:
-
     int travel(TreeNode *r) {
         if(r == NULL) return 0;
         int lmax = travel(r->left);
@@ -519,7 +542,6 @@ public:
         maxsum = max(maxsum, lmax+rmax+r->val);
         return max(max(lmax,rmax)+r->val,0);
     }
-
     int maxPathSum(TreeNode *root) {
         maxval = numeric_limits<int>::min();
         maxsum = 0;
@@ -548,22 +570,23 @@ public:
 //////////////////////////////////////////////////////////////////////////
 // 122.Best Time to Buy and Sell Stock II
 // O(n^2), Large data timeout
+// think as Rod cutting. C(i) = max{C(k-1)+maxval(k,i)}, k=[0,i]
 class Solution {
 public:
 	int maxProfit(vector<int> &prices) {
 		int n = prices.size();
 		if (n <= 1) return 0;
 		vector<int> C(n+1,0);
-		for (int i=n-1; i>=0; i--) {
+		for (int i=0; i<n; i++) {
 			int maxval = 0;
 			int curmin = prices[i];
-			for (int k=i+1; k<n; k++) {
+			for (int k=0; k<=i; k++) {
 				curmin = min(curmin, prices[k]);
 				maxval = max(maxval, prices[k]-curmin);
-				C[i] = max(maxval + C[k+1], C[i]);
+				C[i+1] = max(maxval + C[k], C[i+1]);
 			}
 		}
-		return C[0];
+		return C[n];
 	}
 };
 // O(n)
@@ -1471,7 +1494,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 // 95.Unique Binary Search Trees II
-//*recursively build left and right tree
+//*recursively build left and right tree, BFS?
 // http://fisherlei.blogspot.com/2013/03/leetcode-unique-binary-search-trees-ii.html
 /**
  * Definition for binary tree
