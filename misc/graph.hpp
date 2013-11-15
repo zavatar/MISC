@@ -78,6 +78,7 @@ namespace misc {
 		public:
 
 			// http://stackoverflow.com/questions/5286922/g-template-parameter-error
+			using _KeyPolicy<_Key, int>::Key;
 			using _KeyPolicy<_Key, int>::Id;
 			using _KeyPolicy<_Key, int>::addkey;
 			using _KeyPolicy<_Key, int>::clearkey;
@@ -235,6 +236,7 @@ namespace misc {
 		public:
 
 			// http://stackoverflow.com/questions/5286922/g-template-parameter-error
+			using _KeyPolicy<_Key, int>::Key;
 			using _KeyPolicy<_Key, int>::Id;
 			using _KeyPolicy<_Key, int>::addkey;
 			using _KeyPolicy<_Key, int>::clearkey;
