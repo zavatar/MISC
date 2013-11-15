@@ -104,7 +104,7 @@ TEST(Graph_Test, Standard)
 		std::vector<char> tpexp(_tp, _tp+6);
 		std::vector<char> buff;
 
-		auto printfun = [&](char& v){buff.push_back(v);};
+		auto printfun = [&](char v){buff.push_back(v);};
 
 		g.topological_sort(printfun);
 		EXPECT_TRUE(tpexp == buff);
@@ -175,5 +175,17 @@ TEST(Graph_Test, Standard)
 			g.addEdge(de[2*i], de[2*i+1], w[i]);
 
 		EXPECT_EQ(g.Edmonds_Karp('s', 't'), 23);
+	}
+//////////////////////////////////////////////////////////////////////////
+	{
+		// case from http://algs4.cs.princeton.edu/15uf/UF.java.html
+		char ds[10] = {'0','1','2','3','4','5','6','7','8','9'};
+		char dc[8*2] = {'4','3', '3','8', '6','5', '9','4', '2','1', 
+		'5','0', '7','2', '6','1'};
+		misc::DisjointSets<char> dsets(ds, ds+10);
+		for (int i=0; i<8; i++) {
+			dsets.link(dc[2*i], dc[2*i+1]);
+		}
+		EXPECT_EQ(dsets.getCount(), 2);
 	}
 }

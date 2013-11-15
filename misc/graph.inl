@@ -32,12 +32,6 @@ namespace misc{
 	}
 
 	GraphTemplate
-	_Key& GraphHead Key( id_type& v )
-	{
-		return root[v].key;
-	}
-
-	GraphTemplate
 	bool GraphHead Visited( _Key v )
 	{
 		return visited(Id(v));
@@ -68,7 +62,6 @@ namespace misc{
 	{
 		id_type v = addkey(kv);
 		root.resize(std::max(v+1, id_type(root.size())));
-		Key(v) = kv;
 		Color(v) = white;
 	}
 
@@ -262,7 +255,7 @@ namespace misc{
 	void GraphHead topological_sort( Fun fn )
 	{
 		std::stack<_Key> S;
-		DFS([](_Key){}, [&](_Key& v){S.push(v);});
+		DFS([](_Key){}, [&](_Key v){S.push(v);});
 		for (; S.size() != 0; S.pop())
 			fn(S.top());
 	}
@@ -287,7 +280,7 @@ namespace misc{
 		transpose(gt);
 
 		int counts = 0;
-		topological_sort([&](_Key&k){
+		topological_sort([&](const _Key&k){
 			if (!gt.Visited(k)) {
 				counts++;
 				gt.DFS_visit(k, printfun, dummyfun);
@@ -302,13 +295,9 @@ namespace misc{
 	template <typename Fun>
 	_Weight GraphHead Kruskal_MST(Fun fn)
 	{
-		int V = root.size();
-		std::vector<int> rank(V);
-		std::vector<id_type> parent(V);
-
-		boost::disjoint_sets<int*, id_type*> dsets(&rank[0], &parent[0]);
+		DisjointSets<id_type, keyInt0> dsets;
 		_foreachVertex([&](id_type v){
-			dsets.make_set(v);
+			dsets.makeSet(v);
 		});
 
 		typedef std::tuple<id_type, id_type, Edge> edge_type;
@@ -325,8 +314,8 @@ namespace misc{
 		for (const auto &t : edges) {
 			id_type v = std::get<0>(t);
 			id_type u = std::get<1>(t);
-			id_type vp = dsets.find_set(v);
-			id_type up = dsets.find_set(u);
+			id_type vp = dsets.findSet(v);
+			id_type up = dsets.findSet(u);
 			if (vp != up) {
 				fn(Key(v), Key(u));
 				ret += std::get<2>(t).w;
@@ -354,7 +343,7 @@ namespace misc{
 		id_type s = Id(ks);
 		id_type t = Id(kt);
 		D[s] = 0;
-		topological_sort([&](_Key&k){
+		topological_sort([&](const _Key&k){
 			id_type v = Id(k);
 			_foreachAdjE(v, [&](id_type u, const Edge&e){
 				if (D[u] > D[v]+e.d) {
@@ -497,6 +486,68 @@ namespace misc{
 			max_flow += path_flow;
 		}
 		return max_flow;
+	}
+
+//////////////////////////////////////////////////////////////////////////
+
+	DisjointSetsTemplate
+	template <class InputIterator>
+	DisjointSetsHead DisjointSets( InputIterator first, InputIterator last )
+	{
+		count = last-first;
+		parent.resize(count);
+		rank.resize(count);
+		for (int i=0; i<count; i++) {
+			parent[i] = addkey(*(first+i));
+			rank[i] = 0;
+		}
+	}
+
+	DisjointSetsTemplate
+	void DisjointSetsHead makeSet( _Key kv )
+	{
+		parent.push_back(addkey(kv));
+		rank.push_back(0);
+		count++;
+	}
+
+	DisjointSetsTemplate
+	_Key DisjointSetsHead findSet( _Key kv )
+	{
+		return Key(_findSet(Id(kv)));
+	}
+
+	DisjointSetsTemplate
+	bool DisjointSetsHead isConnected(_Key ku, _Key kv)
+	{
+		return _findSet(Id(ku)) == _findSet(Id(kv));
+	}
+
+	DisjointSetsTemplate
+	void DisjointSetsHead link(_Key ku, _Key kv)
+	{
+		id_type i = _findSet(Id(ku));
+		id_type j = _findSet(Id(kv));
+		if (i == j) return;
+
+		// union by rank
+		if (rank[i] < rank[j]) parent[i] = j;
+		else if (rank[i] > rank[j]) parent[j] = i;
+		else {
+			parent[j] = i;
+			rank[i]++;
+		}
+		count--;
+	}
+
+	DisjointSetsTemplate
+	typename DisjointSetsHead id_type DisjointSetsHead _findSet( id_type kv )
+	{
+		while (kv != parent[kv]) {
+			parent[kv] = parent[parent[kv]]; // path compression
+			kv = parent[kv];
+		}
+		return kv;
 	}
 
 } // namespace misc
