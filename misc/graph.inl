@@ -255,7 +255,7 @@ namespace misc{
 	void GraphHead topological_sort( Fun fn )
 	{
 		std::stack<_Key> S;
-		DFS([](_Key){}, [&](_Key v){S.push(v);});
+		DFS([](_Key){}, [&](const _Key& v){S.push(v);});
 		for (; S.size() != 0; S.pop())
 			fn(S.top());
 	}

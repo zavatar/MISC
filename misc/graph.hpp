@@ -54,10 +54,10 @@ namespace misc {
 			_Key Key(id_type v) { return keys[v]; }
 			id_type Id(const _Key&k) { return maps[k]; }
 		protected:
-			id_type addkey(const _Key&k) { 
+			id_type addkey(const _Key&k) {
 				if (maps.find(k) == maps.end()) {
+					maps[k] = keys.size();
 					keys.push_back(k);
-					maps[k]= maps.size();
 				}
 				return maps[k];
 			}
