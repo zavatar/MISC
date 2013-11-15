@@ -1,9 +1,6 @@
 #ifndef misc_graph
 #define misc_graph
 
-#include <boost/config.hpp>
-#include <boost/pending/disjoint_sets.hpp>
-
 namespace misc {
 
 //////////////////////////////////////////////////////////////////////////

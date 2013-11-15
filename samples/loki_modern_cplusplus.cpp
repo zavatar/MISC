@@ -19,7 +19,6 @@
 // Chapter 2. Techniques
 
 // 2.1 Compile-Time Assertions
-BOOST_STATIC_ASSERT(true);
 #ifdef MCXX11
 // C++11
 static_assert(true, "Msg");
