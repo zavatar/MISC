@@ -1,5 +1,188 @@
 namespace misc{
 
+	template <typename node_type, typename Fun>
+	void PreOrderRecursively( node_type* root, Fun fn )
+	{
+		std::function<void(node_type*)> travel = [&](node_type* r) {
+			if (r == NULL) return;
+			fn(r);
+			travel(r->l);
+			travel(r->r);
+		};
+		travel(root);
+	}
+
+	template <typename node_type, typename Fun>
+	void InOrderRecursively( node_type* root, Fun fn )
+	{
+		std::function<void(node_type*)> travel = [&](node_type* r) {
+			if (r == NULL) return;
+			travel(r->l);
+			fn(r);
+			travel(r->r);
+		};
+		travel(root);
+	}
+
+	template <typename node_type, typename Fun>
+	void PostOrderRecursively( node_type* root, Fun fn )
+	{
+		std::function<void(node_type*)> travel = [&](node_type* r) {
+			if (r == NULL) return;
+			travel(r->l);
+			travel(r->r);
+			fn(r);
+		};
+		travel(root);
+	}
+
+	template <typename node_type, typename Fun>
+	void PreOrderIteratively( node_type* root, Fun fn )
+	{
+		std::stack<node_type*> s;
+		node_type* r = root;
+		while(true) {
+			if (r != NULL) {
+				s.push(r);
+				fn(r);
+				r = r->l;
+			} else {
+				if(s.empty()) break;
+				r = s.top();
+				s.pop();
+				r = r->r;
+			}
+		}
+	}
+
+	template <typename node_type, typename Fun>
+	void InOrderIteratively( node_type* root, Fun fn )
+	{
+		std::stack<node_type*> s;
+		node_type* r = root;
+		while(true) {
+			if (r != NULL) {
+				s.push(r);
+				r = r->l;
+			} else {
+				if(s.empty()) break;
+				r = s.top();
+				s.pop();
+				fn(r);
+				r = r->r;
+			}
+		}
+	}
+
+	template <typename node_type, typename Fun>
+	void PostOrderIteratively( node_type* root, Fun fn )
+	{
+		std::stack<std::pair<node_type*, bool> > s;
+		node_type* r = root;
+		while(true) {
+			if (r != NULL) {
+				s.emplace(r, false); // first access
+				r = r->l;
+			} else {
+				while(!s.empty() && s.top().second) {
+					fn(s.top().first); // third access
+					s.pop();
+				}
+				if(s.empty()) break;
+				r = s.top().first;
+				r = r->r;
+				s.top().second = true; // second access
+			}
+		}
+	}
+
+	template <typename node_type, typename Fun>
+	void PreOrderMorris( node_type* root, Fun fn )
+	{
+		node_type* r = root;
+		while (r != NULL) {
+			if (r->l == NULL) {
+				fn(r);
+				r = r->r;
+			} else {
+				node_type* p = r->l;
+				while (p->r!=NULL && p->r!=r) p = p->r;
+				if (p->r == NULL) {
+					p->r = r;
+					fn(r); // second access
+					r = r->l;
+				} else { // p->r == r
+					p->r = NULL;
+					r = r->r;
+				}
+			}
+		}
+	}
+
+	template <typename node_type, typename Fun>
+	void InOrderMorris( node_type* root, Fun fn )
+	{
+		node_type* r = root;
+		while (r != NULL) {
+			if (r->l == NULL) {
+				fn(r);
+				r = r->r;
+			} else {
+				node_type* p = r->l;
+				while (p->r!=NULL && p->r!=r) p = p->r;
+				if (p->r == NULL) {
+					p->r = r;
+					r = r->l;
+				} else { // p->r == r
+					p->r = NULL;
+					fn(r); // second access
+					r = r->r;
+				}
+			}
+		}
+	}
+
+	template <typename node_type, typename Fun>
+	void PostOrderMorris( node_type* root, Fun fn )
+	{
+		node_type dump;
+		dump.l = root;
+		node_type* r = &dump;
+		auto rev = [](node_type* from, node_type* to){
+			if (from == to) return;
+			node_type *pre = from, *cur = from->r;
+			do {
+				node_type *tmp = cur->r;
+				cur->r = pre;
+				pre = cur;
+				cur = tmp;
+			} while (pre != to);
+		};
+		while (r != NULL) {
+			if (r->l == NULL) {
+				r = r->r;
+			} else {
+				node_type* p = r->l;
+				while (p->r!=NULL && p->r!=r) p = p->r;
+				if (p->r == NULL) {
+					p->r = r;
+					r = r->l;
+				} else { // p->r == r
+					rev(r->l, p);
+					node_type *cur = p;
+					while (true) {
+						fn(cur);
+						if (cur == r->l) break;
+						cur = cur->r;
+					}
+					rev(p, r->l);
+					p->r = NULL;
+					r = r->r;
+				}
+			}
+		}
+	}
+
 	template <typename T, typename node_type>
 	typename BST<T,node_type>::node_pointer BST<T,node_type>::minimum( node_pointer x )
 	{
@@ -100,46 +283,6 @@ namespace misc{
 		return true;
 	}
 
-	template <typename T, typename node_type> template <typename Fun>
-	void BST<T,node_type>::preorder( Fun fn )
-	{
-		std::function<void(node_pointer)> inorder_fun = 
-			[&fn, &inorder_fun](node_pointer node) {
-				if (node == NULL) return;
-				fn(node);
-				inorder_fun(node->l);
-				inorder_fun(node->r);
-		};
-		inorder_fun(root);
-	}
-
-	// http://stackoverflow.com/questions/5108359/how-do-i-define-a-template-function-within-a-template-class-outside-of-the-class
-	template <typename T, typename node_type> template <typename Fun>
-	void BST<T,node_type>::inorder( Fun fn )
-	{
-		std::function<void(node_pointer)> inorder_fun = 
-			[&fn, &inorder_fun](node_pointer node) {
-				if (node == NULL) return;
-				inorder_fun(node->l);
-				fn(node);
-				inorder_fun(node->r);
-		};
-		inorder_fun(root);
-	}
-
-	template <typename T, typename node_type> template <typename Fun>
-	void BST<T,node_type>::postorder( Fun fn )
-	{
-		std::function<void(node_pointer)> inorder_fun = 
-			[&fn, &inorder_fun](node_pointer node) {
-				if (node == NULL) return;
-				inorder_fun(node->l);
-				inorder_fun(node->r);
-				fn(node);
-		};
-		inorder_fun(root);
-	}
-
 	template <typename T, typename node_type>
 	void BST<T,node_type>::transplant( node_pointer u, node_pointer v )
 	{
@@ -175,15 +318,7 @@ namespace misc{
 	void BST<T, node_type>::left_rotate( node_pointer x )
 	{
 		node_pointer y = x->r;
-		y->p = x->p;
-		if (y->p == NULL)
-			this->root = y;
-		else {
-			if (y->p->l == x)
-				y->p->l = y;
-			else if (y->p->r == x)
-				y->p->r = y;
-		}
+		transplant(x, y);
 		x->r = y->l;
 		if (x->r != NULL)
 			x->r->p = x;
@@ -195,15 +330,7 @@ namespace misc{
 	void BST<T, node_type>::right_rotate( node_pointer x )
 	{
 		node_pointer y = x->l;
-		y->p = x->p;
-		if (y->p == NULL)
-			this->root = y;
-		else {
-			if (y->p->l == x)
-				y->p->l = y;
-			else if (y->p->r == x)
-				y->p->r = y;
-		}
+		transplant(x, y);
 		x->l = y->r;
 		if (x->l != NULL)
 			x->l->p = x;
@@ -297,16 +424,22 @@ namespace misc{
 	void AVL<T,node_type>::rebalance( node_pointer x )
 	{
 		while (x != NULL) {
-			update_height(x);
 			if (height(x->l) >= 2+height(x->r)) {
 				if (height(x->l->l) < height(x->l->r))
 					left_rotate(x->l);
 				right_rotate(x);
+				break; // rotate only once
 			} else if (height(x->r) >= 2+height(x->l)) {
 				if (height(x->r->r) < height(x->r->l))
 					right_rotate(x->r);
 				left_rotate(x);
+				break; // rotate only once
 			}
+			update_height(x);
+			x = x->p;
+		}
+		while (x != NULL) {
+			update_from_lr(x);
 			x = x->p;
 		}
 	}
@@ -527,7 +660,6 @@ namespace misc{
 	template <typename T, typename node_type>
 	void order_statistic_tree<T, node_type>::insertp( node_pointer z )
 	{
-		z->s = 1;
 		AVL<T,node_type>::insertp(z);
 	}
 

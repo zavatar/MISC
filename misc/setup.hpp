@@ -73,6 +73,7 @@
 // Visual C++ defines
 #define MISC_COMPILER_VC				0x01000000
 #define MISC_COMPILER_VC2012			0x01000020
+#define MISC_COMPILER_VC2013			0x01000030
 
 // GCC defines
 #define MISC_COMPILER_GCC				0x02000000
@@ -83,7 +84,9 @@
 #ifdef MISC_FORCE_COMPILER_UNKNOWN
 #	define MISC_COMPILER MISC_COMPILER_UNKNOWN
 #elif defined(_MSC_VER) // Visual C++
-#	if _MSC_VER == 1700
+#	if _MSC_VER == 1800
+#		define MISC_COMPILER MISC_COMPILER_VC2013
+#	elif _MSC_VER == 1700
 #		define MISC_COMPILER MISC_COMPILER_VC2012
 #	else//_MSC_VER
 #		define MISC_COMPILER MISC_COMPILER_VC
@@ -102,7 +105,9 @@
 
 #if(defined(MISC_MESSAGES) && !defined(MISC_MESSAGE_COMPILER_DISPLAYED))
 #	define MISC_MESSAGE_COMPILER_DISPLAYED
-#	if(MISC_COMPILER == MISC_COMPILER_VC2012)
+#	if(MISC_COMPILER == MISC_COMPILER_VC2013)
+#		pragma message("MISC: Visual Studio 2013")
+#	elif(MISC_COMPILER == MISC_COMPILER_VC2012)
 #		pragma message("MISC: Visual Studio 2012")
 #	elif(MISC_COMPILER == MISC_COMPILER_GCC47)
 #		pragma message("MISC: GCC 4.7")
@@ -149,8 +154,10 @@
 // C++ Version
 #define MISC_LANG_CXX			(0 << 0)
 #define MISC_LANG_CXX98			(1 << 1)
-#define MISC_LANG_CXX0X			(1 << 2)
+#define MISC_LANG_VCXX2			(1 << 2)
 #define MISC_LANG_CXX11			(1 << 3)
+#define MISC_LANG_CXX14			(1 << 4)
+#define MISC_LANG_VCXX3			(1 << 5)
 
 // http://gcc.gnu.org/gcc-4.7/changes.html
 #if(MISC_ISGCC)
@@ -162,8 +169,10 @@
 #		define MISC_LANG MISC_LANG_CXX
 #	endif
 #elif(MISC_ISVC)
-#	if(MISC_COMPILER == MISC_COMPILER_VC2012)
-#		define MISC_LANG MISC_LANG_CXX0X
+#	if(MISC_COMPILER == MISC_COMPILER_VC2013)
+#		define MISC_LANG MISC_LANG_VCXX3
+#	elif(MISC_COMPILER == MISC_COMPILER_VC2012)
+#		define MISC_LANG MISC_LANG_VCXX2
 #	else
 #		define MISC_LANG MISC_LANG_CXX98
 #	endif
@@ -175,8 +184,10 @@
 #	define MISC_MESSAGE_LANG_DISPLAYED
 #	if(MISC_LANG == MISC_LANG_CXX11)
 #		pragma message("MISC: C++11")
-#	elif(MISC_LANG == MISC_LANG_CXX0X)
-#		pragma message("MISC: C++0x")
+#	elif(MISC_LANG == MISC_LANG_VCXX3)
+#		pragma message("MISC: VC++ 2013")
+#	elif(MISC_LANG == MISC_LANG_VCXX2)
+#		pragma message("MISC: VC++ 2012")
 #	elif(MISC_LANG == MISC_LANG_CXX98)
 #       error("MISC: C++98")
 #   else
@@ -185,7 +196,8 @@
 #endif//MISC_MESSAGE
 
 #define MISC_ISCXX11 (MISC_LANG == MISC_LANG_CXX11)
-#define MISC_ISCXX0X (MISC_LANG == MISC_LANG_CXX0X)
+#define MISC_ISVCXX2 (MISC_LANG == MISC_LANG_VCXX2)
+#define MISC_ISVCXX3 (MISC_LANG == MISC_LANG_VCXX3)
 
 //////////////////////////////////////////////////////////////////////////
 // Qualifiers

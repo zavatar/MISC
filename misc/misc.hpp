@@ -2,6 +2,7 @@
 #define misc_misc
 
 #include <stdio.h>
+#include <type_traits>
 #include <cassert>
 #include <iostream>
 #include <memory>
@@ -32,6 +33,6 @@
 #include "hashing.hpp"
 #include "dynamic_programming.hpp"
 #include "graph.hpp"
-#include "pattern_searching.hpp"
+#include "string.hpp"
 
 #endif//misc_misc

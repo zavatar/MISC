@@ -7,7 +7,6 @@ set(GTEST_LIBS_DIR ${GTEST_LIBS_DIR} PARENT_SCOPE)
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
 
 set(TEST_NAME tests)
 

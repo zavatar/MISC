@@ -7,9 +7,6 @@ function(CreateSample NAME)
   add_dependencies(${SAMPLE_NAME} loki)
 	if(NAME STREQUAL "virtual_inheritance" AND MSVC)
 		set_target_properties(${SAMPLE_NAME} PROPERTIES COMPILE_FLAGS /d1reportSingleClassLayoutDiamondSub)
-	elseif(NAME STREQUAL "allocator" AND STLPort)
-		set_target_properties(${SAMPLE_NAME} PROPERTIES INCLUDE_DIRECTORIES 
-		${PROJECT_SOURCE_DIR}/common/stlport/inc)
 	elseif(NAME STREQUAL "google_test")
 		set_target_properties(${SAMPLE_NAME} PROPERTIES COMPILE_FLAGS ${COMPILER_DEFS})
 		add_dependencies(${SAMPLE_NAME} googletest)
@@ -43,15 +40,6 @@ if(MSVC)
 	add_subdirectory(masm)
 endif()
 ################################
-# Add STLPort
-
-if(MSVC)
-	option(STLPort "Using STLPort" OFF)
-	if (STLPort)
-		# TODO: How to move this line to line9?
-		link_directories(${PROJECT_SOURCE_DIR}/common/stlport/lib)
-	endif()
-endif()
 
 file(GLOB SAMPLE_LIST *.cpp)
 foreach(Src ${SAMPLE_LIST})
@@ -64,5 +52,4 @@ endforeach()
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${GTEST_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${LOKI_INCLUDE_DIRS})

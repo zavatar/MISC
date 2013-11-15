@@ -154,9 +154,24 @@ namespace misc{
 	}
 
 	template <typename T>
+	void __quicksort(T *a, int l, int r)
+	{
+		if(l>=r) return;
+		int m = rand()%(r-l+1) + l;
+		std::swap(a[m], a[r]);
+		int p1 = l;
+		for(int p2=l; p2<r; p2++)
+			if(a[p2]<a[r])
+				std::swap(a[p1++], a[p2]);
+		std::swap(a[r], a[p1]);
+		__quicksort(a, l, p1-1);
+		__quicksort(a, p1+1, r);
+	}
+
+	template <typename T>
 	void quicksort_n(T *a, int n)
 	{
-		__quicksort(a, a+n-1);
+		__quicksort(a, 0, n-1);
 	}
 
 	template <typename T>
